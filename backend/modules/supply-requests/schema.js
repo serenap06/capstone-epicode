@@ -21,7 +21,10 @@ const supplyRequestSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 1,
-      validate: Number.isInteger,
+      validate: {
+        validator: Number.isInteger,
+        message: "amount must be an integer",
+      },
     },
     state: {
       type: String,

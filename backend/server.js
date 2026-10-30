@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
+const logger = require("./middlewares/globals/logger");
 
 // middleware
 const errorHandler = require("./middlewares/errors/errorHandler");
@@ -12,6 +13,7 @@ const usersRouter = require("./modules/users/routes");
 
 const app = express();
 
+app.use(logger);
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL }));
 

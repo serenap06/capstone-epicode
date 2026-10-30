@@ -17,13 +17,37 @@ const findOne = async (userId) => {
   return user;
 };
 
-const create = async (body) => {
-  const user = new User(body);
+const create = async (userData) => {
+  const user = new User(userData);
   return await user.save();
 };
 
+const update = async (userId, userData) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+  Object.entries(userData).forEach(([field, value]) => {
+    if (value !== undefined) {
+      user[field] = value;
+    }
+  });
+  await user.save();
+
+  const { password, ...safeUser } = user.toObject();
+  return safeUser;
+};
+
+const deleteUser = async (userId) => {
+  const user = await User.findByIdAndDelete(userId);
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+};
 module.exports = {
   findAll,
   findOne,
   create,
+  update,
+  deleteUser,
 };

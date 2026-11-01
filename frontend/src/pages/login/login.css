@@ -5,8 +5,8 @@
 }
 
 .login-page {
-  max-width: 460px;
-  min-height: 100vh;
+  max-width: 350px;
+  min-height: 110vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -36,7 +36,7 @@
   border: 2px solid transparent;
   border-radius: 50rem;
   padding: 0.9rem 1.5rem 0.9rem 3.6rem;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--login-violet);
 }
@@ -53,28 +53,31 @@
 }
 
 .login-error {
-  color: #dc3545;
+  color: #8e9aeb;
   font-size: 0.9rem;
   margin: 0.4rem 0 0 1.5rem;
 }
 
 .login-remember {
   font-size: 1.1rem;
+  color: #f0872f;
   font-weight: 600;
   display: flex;
   justify-content: center;
   gap: 0.5rem;
 }
-.form-check-label:checked{
-      background-color: white;
 
+.form-check-input:checked[type="checkbox"] {
+  background-color: #f0872f;
+  border: none;
 }
+
 .btn.login-button {
   background: var(--login-orange);
   border: none;
   border-radius: 50rem;
   padding: 0.8rem;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 

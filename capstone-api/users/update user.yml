@@ -1,0 +1,24 @@
+info:
+  name: update user
+  type: http
+  seq: 3
+
+http:
+  method: PATCH
+  url: http://localhost:9092/api/users/6ae4cc3304b6042358c113a1
+  body:
+    type: json
+    data: |-
+      {
+        "name":"Letizia"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTNjY2FhMTJjYjlhZDk4MGM3NmRjYyIsImlhdCI6MTc5MzMxNTQ0NCwiZXhwIjoxNzkzNDAxODQ0fQ.munFa4LZcgbX0WQGnDIYev8rnAc30ArPAKMGuvTWeu0
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

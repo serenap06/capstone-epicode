@@ -1,0 +1,18 @@
+info:
+  name: me admin
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: http://localhost:9092/api/auth/me
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTM5NzcwYjdiZjk1ZmJjMDljNDhlYyIsImlhdCI6MTc5MzMwMDg3OCwiZXhwIjoxNzkzMzg3Mjc4fQ.GVuQ0J28-jDS5vIy34DtfzlD8YFpOdHbaoMUCn7yzBQ
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

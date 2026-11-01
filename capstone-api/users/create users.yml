@@ -1,0 +1,29 @@
+info:
+  name: create users
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:9092/api/users
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Laura",
+        "surname": "Blu",
+        "email": "laura@demo.it",
+        "password": "Password123",
+        "role": "employee",
+        "store": "6ae3ccaa12cb9ad980c76dca"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTNjY2FhMTJjYjlhZDk4MGM3NmRjZCIsImlhdCI6MTc5MzMxNTU4NywiZXhwIjoxNzkzNDAxOTg3fQ.uQAaOZV58cHO7Sb_P9iCastwsU1cGeL8EpfgAPonYVs
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

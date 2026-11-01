@@ -3,7 +3,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 // api helper per non riscrivere sempre la fetch
 
 const api = async (path, { method = "GET", body } = {}) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
   const res = await fetch(`${API_URL}${path}`, {
     method,

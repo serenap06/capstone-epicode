@@ -32,10 +32,10 @@ const Login = () => {
     );
   }
 
-  const onSubmit = async ({ email, password }) => {
+  const onSubmit = async ({ email, password,remember }) => {
     setServerError("");
     try {
-      const loggedUser = await login(email, password);
+      const loggedUser = await login(email, password,remember);
       navigate(loggedUser.role === "admin" ? "/admin" : "/employee");
     } catch (e) {
       setServerError(e.message);
@@ -46,12 +46,12 @@ const Login = () => {
     <Container className="login-page">
       <h1 className="login-title">LOGIN</h1>
 
-      {serverError && <Alert variant="danger">{serverError}</Alert>}
+      {serverError && <Alert className="mx-3" >{serverError}</Alert>}
 
-      <Form onSubmit={handleSubmit(onSubmit)} noValidate className="login-form">
-        <Form.Group controlId="email">
+      <Form onSubmit={handleSubmit(onSubmit)} noValidate className="login-form mt-4">
+        <Form.Group className="mb-3" controlId="email">
           <FormLabel visuallyHidden>Email</FormLabel>
-          <div className="login-field mb-3">
+          <div className="login-field">
             <User className="login-icon" />
             <FormControl
               type="email"
@@ -60,9 +60,9 @@ const Login = () => {
             />
           </div>
         </Form.Group>
-        <Form.Group controlId="password">
+        <Form.Group className="mb-3" controlId="password">
           <FormLabel visuallyHidden>Password</FormLabel>
-          <div className="login-field mb-3">
+          <div className="login-field">
             <Lock className="login-icon" />
             <FormControl
               type="password"

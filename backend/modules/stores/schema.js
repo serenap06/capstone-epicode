@@ -15,9 +15,29 @@ const storeSchema = new mongoose.Schema(
       required: true,
       minlength: 1,
       maxlength: 255,
+      trim: true,
+      unique: true,
+    },
+    city: {
+      type: String,
+      required: true,
+      minlength: 1,
+      maxlength: 255,
+      trim: true,
     },
   },
-  { timestamps: true, strict: true },
+  {
+    timestamps: true,
+    strict: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
+
+storeSchema.virtual("users", {
+  ref: "User",
+  localField: "_id",
+  foreignField: "store",
+});
 
 module.exports = mongoose.model("Store", storeSchema, "stores");

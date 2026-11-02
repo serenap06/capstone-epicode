@@ -1,0 +1,18 @@
+info:
+  name: find
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: http://localhost:9092/api/stores/6ae4dd26c173a8bf5a187a11
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExNCIsImlhdCI6MTc5MzU3NzIyMiwiZXhwIjoxNzkzNjYzNjIyfQ.9lcfHWotQCjcZlSkHkPRBPw6LK7mzIza9U6VUUcNme0
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

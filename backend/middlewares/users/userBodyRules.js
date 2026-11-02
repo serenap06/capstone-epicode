@@ -6,13 +6,16 @@ const userBodyRules = [
     .withMessage("Name must be a string")
     .trim()
     .notEmpty()
-    .isLength({ min: 1, max: 255 }),
+    .withMessage("Name field cannot be empty")
+    .isLength({ min: 1, max: 255 })
+    .withMessage("Name must be at most 255 characters"),
   body("surname")
     .isString()
     .withMessage("Surname must be a string")
     .notEmpty()
+    .withMessage("Surname field cannot be empty")
     .isLength({ min: 1, max: 255 })
-    .withMessage("Surname field cannot be empty"),
+    .withMessage("Surname must be at most 255 characters"),
   body("email")
     .isString()
     .withMessage("Email must be a string")
@@ -31,9 +34,7 @@ const userBodyRules = [
     .optional()
     .isIn(["admin", "employee"])
     .withMessage("Role must be admin or employee"),
-  body("store")
-    .optional()
-    .isMongoId().withMessage("Store must be a valid id"),
+  body("store").optional().isMongoId().withMessage("Store must be a valid id"),
 ];
 
 module.exports = userBodyRules;

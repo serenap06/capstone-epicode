@@ -1,16 +1,17 @@
 const User = require("./schema");
+const Store = require("../stores/schema")
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 
 const findAll = async () => {
   return (
     User.find()
-      //.populate("store", "name")
+      .populate("store", "name")
       .sort({ surname: 1, name: 1 })
   );
 };
 
 const findOne = async (userId) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).populate("store","name");
   if (!user) {
     throw new NotFoundException("User not found");
   }
@@ -19,7 +20,9 @@ const findOne = async (userId) => {
 
 const create = async (userData) => {
   const user = new User(userData);
-  return await user.save();
+  await user.save();
+  const { password, ...safeUser } = user.toObject();
+  return safeUser;
 };
 
 const update = async (userId, userData) => {

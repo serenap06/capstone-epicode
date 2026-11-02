@@ -17,7 +17,7 @@ const findOne = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await userService.findOne(userId);
-    return res.status(200).send({
+    res.status(200).send({
       statusCode: 200,
       user,
     });

@@ -7,14 +7,17 @@ const userUpdateRules = [
     .withMessage("Name must be a string")
     .trim()
     .notEmpty()
-    .isLength({ min: 1, max: 255 }),
+    .withMessage("Name field cannot be empty")
+    .isLength({ min: 1, max: 255 })
+    .withMessage("Name must be at most 255 characters"),
   body("surname")
     .optional()
     .isString()
     .withMessage("Surname must be a string")
     .notEmpty()
+    .withMessage("Surname field cannot be empty")
     .isLength({ min: 1, max: 255 })
-    .withMessage("Surname field cannot be empty"),
+    .withMessage("Surname must be at most 255 characters"),
   body("email")
     .optional()
     .isString()
@@ -28,10 +31,7 @@ const userUpdateRules = [
     .optional()
     .isIn(["admin", "employee"])
     .withMessage("Role must be admin or employee"),
-  body("store")
-    .optional()
-    .isMongoId()
-    .withMessage("Store must be a valid id"),
+  body("store").optional().isMongoId().withMessage("Store must be a valid id"),
 ];
 
 module.exports = userUpdateRules;

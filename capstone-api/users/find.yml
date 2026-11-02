@@ -1,5 +1,5 @@
 info:
-  name: findAll
+  name: find
   type: http
   seq: 1
 

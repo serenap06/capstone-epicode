@@ -23,8 +23,12 @@ const shiftSchema = new mongoose.Schema(
   },
   { timestamps: true, strict: true },
 );
-shiftSchema.path("endAt").validate(function (value) {
-  return value > this.startAt;
+shiftSchema.pre("validate", function (next) {
+  if (this.startAt && this.endAt && this.endAt <= this.startAt) {
+    this.invalidate("endAt", "endAt must be later than startAt");
+  }
 });
+
+shiftSchema.index({ store: 1, startAt: 1 });
 
 module.exports = mongoose.model("Shift", shiftSchema, "shifts");

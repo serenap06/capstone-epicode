@@ -1,0 +1,21 @@
+info:
+  name: update
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: http://localhost:9092/api/shifts/6ae91e1c470bf15de2d78310
+  body:
+    type: json
+    data: '{ "startAt": "2026-11-09T23:00:00.000Z" }'
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzcyNTcxMCwiZXhwIjoxNzkzODEyMTEwfQ.A2IdRraQ0AJgLp25BG97uMlq8drHHLXYDGmxryxIqq4
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

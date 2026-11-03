@@ -1,0 +1,27 @@
+info:
+  name: create
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:9092/api/shifts
+  body:
+    type: json
+    data: |-
+      {
+        "user": "6ae4dd26c173a8bf5a187a14",
+        "store": "6ae4dd26c173a8bf5a187a11",
+        "startAt": "ciao",
+        "endAt": "2026-11-10T14:00:00.000Z"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzcyNTcxMCwiZXhwIjoxNzkzODEyMTEwfQ.A2IdRraQ0AJgLp25BG97uMlq8drHHLXYDGmxryxIqq4
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

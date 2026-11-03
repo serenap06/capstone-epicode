@@ -11,6 +11,7 @@ const errorHandler = require("./middlewares/errors/errorHandler");
 const authRouter = require("./modules/auth/routes");
 const usersRouter = require("./modules/users/routes");
 const storesRouter = require("./modules/stores/routes");
+const shiftsRouter = require("./modules/shifts/routes");
 
 const app = express();
 
@@ -21,7 +22,8 @@ app.use(cors({ origin: process.env.FRONTEND_URL }));
 app.get("/api/health", (req, res) => res.send({ status: "ok" }));
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/stores",storesRouter)
+app.use("/api/stores", storesRouter);
+app.use("/api/shifts", shiftsRouter);
 
 app.use(errorHandler);
 

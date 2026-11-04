@@ -5,8 +5,10 @@ info:
 
 http:
   method: DELETE
-  url: http://localhost:9092/api/stores/
-  auth: inherit
+  url: http://localhost:9092/api/stores/6aeb5fcfbcebcf55a95b7846
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzgwODYxMywiZXhwIjoxNzkzODk1MDEzfQ.dmflIFcD1bXw-wyjDeWoE6Knz4k8_Az9lqAZz6DPFr4
 
 settings:
   encodeUrl: true

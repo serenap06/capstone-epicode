@@ -1,0 +1,28 @@
+info:
+  name: create
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:9092/api/products
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Magnete Colosseo",
+        "price": 4.5,
+        "brand": "Souvenir Roma",
+        "category": "Gadget",
+        "active": false
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzgwODYxMywiZXhwIjoxNzkzODk1MDEzfQ.dmflIFcD1bXw-wyjDeWoE6Knz4k8_Az9lqAZz6DPFr4
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

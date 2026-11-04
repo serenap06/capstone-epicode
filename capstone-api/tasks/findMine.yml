@@ -5,14 +5,10 @@ info:
 
 http:
   method: GET
-  url: http://localhost:9092/api/tasks?status=done
-  params:
-    - name: status
-      value: done
-      type: query
+  url: http://localhost:9092/api/tasks/mine
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzgwODYxMywiZXhwIjoxNzkzODk1MDEzfQ.dmflIFcD1bXw-wyjDeWoE6Knz4k8_Az9lqAZz6DPFr4
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExNCIsImlhdCI6MTc5MzgwOTQ1NCwiZXhwIjoxNzkzODk1ODU0fQ.9JL-UduDacZmgG8CO4fC48f1a-_XNXCLPAMdTPVM8yc
 
 settings:
   encodeUrl: true

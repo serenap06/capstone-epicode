@@ -13,6 +13,7 @@ const usersRouter = require("./modules/users/routes");
 const storesRouter = require("./modules/stores/routes");
 const shiftsRouter = require("./modules/shifts/routes");
 const tasksRouter = require("./modules/tasks/routes");
+const productsRouter = require("./modules/products/routes");
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/stores", storesRouter);
 app.use("/api/shifts", shiftsRouter);
 app.use("/api/tasks", tasksRouter);
+app.use("/api/products", productsRouter);
 
 app.use(errorHandler);
 

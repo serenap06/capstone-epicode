@@ -8,7 +8,7 @@ http:
   url: http://localhost:9092/api/users
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzM4Mzc0MCwiZXhwIjoxNzkzNDcwMTQwfQ.V7F2X1I52ELHyLX34wNdYVxAsthJ556XcXCdVhGztKU
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzU3NzA0OCwiZXhwIjoxNzkzNjYzNDQ4fQ.RNfvuT8WNQIzqbx8XtnMUIzAgcL6vwjNXUnDGJZYeVM
 
 settings:
   encodeUrl: true

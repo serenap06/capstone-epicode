@@ -4,11 +4,8 @@ info:
   seq: 5
 
 http:
-  method: PATCH
-  url: http://localhost:9092/api/shifts/6ae91e1c470bf15de2d78310
-  body:
-    type: json
-    data: '{ "startAt": "2026-11-09T23:00:00.000Z" }'
+  method: DELETE
+  url: http://localhost:9092/api/shifts/6ae91d52a9f1a220f7ef2a57
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzcyNTcxMCwiZXhwIjoxNzkzODEyMTEwfQ.A2IdRraQ0AJgLp25BG97uMlq8drHHLXYDGmxryxIqq4

@@ -1,0 +1,18 @@
+info:
+  name: findAll
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: http://localhost:9092/api/products/123
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzgwODYxMywiZXhwIjoxNzkzODk1MDEzfQ.dmflIFcD1bXw-wyjDeWoE6Knz4k8_Az9lqAZz6DPFr4
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

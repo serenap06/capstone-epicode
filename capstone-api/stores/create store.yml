@@ -6,7 +6,17 @@ info:
 http:
   method: POST
   url: http://localhost:9092/api/stores
-  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Negozio vuoto",
+        "address": "Via Prova 1",
+        "city": "Napoli"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzgwODYxMywiZXhwIjoxNzkzODk1MDEzfQ.dmflIFcD1bXw-wyjDeWoE6Knz4k8_Az9lqAZz6DPFr4
 
 settings:
   encodeUrl: true

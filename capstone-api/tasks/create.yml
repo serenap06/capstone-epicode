@@ -10,13 +10,13 @@ http:
     type: json
     data: |-
       {
-        "title": "Riunione generale",
-        "dueDate": "2026-11-10T17:30:00.000Z",
-        "priority": "high",
-        "category": "administrative",
+        "title": "Test negozio vuoto",
+        "dueDate": "2026-11-10T16:00:00.000Z",
+        "priority": "medium",
+        "category": "operations",
         "type": "daily",
-        "store": "6ae4dd26c173a8bf5a187a11",
-        "isGlobal": true
+        "isGlobal": true,
+        "store": "6aeb5fcfbcebcf55a95b7846"
       }
   auth:
     type: bearer

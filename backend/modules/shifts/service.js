@@ -1,35 +1,8 @@
 const Shift = require("./schema");
-const User = require("../users/schema");
+const checkShiftOverlap = require("../../utils/shifts/checkShiftOverlap");
+const checkUserBelongsToStore = require("../../utils/checkUserBelongsToStore");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
-const HttpException = require("../../exceptions/index");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
-
-// Controlla che il dipendente esista e lavori nel negozio del turno
-const checkUserBelongsToStore = async (userId, storeId) => {
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new NotFoundException("User not found");
-  }
-  if (user.store?.toString() !== storeId.toString()) {
-    throw new HttpException("User doesn't belong to this store",400);
-  }
-};
-
-// Controlla che il dipendente non abbia già un turno nello stesso orario.
-const checkShiftOverlap = async (userId, startAt, endAt, currentShiftId) => {
-  const overlapFilter = {
-    user: userId,
-    startAt: { $lt: endAt }, //l'inizio del turno deve essere inferiore alla fine del turno
-    endAt: { $gt: startAt }, //la fine del turno deve essere maggiore all'inizio del turno
-  };
-  if (currentShiftId) {
-    overlapFilter._id = { $ne: currentShiftId }; //l'id filtrato non deve essere uguale all'id del turno corrente
-  }
-  const overlappingShift = await Shift.exists(overlapFilter);
-  if (overlappingShift) {
-    throw new HttpException("User already has a shift in this time range",409);
-  }
-};
 
 const findAll = async ({ store: storeId, from, to }, currentUser) => {
   const isAdmin = currentUser.role === "admin";

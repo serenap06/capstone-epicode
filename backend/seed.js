@@ -35,8 +35,8 @@ const seed = async () => {
 
     // 2. Punti vendita
     const [storeA, storeB] = await Store.create([
-      { name: "Bookshop Museo", address: "Via Roma 1" },
-      { name: "Shop Castello", address: "Via Milano 2" },
+      { name: "Bookshop Museo", address: "Via Roma 1", city: "Napoli" },
+      { name: "Shop Castello", address: "Via Milano 2", city: "Napoli" },
     ]);
 
     // 3. Utenti (create, non insertMany: così l'hook cifra le password)
@@ -151,13 +151,23 @@ const seed = async () => {
     });
     await Shift.create(shifts);
 
-    // 7. Task di oggi per ogni dipendente
+    // 7. Task
+    // Ogni task ha il suo groupId e il suo store. Per i task di un solo
+    // dipendente il groupId è nuovo ogni volta (base() lo genera a ogni chiamata)
+    const base = (employee) => ({
+      createdBy: manager._id,
+      assignedTo: employee._id,
+      store: employee.store,
+      groupId: new mongoose.Types.ObjectId(),
+    });
+
     const tasks = [];
+
+    // Task di oggi per ogni dipendente
     employees.forEach((employee, i) => {
-      const base = { createdBy: manager._id, assignedTo: employee._id };
       tasks.push(
         {
-          ...base,
+          ...base(employee),
           title: "Apertura cassa",
           description: "Controllo del fondo cassa e accensione del POS",
           dueDate: at(0, 10),
@@ -167,7 +177,7 @@ const seed = async () => {
           type: "daily",
         },
         {
-          ...base,
+          ...base(employee),
           title: "Riordino espositori",
           description: "Riallestimento degli espositori di cartoline e gadget",
           dueDate: at(0, 15),
@@ -177,7 +187,7 @@ const seed = async () => {
           type: "daily",
         },
         {
-          ...base,
+          ...base(employee),
           title: "Controllo corrispettivi giornalieri",
           description: "Verifica dei corrispettivi e chiusura della cassa",
           dueDate: at(0, 20),
@@ -200,8 +210,7 @@ const seed = async () => {
     );
     tasks.push(
       {
-        createdBy: manager._id,
-        assignedTo: marta._id,
+        ...base(marta),
         title: "Inventario mensile",
         description: "Conteggio completo della merce in negozio",
         dueDate: endOfMonth,
@@ -210,8 +219,7 @@ const seed = async () => {
         type: "monthly",
       },
       {
-        createdBy: manager._id,
-        assignedTo: giulia._id,
+        ...base(giulia),
         title: "Controllo documenti di trasporto",
         description: "Verifica dei documenti di trasporto del mese",
         dueDate: endOfMonth,
@@ -221,21 +229,29 @@ const seed = async () => {
       },
     );
 
-    // Task per tutti i dipendenti: una copia per ognuno, con lo stesso groupId
-    const groupId = new mongoose.Types.ObjectId();
-    employees.forEach((employee) => {
-      tasks.push({
-        createdBy: manager._id,
-        assignedTo: employee._id,
-        title: "Riunione generale",
-        description: "Aggiornamento sul programma delle prossime mostre",
-        dueDate: at(1, 9),
-        priority: "medium",
-        category: "administrative",
-        type: "daily",
-        groupId,
-      });
+    // Task globali: una per punto vendita, una copia per ogni dipendente
+    // di quel negozio, tutte con lo stesso groupId
+    [storeA, storeB].forEach((store) => {
+      const groupId = new mongoose.Types.ObjectId();
+      employees
+        .filter((e) => e.store.toString() === store._id.toString())
+        .forEach((employee) => {
+          tasks.push({
+            createdBy: manager._id,
+            assignedTo: employee._id,
+            store: store._id,
+            groupId,
+            isGlobal: true,
+            title: "Riunione generale",
+            description: "Aggiornamento sul programma delle prossime mostre",
+            dueDate: at(1, 9),
+            priority: "medium",
+            category: "administrative",
+            type: "daily",
+          });
+        });
     });
+
     await Task.create(tasks);
 
     // 8. Richieste di fornitura

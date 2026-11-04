@@ -1,0 +1,26 @@
+info:
+  name: create
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:9092/api/stocks
+  body:
+    type: json
+    data: |-
+      {
+        "product": "6aebb186354a4df959536aaa",
+        "store": "6aebb186354a4df959536ef5",
+        "amount": 5
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWJiMTg2MzU0YTRkZjk1OTUzNmVmNyIsImlhdCI6MTc5MzgzNTA4MywiZXhwIjoxNzkzOTIxNDgzfQ.rcKZPmph2lyqTwYjo3Q9fqU9R_ekVPR_mymEN93E7_8
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

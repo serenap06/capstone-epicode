@@ -1,0 +1,21 @@
+info:
+  name: update
+  type: http
+  seq: 2
+
+http:
+  method: PATCH
+  url: http://localhost:9092/api/stocks/6aebb186354a4df959536f03
+  body:
+    type: json
+    data: '{ "amount": -3 }'
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWJiMTg2MzU0YTRkZjk1OTUzNmVmNyIsImlhdCI6MTc5MzgzNTA4MywiZXhwIjoxNzkzOTIxNDgzfQ.rcKZPmph2lyqTwYjo3Q9fqU9R_ekVPR_mymEN93E7_8
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

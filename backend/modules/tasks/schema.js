@@ -5,11 +5,13 @@ const taskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
+      trim: true,
       minlength: 1,
       maxlength: 255,
     },
     description: {
       type: String,
+      trim: true,
       minlength: 1,
       maxlength: 255,
     },
@@ -41,6 +43,7 @@ const taskSchema = new mongoose.Schema(
     },
     groupId: {
       type: mongoose.Schema.Types.ObjectId,
+      required: true,
     },
     category: {
       type: String,
@@ -52,8 +55,22 @@ const taskSchema = new mongoose.Schema(
       enum: ["daily", "monthly"],
       default: "daily",
     },
+    isGlobal: {
+      type: Boolean,
+      default: false,
+    },
+    store: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Store",
+      required: true,
+    },
+    completedAt: { type: Date },
   },
   { timestamps: true, strict: true },
 );
+
+taskSchema.index({ groupId: 1 });
+taskSchema.index({ store: 1, dueDate: 1 });
+taskSchema.index({ assignedTo: 1, dueDate: 1 });
 
 module.exports = mongoose.model("Task", taskSchema, "tasks");

@@ -12,6 +12,7 @@ const authRouter = require("./modules/auth/routes");
 const usersRouter = require("./modules/users/routes");
 const storesRouter = require("./modules/stores/routes");
 const shiftsRouter = require("./modules/shifts/routes");
+const tasksRouter = require("./modules/tasks/routes");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/stores", storesRouter);
 app.use("/api/shifts", shiftsRouter);
+app.use("/api/tasks", tasksRouter);
 
 app.use(errorHandler);
 

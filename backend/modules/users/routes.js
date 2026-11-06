@@ -10,10 +10,19 @@ const { param } = require("express-validator");
 const userBodyRules = require("../../middlewares/users/userBodyRules");
 const userUpdateRules = require("../../middlewares/users/userUpdateRules");
 
-usersRouter.use(authenticate, authorizeRoles("admin"));
+usersRouter.use(authenticate);
+
+// Rotte per l'employee
+
+//usersRouter.get("/me", userController.findMe);
+//usersRouter.patch("/me", profileUpdateRules, validate, userController.updateMe);
+//usersRouter.patch("/:userId/avatar", param("userId").isMongoId().withMessage("Invalid user id"), validate, userController.uploadAvatar);
+
+// Rotte per l'admin
+
+usersRouter.use(authorizeRoles("admin"));
 
 usersRouter.get("/", userController.findAll);
-
 usersRouter.get(
   "/:userId",
   param("userId").isMongoId().withMessage("Invalid user id"),
@@ -30,7 +39,6 @@ usersRouter.patch(
   validate,
   userController.update,
 );
-//usersRouter.patch("/:userId/avatar", param("userId").isMongoId().withMessage("Invalid user id"), validate, userController.uploadAvatar);
 
 usersRouter.delete(
   "/:userId",

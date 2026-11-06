@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    weeklyHours: {
+      type: Number,
+      min: 0,
+    },
   },
   { timestamps: true, strict: true },
 );

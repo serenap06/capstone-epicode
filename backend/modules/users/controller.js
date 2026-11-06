@@ -28,7 +28,8 @@ const findOne = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const { name, surname, email, password, role, store } = req.body;
+    const { name, surname, email, password, role, store, weeklyHours } =
+      req.body;
     const user = await userService.create({
       name,
       surname,
@@ -36,6 +37,7 @@ const create = async (req, res, next) => {
       password,
       role,
       store,
+      weeklyHours,
     });
     res.status(201).send({
       statusCode: 201,
@@ -48,7 +50,7 @@ const create = async (req, res, next) => {
 };
 const update = async (req, res, next) => {
   try {
-    const { name, surname, email, role, store } = req.body;
+    const { name, surname, email, role, store, weeklyHours } = req.body;
     const { userId } = req.params;
     const user = await userService.update(userId, {
       name,
@@ -56,6 +58,7 @@ const update = async (req, res, next) => {
       email,
       role,
       store,
+      weeklyHours,
     });
     res.status(200).send({
       statusCode: 200,

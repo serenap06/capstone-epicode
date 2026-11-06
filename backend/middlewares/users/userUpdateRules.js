@@ -32,6 +32,11 @@ const userUpdateRules = [
     .isIn(["admin", "employee"])
     .withMessage("Role must be admin or employee"),
   body("store").optional().isMongoId().withMessage("Store must be a valid id"),
+  body("weeklyHours")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("weeklyHours must be an integer greater than or equal to 0")
+    .toInt(),
 ];
 
 module.exports = userUpdateRules;

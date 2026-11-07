@@ -20,8 +20,8 @@ const stockSchema = new mongoose.Schema(
     },
     minThreshold: {
       type: Number,
-      min:5,
-      default: 0,
+      default: 5,
+      min: 0,
     },
   },
   { timestamps: true, strict: true },

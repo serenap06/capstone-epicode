@@ -1,0 +1,18 @@
+info:
+  name: getKpis
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: http://localhost:9092/api/dashboard
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWZiMGJiY2YyYTFmZDhjY2VlZTAwMSIsImlhdCI6MTc5NDA5MzI2MSwiZXhwIjoxNzk0MTc5NjYxfQ.DHu_6bpTwPbjmggkI6zbdFQCEmZ5SQTHigOVcBeoLi4
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

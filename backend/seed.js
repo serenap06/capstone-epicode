@@ -260,19 +260,19 @@ const seed = async () => {
         product: magnete._id,
         requestedBy: luca._id,
         store: storeB._id,
-        amount: 30,
+        requestedAmount: 30,
       },
       {
         product: cartoline._id,
         requestedBy: paolo._id,
         store: storeB._id,
-        amount: 50,
+        requestedAmount: 50,
       },
       {
         product: guida._id,
         requestedBy: luca._id,
         store: storeB._id,
-        amount: 15,
+        requestedAmount: 15,
         state: "handled",
       },
     ]);

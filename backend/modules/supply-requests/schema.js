@@ -17,7 +17,7 @@ const supplyRequestSchema = new mongoose.Schema(
       ref: "Store",
       required: true,
     },
-    amount: {
+    requestedAmount: {
       type: Number,
       required: true,
       min: 1,

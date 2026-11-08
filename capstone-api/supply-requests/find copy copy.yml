@@ -1,0 +1,21 @@
+info:
+  name: find copy copy
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: http://localhost:9092/api/supply-requests/6aebb187354a4df959536f45
+  body:
+    type: json
+    data: '{ "state": "boh" }'
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWJiMTg2MzU0YTRkZjk1OTUzNmVmOCIsImlhdCI6MTc5NDA4OTc3NywiZXhwIjoxNzk0MTc2MTc3fQ.ibG8_Od7hkDWYKSAlxy8BnnB1Ks4ODHW0XDs6Q8W4F8
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

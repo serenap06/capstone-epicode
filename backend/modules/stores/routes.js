@@ -10,7 +10,7 @@ const { param } = require("express-validator");
 const storeBodyRules = require("../../middlewares/stores/storeBodyRules");
 const storeUpdateRules = require("../../middlewares/stores/storeUpdateRules");
 
-storesRouter.use(authenticate);
+storesRouter.use(authenticate, authorizeRoles("admin"));
 
 storesRouter.get("/", storeController.findAll);
 
@@ -21,17 +21,10 @@ storesRouter.get(
   storeController.findOne,
 );
 
-storesRouter.post(
-  "/",
-  authorizeRoles("admin"),
-  storeBodyRules,
-  validate,
-  storeController.create,
-);
+storesRouter.post("/", storeBodyRules, validate, storeController.create);
 
 storesRouter.patch(
   "/:storeId",
-  authorizeRoles("admin"),
   param("storeId").isMongoId().withMessage("Invalid store id"),
   storeUpdateRules,
   validate,
@@ -40,7 +33,6 @@ storesRouter.patch(
 
 storesRouter.delete(
   "/:storeId",
-  authorizeRoles("admin"),
   param("storeId").isMongoId().withMessage("Invalid store id"),
   validate,
 

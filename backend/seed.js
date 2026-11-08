@@ -11,6 +11,17 @@ const SupplyRequest = require("./modules/supply-requests/schema");
 
 const DEMO_PASSWORD = "Password123";
 
+// URL Cloudinary delle foto dei prodotti (caricate con PATCH /api/products/:id/image).
+// Lascia "" finché non hai l'URL: il prodotto resta senza foto.
+const IMAGES = {
+  guida: "",
+  cartoline: "",
+  magnete: "",
+  poster: "",
+  borsa: "",
+  catalogo: "",
+};
+
 // Data e ora relative a oggi: day = 0 è oggi, 1 è domani, -1 è ieri
 const at = (day, hour) => {
   const d = new Date();
@@ -54,6 +65,7 @@ const seed = async () => {
         email: "marta@demo.it",
         password: DEMO_PASSWORD,
         role: "employee",
+        weeklyHours: 40,
         store: storeA._id,
       },
       {
@@ -62,6 +74,7 @@ const seed = async () => {
         email: "luca@demo.it",
         password: DEMO_PASSWORD,
         role: "employee",
+        weeklyHours: 40,
         store: storeB._id,
       },
       {
@@ -70,6 +83,7 @@ const seed = async () => {
         email: "giulia@demo.it",
         password: DEMO_PASSWORD,
         role: "employee",
+        weeklyHours: 30,
         store: storeA._id,
       },
       {
@@ -78,6 +92,7 @@ const seed = async () => {
         email: "paolo@demo.it",
         password: DEMO_PASSWORD,
         role: "employee",
+        weeklyHours: 20,
         store: storeB._id,
       },
     ]);
@@ -92,21 +107,39 @@ const seed = async () => {
           price: 12,
           brand: "Edizioni Locali",
           category: "libri",
+          image: IMAGES.guida,
         },
-        { name: "Set cartoline", price: 3, category: "cartoleria" },
-        { name: "Magnete", price: 4.5, category: "gadget" },
-        { name: "Poster", price: 8, category: "cartoleria" },
+        {
+          name: "Set cartoline",
+          price: 3,
+          category: "cartoleria",
+          image: IMAGES.cartoline,
+        },
+        {
+          name: "Magnete",
+          price: 4.5,
+          category: "gadget",
+          image: IMAGES.magnete,
+        },
+        {
+          name: "Poster",
+          price: 8,
+          category: "cartoleria",
+          image: IMAGES.poster,
+        },
         {
           name: "Borsa in tela",
           description: "Borsa in cotone con stampa originale",
           price: 15,
           category: "gadget",
+          image: IMAGES.borsa,
         },
         {
           name: "Catalogo della mostra",
           price: 25,
           brand: "Edizioni Locali",
           category: "libri",
+          image: IMAGES.catalogo,
         },
       ]);
 

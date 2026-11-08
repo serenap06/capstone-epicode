@@ -26,6 +26,19 @@ const findOne = async (req, res, next) => {
   }
 };
 
+const findWeeklyHours = async (req, res, next) => {
+  try {
+    const { store, from, to } = req.query;
+    const hours = await shiftService.findWeeklyHours({ store, from, to });
+    res.status(200).send({
+      statusCode: 200,
+      hours,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const create = async (req, res, next) => {
   try {
     const { user, store, startAt, endAt } = req.body;
@@ -81,6 +94,7 @@ const deleteShift = async (req, res, next) => {
 module.exports = {
   findAll,
   findOne,
+  findWeeklyHours,
   create,
   update,
   deleteShift,

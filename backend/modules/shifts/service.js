@@ -1,4 +1,5 @@
 const Shift = require("./schema");
+const User = require("../users/schema");
 const checkShiftOverlap = require("../../utils/shifts/checkShiftOverlap");
 const checkUserBelongsToStore = require("../../utils/checkUserBelongsToStore");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
@@ -45,6 +46,39 @@ const findOne = async (shiftId, currentUser) => {
   return shift;
 };
 
+const findWeeklyHours = async ({ store, from, to }) => {
+  const storeFilter = store ? { store } : {};
+  const employees = await User.find({ role: "employee", ...storeFilter });
+
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
+  toDate.setHours(23, 59, 59, 999);
+
+  const employeeIds = employees.map((employee) => employee._id);
+
+  const shifts = await Shift.find({
+    user: { $in: employeeIds },
+    startAt: { $gte: fromDate, $lte: toDate },
+  });
+
+  const hours = employees.map((employee) => {
+    const employeeShifts = shifts.filter(
+      (shift) => shift.user.toString() === employee._id.toString(),
+    );
+    const scheduledHours = employeeShifts.reduce(
+      (total, shift) => total + (shift.endAt - shift.startAt) / 3600000,
+      0,
+    );
+    return {
+      employee: `${employee.name} ${employee.surname}`,
+      weeklyHours: employee.weeklyHours,
+      scheduledHours,
+      difference: scheduledHours - employee.weeklyHours,
+    };
+  });
+  return hours;
+};
+
 const create = async (shiftData) => {
   const { user: userId, store: storeId, startAt, endAt } = shiftData;
   await checkUserBelongsToStore(userId, storeId);
@@ -89,6 +123,7 @@ const deleteShift = async (shiftId) => {
 module.exports = {
   findAll,
   findOne,
+  findWeeklyHours,
   create,
   update,
   deleteShift,

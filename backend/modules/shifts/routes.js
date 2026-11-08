@@ -10,10 +10,19 @@ const { param } = require("express-validator");
 const shiftQueryRules = require("../../middlewares/shifts/shiftQueryRules");
 const shiftBodyRules = require("../../middlewares/shifts/shiftBodyRules");
 const shiftUpdateRules = require("../../middlewares/shifts/shiftUpdateRules");
+const shiftHoursQueryRules = require("../../middlewares/shifts/shiftHoursQueryRules");
 
 shiftsRouter.use(authenticate);
 
 shiftsRouter.get("/", shiftQueryRules, validate, shiftController.findAll);
+
+shiftsRouter.get(
+  "/hours",
+  authorizeRoles("admin"),
+  shiftHoursQueryRules,
+  validate,
+  shiftController.findWeeklyHours,
+);
 
 shiftsRouter.get(
   "/:shiftId",

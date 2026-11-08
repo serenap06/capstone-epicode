@@ -1,3 +1,4 @@
+const HttpException = require("../../exceptions");
 const productService = require("./service");
 
 const findAll = async (req, res, next) => {
@@ -77,6 +78,23 @@ const update = async (req, res, next) => {
   }
 };
 
+const updateImage = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    if (!req.file) {
+      throw new HttpException("Image file is required", 400);
+    }
+    const product = await productService.updateImage(productId, req.file.path);
+    res.status(200).send({
+      statusCode: 200,
+      message: "Product image updated successfully",
+      product,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const deleteProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -95,5 +113,6 @@ module.exports = {
   findOne,
   create,
   update,
+  updateImage,
   deleteProduct,
 };

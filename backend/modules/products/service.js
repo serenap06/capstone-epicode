@@ -43,6 +43,15 @@ const update = async (productId, productData) => {
   return await product.save();
 };
 
+const updateImage = async (productId, imageUrl) => {
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new NotFoundException("Product not found");
+  }
+  product.image = imageUrl;
+  return await product.save();
+};
+
 const deleteProduct = async (productId) => {
   const product = await Product.findByIdAndDelete(productId);
   if (!product) {
@@ -55,5 +64,6 @@ module.exports = {
   findOne,
   create,
   update,
+  updateImage,
   deleteProduct,
 };

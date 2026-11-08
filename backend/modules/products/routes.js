@@ -6,6 +6,7 @@ const authenticate = require("../../middlewares/auth/auth");
 const authorizeRole = require("../../middlewares/auth/authorizeRoles");
 const validate = require("../../middlewares/validate/validate");
 const { param } = require("express-validator");
+const {uploadProductImage}=require("../../middlewares/upload/cloudinary")
 
 const productBodyRules = require("../../middlewares/products/productBodyRules");
 const productUpdateRules = require("../../middlewares/products/productUpdateRules");
@@ -37,6 +38,16 @@ productsRouter.patch(
   validate,
   productController.update,
 );
+
+productsRouter.patch(
+  "/:productId/image",
+  authorizeRole("admin"),
+  param("productId").isMongoId().withMessage("Invalid product id"),
+  validate,
+  uploadProductImage.single("image"),
+  productController.updateImage,
+);
+
 
 productsRouter.delete(
   "/:productId",

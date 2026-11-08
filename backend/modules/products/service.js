@@ -1,4 +1,7 @@
 const Product = require("./schema");
+const Stock = require("../stock/schema");
+const SupplyRequest = require("../supply-requests/schema");
+
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 
 const findAll = async (filters, currentUser) => {
@@ -57,6 +60,8 @@ const deleteProduct = async (productId) => {
   if (!product) {
     throw new NotFoundException("Product not found");
   }
+  await Stock.deleteMany({ product: productId });
+  await SupplyRequest.deleteMany({ product: productId });
 };
 
 module.exports = {

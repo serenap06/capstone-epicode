@@ -46,9 +46,11 @@ const findOne = async (shiftId, currentUser) => {
   return shift;
 };
 
-const findWeeklyHours = async ({ store, from, to }) => {
+const findWeeklyHours = async ({ store, from, to }, currentUser) => {
   const storeFilter = store ? { store } : {};
-  const employees = await User.find({ role: "employee", ...storeFilter });
+  const employeeFilter =
+    currentUser.role === "employee" ? { _id: currentUser._id } : storeFilter;
+  const employees = await User.find({ role: "employee", ...employeeFilter });
 
   const fromDate = new Date(from);
   const toDate = new Date(to);

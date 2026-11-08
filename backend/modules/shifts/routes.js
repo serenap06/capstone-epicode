@@ -18,7 +18,7 @@ shiftsRouter.get("/", shiftQueryRules, validate, shiftController.findAll);
 
 shiftsRouter.get(
   "/hours",
-  authorizeRoles("admin"),
+  authorizeRoles("admin","employee"),
   shiftHoursQueryRules,
   validate,
   shiftController.findWeeklyHours,

@@ -29,7 +29,7 @@ const findOne = async (req, res, next) => {
 const findWeeklyHours = async (req, res, next) => {
   try {
     const { store, from, to } = req.query;
-    const hours = await shiftService.findWeeklyHours({ store, from, to });
+    const hours = await shiftService.findWeeklyHours({ store, from, to },req.user);
     res.status(200).send({
       statusCode: 200,
       hours,

@@ -1,0 +1,18 @@
+info:
+  name: find me
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: http://localhost:9092/api/users
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWJiMTg2MzU0YTRkZjk1OTUzNmVmNyIsImlhdCI6MTc5Mzk5MTAyMywiZXhwIjoxNzk0MDc3NDIzfQ.52oFKVg7DI8AnR02CwIbIvq-5MEw82IsXFrCWBZ6lp8
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

@@ -1,0 +1,21 @@
+info:
+  name: uploadAvatar
+  type: http
+  seq: 7
+
+http:
+  method: PATCH
+  url: http://localhost:9092/api/users/me
+  body:
+    type: json
+    data: '{ "email": "luca@demo.it" }'
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWZiMGJiY2YyYTFmZDhjY2VlZTAwMiIsImlhdCI6MTc5NDEzNDUyOSwiZXhwIjoxNzk0MjIwOTI5fQ.bywKEetiOZwJxDp6Zdlsow2sbRp7phaH9AvHyqeS8Rw
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

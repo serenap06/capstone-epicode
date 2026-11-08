@@ -1,17 +1,20 @@
 const User = require("./schema");
-const Store = require("../stores/schema")
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 
 const findAll = async () => {
-  return (
-    User.find()
-      .populate("store", "name")
-      .sort({ surname: 1, name: 1 })
-  );
+  return User.find().populate("store", "name").sort({ surname: 1, name: 1 });
 };
 
 const findOne = async (userId) => {
-  const user = await User.findById(userId).populate("store","name");
+  const user = await User.findById(userId).populate("store", "name");
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+  return user;
+};
+
+const findMe = async (userId) => {
+  const user = await User.findById(userId).populate("store", "name city");
   if (!user) {
     throw new NotFoundException("User not found");
   }
@@ -41,6 +44,30 @@ const update = async (userId, userData) => {
   return safeUser;
 };
 
+const updateMe = async (userId, userData) => {
+  const user = await User.findById(userId).populate("store", "name city");
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+  Object.entries(userData).forEach(([field, value]) => {
+    if (value !== undefined) {
+      user[field] = value;
+    }
+  });
+  await user.save();
+  return user;
+};
+
+const uploadAvatar = async (userId, avatarUrl) => {
+  const user = await User.findById(userId).populate("store", "name city");
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+  user.avatar = avatarUrl;
+  await user.save();
+  return user;
+};
+
 const deleteUser = async (userId) => {
   const user = await User.findByIdAndDelete(userId);
   if (!user) {
@@ -50,7 +77,10 @@ const deleteUser = async (userId) => {
 module.exports = {
   findAll,
   findOne,
+  findMe,
   create,
   update,
+  updateMe,
+  uploadAvatar,
   deleteUser,
 };

@@ -42,6 +42,10 @@ const productUpdateRules = [
     .withMessage("Category cannot be empty")
     .isLength({ max: 255 })
     .withMessage("Category must be at most 255 characters"),
+  body("vatRate")
+    .optional()
+    .isIn([4, 5, 10, 22])
+    .withMessage("vatRate must be a 4, 5, 10 or 22"),
 ];
 
 module.exports = productUpdateRules;

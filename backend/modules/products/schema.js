@@ -42,6 +42,11 @@ const productSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+    vatRate: {
+      type: Number,
+      enum: [4, 5, 10, 22],
+      default: 22,
+    },
   },
   { timestamps: true, strict: true },
 );

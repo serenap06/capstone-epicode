@@ -37,7 +37,8 @@ const findOne = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const { name, description, price, active, brand, category } = req.body;
+    const { name, description, price, active, brand, category, vatRate } =
+      req.body;
     const product = await productService.create({
       name,
       description,
@@ -45,6 +46,7 @@ const create = async (req, res, next) => {
       active,
       brand,
       category,
+      vatRate,
     });
     res.status(201).send({
       statusCode: 201,
@@ -59,7 +61,8 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const { name, description, price, active, brand, category } = req.body;
+    const { name, description, price, active, brand, category, vatRate } =
+      req.body;
     const product = await productService.update(productId, {
       name,
       description,
@@ -67,6 +70,7 @@ const update = async (req, res, next) => {
       active,
       brand,
       category,
+      vatRate,
     });
     res.status(200).send({
       statusCode: 200,

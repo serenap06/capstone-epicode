@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const HttpException = require("../../exceptions");
+const multer = require("multer");
 
 const errorHandler = (err, req, res, next) => {
   if (err instanceof HttpException) {
@@ -7,6 +8,23 @@ const errorHandler = (err, req, res, next) => {
       statusCode: err.statusCode,
       message: err.message,
       error: err.error,
+    });
+  }
+  if (err instanceof multer.MulterError) {
+    return res.status(400).send({
+      statusCode: 400,
+      message: "Upload error",
+      error:
+        err.code === "LIMIT_FILE_SIZE"
+          ? "File too large: maximum size is 2 MB"
+          : err.message,
+    });
+  }
+  if (err.http_code === 400) {
+    return res.status(400).send({
+      statusCode: 400,
+      message: "Upload error",
+      error: "File format not allowed: use png, jpg, jpeg or webp",
     });
   }
   if (err instanceof mongoose.Error.CastError) {

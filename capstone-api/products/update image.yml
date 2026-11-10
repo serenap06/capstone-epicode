@@ -5,13 +5,16 @@ info:
 
 http:
   method: PATCH
-  url: http://localhost:9092/api/products/6aeba9333af84e2dfb35ff2f
+  url: http://localhost:9092/api/products/6af35a878568a5d1d062b45f/image
   body:
-    type: json
-    data: '{ "price": 1 }'
+    type: multipart-form
+    data:
+      - name: image
+        type: text
+        value: ""
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExNCIsImlhdCI6MTc5MzgwOTQ1NCwiZXhwIjoxNzkzODk1ODU0fQ.9JL-UduDacZmgG8CO4fC48f1a-_XNXCLPAMdTPVM8yc
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjM1YTg2ODU2OGE1ZDFkMDYyYjQ1NiIsImlhdCI6MTc5NDMzMzM0MywiZXhwIjoxNzk0NDE5NzQzfQ.2wVHLiQdC66cmN6K98pxjmkk5MmUpSMwWpBz1z6kwa0
 
 settings:
   encodeUrl: true

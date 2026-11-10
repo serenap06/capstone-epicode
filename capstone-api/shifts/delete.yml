@@ -5,10 +5,10 @@ info:
 
 http:
   method: DELETE
-  url: http://localhost:9092/api/shifts/6ae91d52a9f1a220f7ef2a57
+  url: http://localhost:9092/api/shifts/6af0bc74d8d6ab307160e91b
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzcyNTcxMCwiZXhwIjoxNzkzODEyMTEwfQ.A2IdRraQ0AJgLp25BG97uMlq8drHHLXYDGmxryxIqq4
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBiYzczZDhkNmFiMzA3MTYwZTkwNCIsImlhdCI6MTc5NDE2MTk1MywiZXhwIjoxNzk0MjQ4MzUzfQ.7KozZEOyMw3yiZMyK8wuyvQCBju6S8TaYGZtxPGwNtU
 
 settings:
   encodeUrl: true

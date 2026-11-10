@@ -5,10 +5,10 @@ info:
 
 http:
   method: GET
-  url: http://localhost:9092/api/stores/6ae4dd26c173a8bf5a187a11
+  url: http://localhost:9092/api/stores
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExNCIsImlhdCI6MTc5MzU3NzIyMiwiZXhwIjoxNzkzNjYzNjIyfQ.9lcfHWotQCjcZlSkHkPRBPw6LK7mzIza9U6VUUcNme0
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjM1YTg2ODU2OGE1ZDFkMDYyYjQ1NiIsImlhdCI6MTc5NDMzMzM0MywiZXhwIjoxNzk0NDE5NzQzfQ.2wVHLiQdC66cmN6K98pxjmkk5MmUpSMwWpBz1z6kwa0
 
 settings:
   encodeUrl: true

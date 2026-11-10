@@ -5,10 +5,10 @@ info:
 
 http:
   method: DELETE
-  url: http://localhost:9092/api/users/6ae3ccaa12cb9ad980c76dd0
+  url: http://localhost:9092/api/users/6af0bc73d8d6ab307160e904
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTNjY2FhMTJjYjlhZDk4MGM3NmRjZCIsImlhdCI6MTc5MzMxNTU4NywiZXhwIjoxNzkzNDAxOTg3fQ.uQAaOZV58cHO7Sb_P9iCastwsU1cGeL8EpfgAPonYVs
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBiYzczZDhkNmFiMzA3MTYwZTkwNCIsImlhdCI6MTc5NDE2MTk1MywiZXhwIjoxNzk0MjQ4MzUzfQ.7KozZEOyMw3yiZMyK8wuyvQCBju6S8TaYGZtxPGwNtU
 
 settings:
   encodeUrl: true

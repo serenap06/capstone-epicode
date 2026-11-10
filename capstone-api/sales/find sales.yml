@@ -4,19 +4,18 @@ info:
   seq: 1
 
 http:
-  method: GET
+  method: POST
   url: http://localhost:9092/api/sales
   body:
     type: json
     data: |-
       {
-        "items": [
-          { "product": "6af213fc7de05d56eeec4bfe", "quantity": 2 }],
+        "items": [{ "product": "6af35a878568a5d1d062b460", "quantity": 3 }],
         "paymentMethod": "card"
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjIxM2ZjN2RlMDVkNTZlZWVjNGJmNCIsImlhdCI6MTc5NDMyOTg2NiwiZXhwIjoxNzk0NDE2MjY2fQ.eJQXKStS0fk5P3QdxwBhnzqup9iZhxm3R_nuvxVcCQo
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjM1YTg2ODU2OGE1ZDFkMDYyYjQ1NyIsImlhdCI6MTc5NDMzMzUxNCwiZXhwIjoxNzk0NDE5OTE0fQ.GWzHB6f_7Nr0tlMPnm2xg0aWJEdURheXDJL2zC9XaJQ
 
 settings:
   encodeUrl: true

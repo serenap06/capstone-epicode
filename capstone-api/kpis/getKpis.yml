@@ -5,10 +5,14 @@ info:
 
 http:
   method: GET
-  url: http://localhost:9092/api/dashboard
+  url: http://localhost:9092/api/dashboard?store=6af35a868568a5d1d062b454
+  params:
+    - name: store
+      value: 6af35a868568a5d1d062b454
+      type: query
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWZiMGJiY2YyYTFmZDhjY2VlZTAwMSIsImlhdCI6MTc5NDA5MzI2MSwiZXhwIjoxNzk0MTc5NjYxfQ.DHu_6bpTwPbjmggkI6zbdFQCEmZ5SQTHigOVcBeoLi4
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjM1YTg2ODU2OGE1ZDFkMDYyYjQ1NiIsImlhdCI6MTc5NDMzMzM0MywiZXhwIjoxNzk0NDE5NzQzfQ.2wVHLiQdC66cmN6K98pxjmkk5MmUpSMwWpBz1z6kwa0
 
 settings:
   encodeUrl: true

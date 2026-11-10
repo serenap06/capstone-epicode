@@ -5,17 +5,20 @@ info:
 
 http:
   method: GET
-  url: http://localhost:9092/api/sales?store=abc
+  url: http://localhost:9092/api/reports/revenue?from=2026-11-01&to=2026-11-10&groupBy=day
   params:
-    - name: store
-      value: abc
+    - name: from
+      value: 2026-11-01
       type: query
-  body:
-    type: json
-    data: ""
+    - name: to
+      value: 2026-11-10
+      type: query
+    - name: groupBy
+      value: day
+      type: query
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjM0ZDgwYWYzODZkOGQxODYyZTE3MCIsImlhdCI6MTc5NDMzMDAwMywiZXhwIjoxNzk0NDE2NDAzfQ.5MWs2Vr9tmLDVvciRabPVaBeXmdD1PAM2Um1ozet2Hs
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjM1YTg2ODU2OGE1ZDFkMDYyYjQ1NiIsImlhdCI6MTc5NDMzMzM0MywiZXhwIjoxNzk0NDE5NzQzfQ.2wVHLiQdC66cmN6K98pxjmkk5MmUpSMwWpBz1z6kwa0
 
 settings:
   encodeUrl: true

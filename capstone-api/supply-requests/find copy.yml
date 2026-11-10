@@ -5,13 +5,13 @@ info:
 
 http:
   method: PATCH
-  url: http://localhost:9092/api/supply-requests/6aebb187354a4df959536f45
+  url: http://localhost:9092/api/supply-requests/6af0ccb3363fc0ed886d0b1b
   body:
     type: json
-    data: '{ "state": "boh" }'
+    data: '{ "state": "handled" }'
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWJiMTg2MzU0YTRkZjk1OTUzNmVmOCIsImlhdCI6MTc5NDA4OTc3NywiZXhwIjoxNzk0MTc2MTc3fQ.ibG8_Od7hkDWYKSAlxy8BnnB1Ks4ODHW0XDs6Q8W4F8
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBjY2IxMzYzZmMwZWQ4ODZkMGFjZCIsImlhdCI6MTc5NDE2NjQyNiwiZXhwIjoxNzk0MjUyODI2fQ.mAW7TLUQX41qyb_4Mv7UNnsRHShpnl2_IXywtxeuS6M
 
 settings:
   encodeUrl: true

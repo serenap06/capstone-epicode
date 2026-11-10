@@ -8,10 +8,13 @@ http:
   url: http://localhost:9092/api/users/me
   body:
     type: json
-    data: '{ "email": "luca@demo.it" }'
+    data: |-
+      {
+        "name": "Marta"
+      }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWZiMGJiY2YyYTFmZDhjY2VlZTAwMiIsImlhdCI6MTc5NDEzNDUyOSwiZXhwIjoxNzk0MjIwOTI5fQ.bywKEetiOZwJxDp6Zdlsow2sbRp7phaH9AvHyqeS8Rw
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBiYzczZDhkNmFiMzA3MTYwZTkwNSIsImlhdCI6MTc5NDE2MTk1OSwiZXhwIjoxNzk0MjQ4MzU5fQ.CTLBCd9QBkoX7zR6Lakejp-Wt4fR6f0EpiugRMay8gg
 
 settings:
   encodeUrl: true

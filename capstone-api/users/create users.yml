@@ -5,21 +5,100 @@ info:
 
 http:
   method: POST
-  url: http://localhost:9092/api/users
+  url: http://localhost:9092/api/users/
   body:
     type: json
     data: |-
       {
-        "name": "Laura",
-        "surname": "Blu",
-        "email": "laura@demo.it",
+        "name": "Giovanna",
+        "surname": "Rosa",
+        "email": "giovanna@demo.it",
         "password": "Password123",
         "role": "employee",
-        "store": "6ae3ccaa12cb9ad980c76dca"
+        "store": "6ae3ccaa12cb9ad980c76dca",
+        "weeklyHours": "-5"
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTNjY2FhMTJjYjlhZDk4MGM3NmRjZCIsImlhdCI6MTc5MzMxNTU4NywiZXhwIjoxNzkzNDAxOTg3fQ.uQAaOZV58cHO7Sb_P9iCastwsU1cGeL8EpfgAPonYVs
+    token: |
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBiYzczZDhkNmFiMzA3MTYwZTkwNCIsImlhdCI6MTc5NDE2MTk1MywiZXhwIjoxNzk0MjQ4MzUzfQ.7KozZEOyMw3yiZMyK8wuyvQCBju6S8TaYGZtxPGwNtU
+        "statusCode": 200,
+        "users": [
+          {
+            "_id": "6af0bc73d8d6ab307160e905",
+            "name": "Marta",
+            "surname": "Bianchi",
+            "email": "marta@demo.it",
+            "role": "employee",
+            "store": {
+              "_id": "6af0bc73d8d6ab307160e902",
+              "name": "Bookshop Museo",
+              "id": "6af0bc73d8d6ab307160e902"
+            },
+            "weeklyHours": 40,
+            "createdAt": "2026-11-08T18:16:19.788Z",
+            "updatedAt": "2026-11-08T18:16:19.788Z",
+            "__v": 0
+          },
+          {
+            "_id": "6af0bc73d8d6ab307160e908",
+            "name": "Paolo",
+            "surname": "Gialli",
+            "email": "paolo@demo.it",
+            "role": "employee",
+            "store": {
+              "_id": "6af0bc73d8d6ab307160e903",
+              "name": "Shop Castello",
+              "id": "6af0bc73d8d6ab307160e903"
+            },
+            "weeklyHours": 20,
+            "createdAt": "2026-11-08T18:16:19.789Z",
+            "updatedAt": "2026-11-08T18:16:19.789Z",
+            "__v": 0
+          },
+          {
+            "_id": "6af0bc73d8d6ab307160e907",
+            "name": "Giulia",
+            "surname": "Neri",
+            "email": "giulia@demo.it",
+            "role": "employee",
+            "store": {
+              "_id": "6af0bc73d8d6ab307160e902",
+              "name": "Bookshop Museo",
+              "id": "6af0bc73d8d6ab307160e902"
+            },
+            "weeklyHours": 30,
+            "createdAt": "2026-11-08T18:16:19.789Z",
+            "updatedAt": "2026-11-08T18:16:19.789Z",
+            "__v": 0
+          },
+          {
+            "_id": "6af0bc73d8d6ab307160e904",
+            "name": "Laura",
+            "surname": "Rossi",
+            "email": "responsabile@demo.it",
+            "role": "admin",
+            "createdAt": "2026-11-08T18:16:19.787Z",
+            "updatedAt": "2026-11-08T18:16:19.787Z",
+            "__v": 0
+          },
+          {
+            "_id": "6af0bc73d8d6ab307160e906",
+            "name": "Luca",
+            "surname": "Verdi",
+            "email": "luca@demo.it",
+            "role": "employee",
+            "store": {
+              "_id": "6af0bc73d8d6ab307160e903",
+              "name": "Shop Castello",
+              "id": "6af0bc73d8d6ab307160e903"
+            },
+            "weeklyHours": 40,
+            "createdAt": "2026-11-08T18:16:19.788Z",
+            "updatedAt": "2026-11-08T18:16:19.788Z",
+            "__v": 0
+          }
+        ]
 
 settings:
   encodeUrl: true

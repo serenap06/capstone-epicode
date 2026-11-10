@@ -5,7 +5,7 @@ info:
 
 http:
   method: DELETE
-  url: http://localhost:9092/api/stocks
+  url: http://localhost:9092/api/stocks/6aebb186354a4df959536f03
   body:
     type: json
     data: |-
@@ -16,7 +16,7 @@ http:
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZWJiMTg2MzU0YTRkZjk1OTUzNmVmNyIsImlhdCI6MTc5MzgzNTA4MywiZXhwIjoxNzkzOTIxNDgzfQ.rcKZPmph2lyqTwYjo3Q9fqU9R_ekVPR_mymEN93E7_8
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBjY2IxMzYzZmMwZWQ4ODZkMGFjZCIsImlhdCI6MTc5NDE2NjIwOSwiZXhwIjoxNzk0MjUyNjA5fQ.-MRJV0xtPErqQdAcgjT9kmSx7ZO1_ai9eRn6tvb6I-8
 
 settings:
   encodeUrl: true

@@ -14,11 +14,12 @@ http:
         "price": 4.5,
         "brand": "Souvenir Roma",
         "category": "Gadget",
-        "active": false
+        "active": false,
+        "vatRate": 22
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExMyIsImlhdCI6MTc5MzgwODYxMywiZXhwIjoxNzkzODk1MDEzfQ.dmflIFcD1bXw-wyjDeWoE6Knz4k8_Az9lqAZz6DPFr4
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjIxM2ZjN2RlMDVkNTZlZWVjNGJmNCIsImlhdCI6MTc5NDI0OTc1MywiZXhwIjoxNzk0MzM2MTUzfQ.JMR6LfrX6gZHl7KvNMyOcjAgvyX781Tcgjxu9bKaX8I
 
 settings:
   encodeUrl: true

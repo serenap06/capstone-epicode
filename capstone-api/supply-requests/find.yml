@@ -6,7 +6,9 @@ info:
 http:
   method: GET
   url: http://localhost:9092/api/supply-requests
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBjY2IxMzYzZmMwZWQ4ODZkMGFjYyIsImlhdCI6MTc5NDE2NTk5MCwiZXhwIjoxNzk0MjUyMzkwfQ.aSjXfVjyvkOksgG3s7vkF5iiHkYB9MT_7NKGwhMEAz0
 
 settings:
   encodeUrl: true

@@ -8,7 +8,7 @@ http:
   url: http://localhost:9092/api/tasks/mine
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTRkZDI2YzE3M2E4YmY1YTE4N2ExNCIsImlhdCI6MTc5MzgwOTQ1NCwiZXhwIjoxNzkzODk1ODU0fQ.9JL-UduDacZmgG8CO4fC48f1a-_XNXCLPAMdTPVM8yc
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBiYzczZDhkNmFiMzA3MTYwZTkwNSIsImlhdCI6MTc5NDE2MTk1OSwiZXhwIjoxNzk0MjQ4MzU5fQ.CTLBCd9QBkoX7zR6Lakejp-Wt4fR6f0EpiugRMay8gg
 
 settings:
   encodeUrl: true

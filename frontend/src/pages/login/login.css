@@ -1,19 +1,13 @@
-:root {
-  --login-orange: #f0872f;
-  --login-peach: #fce8d8;
-  --login-violet: #8e9aeb;
-}
-
 .login-page {
   max-width: 350px;
-  min-height: 110vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .login-title {
-  color: var(--login-orange);
+  color: var(--primary);
   font-weight: 800;
   text-align: center;
   margin-bottom: 2rem;
@@ -28,61 +22,63 @@
   left: 1.4rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--login-violet);
+  color: var(--secondary);
 }
 
 .login-input {
-  background: var(--login-peach);
-  border: 2px solid transparent;
+  background: var(--surface);
+  border: 2px solid var(--border);
   border-radius: 50rem;
   padding: 0.9rem 1.5rem 0.9rem 3.6rem;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--login-violet);
+  color: var(--text);
 }
 
 .login-input::placeholder {
-  color: var(--login-violet);
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 .login-input:focus {
-  background: var(--login-peach);
-  color: var(--login-violet);
-  border-color: var(--login-orange);
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--primary);
   box-shadow: none;
 }
 
 .login-error {
-  color: #8e9aeb;
+  color: var(--primary-dark);
   font-size: 0.9rem;
   margin: 0.4rem 0 0 1.5rem;
 }
 
 .login-remember {
   font-size: 1.1rem;
-  color: #f0872f;
+  color: var(--text);
   font-weight: 600;
   display: flex;
   justify-content: center;
   gap: 0.5rem;
 }
 
-.form-check-input:checked[type="checkbox"] {
-  background-color: #f0872f;
-  border: none;
+.login-remember .form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
 .btn.login-button {
-  background: var(--login-orange);
+  background: var(--primary);
   border: none;
   border-radius: 50rem;
   padding: 0.8rem;
   font-size: 1.2rem;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .btn.login-button:hover,
 .btn.login-button:disabled {
-  background: var(--login-orange);
-  opacity: 0.9;
+  background: var(--primary-dark);
+  color: #ffffff;
 }

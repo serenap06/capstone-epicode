@@ -1,0 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");
+
+:root {
+  /* fondi e bordi */
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --border: #e4e7ef;
+
+  /* testo */
+  --text: #1e2440;
+  --text-muted: #5a6078;
+
+  /* colore principale: pulsanti, link, voce attiva */
+  --primary: #c2185b;
+  --primary-dark: #9b1450;
+  --primary-soft: #fce4ef;
+
+  /* colore secondario: logo, titoli, "fatto" */
+  --secondary: #6c4bc4;
+  --secondary-dark: #4a2fa3;
+  --secondary-soft: #ece7fa;
+
+  /* schede colorate */
+  --turquoise: #0a769f;
+  --orange: #ee8631;
+
+  /* avvisi: "da fare", scorta bassa */
+  --warning-soft: #ffebd6;
+  --warning-text: #8a3f05;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+a {
+  color: var(--primary);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}

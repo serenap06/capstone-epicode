@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import api from "../api/api";
 //contesto per l'accesso
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -12,7 +13,9 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const loadUser = async () => {
-      if (!token) {
+      const savedToken =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+      if (!savedToken) {
         setLoading(false);
         return;
       }
@@ -52,7 +55,6 @@ const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        token,
         user,
         loading,
         login,

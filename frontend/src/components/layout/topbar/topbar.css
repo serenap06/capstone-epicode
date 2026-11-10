@@ -1,0 +1,56 @@
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem clamp(1rem, 3vw, 1.5rem);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-logo,
+.app-logo:hover {
+  font-weight: 800;
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  letter-spacing: -0.03em;
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+.app-logo span {
+  color: var(--primary);
+}
+
+.btn.app-user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: 0;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.app-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--secondary);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  object-fit: cover;
+}
+
+@media (max-width: 767px) {
+  .app-user-name {
+    display: none;
+  }
+}

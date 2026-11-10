@@ -32,10 +32,10 @@ const Login = () => {
     );
   }
 
-  const onSubmit = async ({ email, password,remember }) => {
+  const onSubmit = async ({ email, password, remember }) => {
     setServerError("");
     try {
-      const loggedUser = await login(email, password,remember);
+      const loggedUser = await login(email, password, remember);
       navigate(loggedUser.role === "admin" ? "/admin" : "/employee");
     } catch (e) {
       setServerError(e.message);
@@ -46,25 +46,34 @@ const Login = () => {
     <Container className="login-page">
       <h1 className="login-title">LOGIN</h1>
 
-      {serverError && <Alert className="mx-3" >{serverError}</Alert>}
+      {serverError && <Alert className="mx-3">{serverError}</Alert>}
 
-      <Form onSubmit={handleSubmit(onSubmit)} noValidate className="login-form mt-4">
+      <Form
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        className="login-form mt-4"
+      >
         <Form.Group className="mb-3" controlId="email">
           <FormLabel visuallyHidden>Email</FormLabel>
           <div className="login-field">
             <User className="login-icon" />
             <FormControl
+              placeholder="email"
               type="email"
               className="login-input"
               {...register("email", { required: "Email obbligatoria" })}
             />
           </div>
+          {errors.email && (
+            <p className="login-error">{errors.email.message}</p>
+          )}
         </Form.Group>
         <Form.Group className="mb-3" controlId="password">
           <FormLabel visuallyHidden>Password</FormLabel>
           <div className="login-field">
             <Lock className="login-icon" />
             <FormControl
+              placeholder="password"
               type="password"
               className="login-input"
               {...register("password", { required: "Password obbligatoria" })}
@@ -82,7 +91,11 @@ const Login = () => {
           {...register("remember")}
         />
 
-        <Button type="submit" disabled={isSubmitting} className="login-button w-100">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="login-button w-100"
+        >
           {isSubmitting ? "accesso in corso" : "accedi"}
         </Button>
       </Form>

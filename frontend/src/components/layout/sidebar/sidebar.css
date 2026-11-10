@@ -1,0 +1,58 @@
+.app-sidebar {
+  flex: 0 0 clamp(180px, 20vw, 240px);
+  padding: 1.5rem clamp(0.5rem, 1.2vw, 1rem);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.app-link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.9rem;
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.app-link:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app-link.active {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  .app-sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    flex: none;
+    padding: 0.5rem;
+    border-right: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .app-nav {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .app-link {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}

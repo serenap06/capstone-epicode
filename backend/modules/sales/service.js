@@ -87,7 +87,7 @@ const create = async ({ items, paymentMethod }, currentUser) => {
       vatAmount: round(lineTotal - lineTotal / (1 + product.vatRate / 100)),
     };
   });
-  
+
   const total = round(
     saleItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
   );
@@ -106,7 +106,7 @@ const create = async ({ items, paymentMethod }, currentUser) => {
     ),
   );
 
-  return await Sale.create({
+  const sale = await Sale.create({
     store: currentUser.store,
     soldBy: currentUser._id,
     items: saleItems,
@@ -115,6 +115,21 @@ const create = async ({ items, paymentMethod }, currentUser) => {
     vatTotal,
     paymentMethod,
   });
+
+  const lowStocks = await Stock.find({
+    store: currentUser.store,
+    product: { $in: productIds },
+    $expr: { $lte: ["$amount", "$minThreshold"] },
+  }).populate("product", "name");
+
+  const lowStock = lowStocks.map((stock) => ({
+    product: stock.product._id,
+    name: stock.product.name,
+    amount: stock.amount,
+    minThreshold: stock.minThreshold,
+  }));
+
+  return { sale, lowStock };
 };
 
 module.exports = { findAll, create };

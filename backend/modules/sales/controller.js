@@ -28,11 +28,15 @@ const findAll = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { items, paymentMethod } = req.body;
-    const sale = await saleService.create({ items, paymentMethod }, req.user);
+    const { sale, lowStock } = await saleService.create(
+      { items, paymentMethod },
+      req.user,
+    );
     res.status(201).send({
       statusCode: 201,
       message: "Sale registered",
       sale,
+      lowStock,
     });
   } catch (e) {
     next(e);

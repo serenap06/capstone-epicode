@@ -8,6 +8,7 @@ const Stock = require("./modules/stock/schema");
 const Shift = require("./modules/shifts/schema");
 const Task = require("./modules/tasks/schema");
 const SupplyRequest = require("./modules/supply-requests/schema");
+const Sale = require("./modules/sales/schema");
 
 const DEMO_PASSWORD = "Password123";
 
@@ -30,12 +31,48 @@ const at = (day, hour) => {
   return d;
 };
 
+// Arrotonda ai centesimi
+const round = (value) => Math.round(value * 100) / 100;
+
+// Costruisce una vendita con gli stessi calcoli del service:
+// lines è un elenco di [prodotto, quantità]
+const buildSale = (employee, day, hour, paymentMethod, lines) => {
+  const items = lines.map(([product, quantity]) => ({
+    product: product._id,
+    name: product.name,
+    unitPrice: product.price,
+    vatRate: product.vatRate,
+    quantity,
+  }));
+  const total = round(
+    items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
+  );
+  const netTotal = round(
+    items.reduce(
+      (sum, item) =>
+        sum + (item.unitPrice * item.quantity) / (1 + item.vatRate / 100),
+      0,
+    ),
+  );
+  return {
+    store: employee.store,
+    soldBy: employee._id,
+    items,
+    total,
+    netTotal,
+    vatTotal: round(total - netTotal),
+    paymentMethod,
+    createdAt: at(day, hour),
+  };
+};
+
 const seed = async () => {
   try {
     await mongoose.connect(process.env.DB_URL);
     console.log("MongoDB connected, seeding...");
 
     // 1. Svuota le collezioni (prima quelle che dipendono dalle altre)
+    await Sale.deleteMany();
     await SupplyRequest.deleteMany();
     await Task.deleteMany();
     await Shift.deleteMany();
@@ -98,7 +135,8 @@ const seed = async () => {
     ]);
     const employees = [marta, luca, giulia, paolo];
 
-    // 4. Prodotti (il catalogo è unico per tutti i punti vendita)
+    // 4. Prodotti (il catalogo è unico per tutti i punti vendita).
+    // I libri hanno l'IVA al 4%, gli altri prendono il 22% predefinito
     const [guida, cartoline, magnete, poster, borsa, catalogo] =
       await Product.create([
         {
@@ -107,6 +145,7 @@ const seed = async () => {
           price: 12,
           brand: "Edizioni Locali",
           category: "libri",
+          vatRate: 4,
           image: IMAGES.guida,
         },
         {
@@ -115,18 +154,8 @@ const seed = async () => {
           category: "cartoleria",
           image: IMAGES.cartoline,
         },
-        {
-          name: "Magnete",
-          price: 4.5,
-          category: "gadget",
-          image: IMAGES.magnete,
-        },
-        {
-          name: "Poster",
-          price: 8,
-          category: "cartoleria",
-          image: IMAGES.poster,
-        },
+        { name: "Magnete", price: 4.5, category: "gadget", image: IMAGES.magnete },
+        { name: "Poster", price: 8, category: "cartoleria", image: IMAGES.poster },
         {
           name: "Borsa in tela",
           description: "Borsa in cotone con stampa originale",
@@ -139,6 +168,7 @@ const seed = async () => {
           price: 25,
           brand: "Edizioni Locali",
           category: "libri",
+          vatRate: 4,
           image: IMAGES.catalogo,
         },
       ]);
@@ -309,6 +339,45 @@ const seed = async () => {
         state: "handled",
       },
     ]);
+
+    // 9. Vendite: cinque di oggi e due al giorno per i 20 giorni precedenti,
+    // così i report per giorno, settimana e mese hanno dati da mostrare.
+    // Le vendite del seed non scalano le giacenze.
+    const sales = [
+      buildSale(marta, 0, 9, "cash", [
+        [guida, 2],
+        [cartoline, 3],
+      ]),
+      buildSale(luca, 0, 9, "card", [[cartoline, 3]]),
+      buildSale(giulia, 0, 10, "card", [[catalogo, 1]]),
+      buildSale(paolo, 0, 11, "cash", [
+        [poster, 1],
+        [cartoline, 2],
+      ]),
+      buildSale(marta, 0, 11, "card", [[guida, 1]]),
+    ];
+
+    for (let day = 1; day <= 20; day++) {
+      sales.push(
+        buildSale(employees[day % 4], -day, 11, day % 2 === 0 ? "cash" : "card", [
+          [cartoline, 2],
+          [magnete, 1],
+        ]),
+        buildSale(
+          employees[(day + 1) % 4],
+          -day,
+          16,
+          day % 3 === 0 ? "cash" : "card",
+          day % 2 === 0
+            ? [[guida, 1]]
+            : [
+                [poster, 1],
+                [catalogo, 1],
+              ],
+        ),
+      );
+    }
+    await Sale.create(sales);
 
     console.log("Seed completed");
     console.log("Login Responsabile: responsabile@demo.it /", DEMO_PASSWORD);

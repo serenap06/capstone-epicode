@@ -1,0 +1,26 @@
+info:
+  name: find sales
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: http://localhost:9092/api/sales
+  body:
+    type: json
+    data: |-
+      {
+        "items": [
+          { "product": "6af213fc7de05d56eeec4bfe", "quantity": 2 }],
+        "paymentMethod": "card"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjIxM2ZjN2RlMDVkNTZlZWVjNGJmNCIsImlhdCI6MTc5NDMyOTg2NiwiZXhwIjoxNzk0NDE2MjY2fQ.eJQXKStS0fk5P3QdxwBhnzqup9iZhxm3R_nuvxVcCQo
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

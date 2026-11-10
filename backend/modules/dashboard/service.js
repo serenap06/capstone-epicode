@@ -2,6 +2,7 @@ const Task = require("../tasks/schema");
 const SupplyRequest = require("../supply-requests/schema");
 const Stock = require("../stock/schema");
 const Shift = require("../shifts/schema");
+const Sale = require("../sales/schema");
 
 const getKpis = async (filters) => {
   const { store } = filters;
@@ -36,11 +37,24 @@ const getKpis = async (filters) => {
     ...storeFilter,
   });
 
+  const todaySales = await Sale.find({
+    createdAt: { $gte: startOfDay, $lte: endOfDay },
+    ...storeFilter,
+  })
+    .select("total")
+    .lean();
+
+  const revenueToday = todaySales.reduce((sum, sale) => sum + sale.total, 0);
+
   return {
     tasksToday: { total: tasksTotal, done: tasksDone },
     pendingSupplyRequests: pendingRequests,
     lowStockItems,
     employeesOnShiftToday: employeesOnShift.length,
+    salesToday: {
+      count: todaySales.length,
+      revenue: Math.round(revenueToday * 100) / 100,
+    },
   };
 };
 

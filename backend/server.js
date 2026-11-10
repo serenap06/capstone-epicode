@@ -18,6 +18,7 @@ const stockRouter = require("./modules/stock/routes");
 const supplyRequestsRouter = require("./modules/supply-requests/routes");
 const dashboardRouter = require("./modules/dashboard/routes");
 const salesRouter = require("./modules/sales/routes");
+const reportsRouter = require("./modules/reports/routes");
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/api/stocks", stockRouter);
 app.use("/api/supply-requests", supplyRequestsRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/sales", salesRouter);
+app.use("/api/reports", reportsRouter);
 
 app.use(errorHandler);
 

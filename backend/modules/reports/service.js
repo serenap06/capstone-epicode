@@ -51,7 +51,7 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
     { $sort: { _id: 1 } },
   ]);
 
-  // 4. Incassi per aliquota IVA
+  // 4. Incassi e IVA per aliquota
   const vatRates = await Sale.aggregate([
     { $match: match },
     { $unwind: "$items" },
@@ -61,6 +61,7 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
         revenue: {
           $sum: { $multiply: ["$items.unitPrice", "$items.quantity"] },
         },
+        vat: { $sum: "$items.vatAmount" },
       },
     },
     { $sort: { _id: 1 } },
@@ -109,12 +110,12 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
     })),
     byVatRate: vatRates.map((row) => {
       const revenue = round(row.revenue);
-      const netRevenue = round(revenue / (1 + row._id / 100));
+      const vat = round(row.vat);
       return {
         vatRate: row._id,
         revenue,
-        netRevenue,
-        vat: round(revenue - netRevenue),
+        netRevenue: round(revenue - vat),
+        vat,
       };
     }),
     topProducts: products.map((row) => ({

@@ -11,6 +11,7 @@ const saleItemSchema = new mongoose.Schema(
     unitPrice: { type: Number, required: true, min: 0 },
     vatRate: { type: Number, required: true },
     quantity: { type: Number, required: true, min: 1 },
+    vatAmount: { type: Number, required: true, min: 0 },
   },
   { _id: false },
 );

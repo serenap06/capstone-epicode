@@ -37,30 +37,28 @@ const round = (value) => Math.round(value * 100) / 100;
 // Costruisce una vendita con gli stessi calcoli del service:
 // lines è un elenco di [prodotto, quantità]
 const buildSale = (employee, day, hour, paymentMethod, lines) => {
-  const items = lines.map(([product, quantity]) => ({
-    product: product._id,
-    name: product.name,
-    unitPrice: product.price,
-    vatRate: product.vatRate,
-    quantity,
-  }));
+  const items = lines.map(([product, quantity]) => {
+    const lineTotal = product.price * quantity;
+    return {
+      product: product._id,
+      name: product.name,
+      unitPrice: product.price,
+      vatRate: product.vatRate,
+      quantity,
+      vatAmount: round(lineTotal - lineTotal / (1 + product.vatRate / 100)),
+    };
+  });
   const total = round(
     items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
   );
-  const netTotal = round(
-    items.reduce(
-      (sum, item) =>
-        sum + (item.unitPrice * item.quantity) / (1 + item.vatRate / 100),
-      0,
-    ),
-  );
+  const vatTotal = round(items.reduce((sum, item) => sum + item.vatAmount, 0));
   return {
     store: employee.store,
     soldBy: employee._id,
     items,
     total,
-    netTotal,
-    vatTotal: round(total - netTotal),
+    netTotal: round(total - vatTotal),
+    vatTotal,
     paymentMethod,
     createdAt: at(day, hour),
   };

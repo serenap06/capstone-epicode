@@ -76,25 +76,27 @@ const create = async ({ items, paymentMethod }, currentUser) => {
   }
   const saleItems = items.map((item) => {
     const product = products.find((p) => p._id.toString() === item.product);
+    const lineTotal = product.price * item.quantity;
+
     return {
       product: product._id,
       name: product.name,
       unitPrice: product.price,
       vatRate: product.vatRate,
       quantity: item.quantity,
+      vatAmount: round(lineTotal - lineTotal / (1 + product.vatRate / 100)),
     };
   });
+  
   const total = round(
     saleItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
   );
-  const netTotal = round(
-    saleItems.reduce(
-      (sum, item) =>
-        sum + (item.unitPrice * item.quantity) / (1 + item.vatRate / 100),
-      0,
-    ),
+
+  const vatTotal = round(
+    saleItems.reduce((sum, item) => sum + item.vatAmount, 0),
   );
-  const vatTotal = round(total - netTotal);
+  const netTotal = round(total - vatTotal);
+
   await Promise.all(
     items.map((item) =>
       Stock.updateOne(
@@ -103,6 +105,7 @@ const create = async ({ items, paymentMethod }, currentUser) => {
       ),
     ),
   );
+
   return await Sale.create({
     store: currentUser.store,
     soldBy: currentUser._id,

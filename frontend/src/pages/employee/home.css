@@ -1,0 +1,54 @@
+.home-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin-top: rem;
+}
+
+.home-panel-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.home-panel-count {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.home-progress {
+  height: 8px;
+  margin-bottom: 0.75rem;
+  border-radius: 999px;
+  background: var(--primary-soft);
+}
+
+.home-progress-fill {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.home-panel-link {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 1rem;
+  font-weight: 700;
+}
+
+/* schede della home un po' più basse di quelle della dashboard */
+.home-kpis .kpi-card {
+  padding: 0.85rem 1rem;
+}
+
+.home-kpis .kpi-card-value {
+  margin-top: 0.2rem;
+  font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+}

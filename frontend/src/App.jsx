@@ -1,7 +1,7 @@
 import { Navigate, Routes, Route } from "react-router-dom";
 import Login from "./pages/login/Login.jsx";
 import Dashboard from "./pages/admin/dashboard/Dashboard.jsx";
-import EmployeeView from "./pages/employeeView/EmployeeView.jsx";
+import Home from "./pages/employee/Home.jsx";
 import ProtectedRoute from "./strategies/ProtectedRoute.jsx";
 import AppLayout from "./components/layout/appLayout/AppLayout.jsx";
 
@@ -16,7 +16,7 @@ const App = () => {
       </Route>
       <Route element={<ProtectedRoute role={"employee"} />}>
         <Route path="/employee" element={<AppLayout />}>
-          <Route index element={<EmployeeView />} />
+          <Route index element={<Home />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

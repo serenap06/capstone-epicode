@@ -5,6 +5,8 @@ import TaskCard from "../../../components/ui/taskCard/TaskCard";
 import ShiftList from "../../../components/ui/shiftList/ShiftList";
 import LowStockList from "../../../components/ui/lowStockList/LowStockList";
 import { formatEuro } from "../../../utils/formatEuro";
+import { formatLongDate } from "../../../utils/formatLongDate";
+import { getToday } from "../../../utils/dates";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./dashboard.css";
@@ -16,18 +18,10 @@ const Dashboard = () => {
   const [shifts, setShifts] = useState([]);
   const [lowStocks, setLowStocks] = useState([]);
 
-  const today = new Date().toLocaleDateString("it-IT", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
+  const today = formatLongDate();
 
   useEffect(() => {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
-    const range = `from=${startOfDay.toISOString()}&to=${endOfDay.toISOString()}`;
+    const range = new URLSearchParams(getToday()).toString();
 
     const loadKpis = async () => {
       try {
@@ -72,57 +66,75 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <Container>
+    <Container fluid>
       <Row>
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">{today}</p>
+        <Col>
+          <h1 className="page-title">Dashboard</h1>
+          <p className="page-subtitle">{today}</p>
+          {error && <p role="alert">{error}</p>}
+          {!error && !kpis && <p>Caricamento...</p>}
+        </Col>
       </Row>
-      <Row aria-label="Indicatori">
-        {error && <p role="alert">{error}</p>}
-        {!error && !kpis && <p>Caricamento</p>}
 
-        {kpis && (
-          <section className="dashboard-kpis">
+      {kpis && (
+        <Row
+          as="section"
+          xs={2}
+          md={3}
+          xl={5}
+          className="g-3 mt-1"
+          aria-label="Indicatori"
+        >
+          <Col>
             <KpiCard
               to="/admin/shifts"
               color="primary"
               label="In turno oggi:"
               value={kpis.employeesOnShiftToday}
               detail="dipendenti"
-            ></KpiCard>
+            />
+          </Col>
+          <Col>
             <KpiCard
               to="/admin/tasks"
               color="secondary"
               label="Task:"
               value={`${kpis.tasksToday.done} su ${kpis.tasksToday.total}`}
               detail="completate"
-            ></KpiCard>
+            />
+          </Col>
+          <Col>
             <KpiCard
               to="/admin/sales"
               color="blue"
               label="Vendite:"
               value={formatEuro(kpis.salesToday.revenue)}
               detail={`${kpis.salesToday.count} vendite`}
-            ></KpiCard>
+            />
+          </Col>
+          <Col>
             <KpiCard
               to="/admin/stock"
               color="turquoise"
               label="Sotto scorta:"
               value={kpis.lowStockItems}
               detail="prodotti"
-            ></KpiCard>
+            />
+          </Col>
+          <Col>
             <KpiCard
               to="/admin/supply-requests"
               color="orange"
               label="Richieste di fornitura:"
               value={kpis.pendingSupplyRequests}
               detail="aperte"
-            ></KpiCard>
-          </section>
-        )}
-      </Row>
-      <Row className="dashboard-main">
-        <Col md={8} lg={7} id="section-tasks">
+            />
+          </Col>
+        </Row>
+      )}
+
+      <Row className="g-4 mt-2">
+        <Col lg={7} id="section-tasks">
           <div className="section-header">
             <h2 className="section-title">Task di oggi</h2>
             <Link to="/admin/tasks" className="section-show-more">
@@ -136,35 +148,40 @@ const Dashboard = () => {
             ))}
           </div>
         </Col>
-        <Col>
-          <Row>
-            <Col className="section-shifts">
-              <div className="section-header">
-                <h2 className="section-title">Turni di oggi</h2>
-                <Link to="/admin/shifts" className="section-show-more">
-                  Vedi tutti
-                </Link>
-              </div>
-              {shifts.length === 0 && <p>Nessun turno oggi</p>}
-              <div className="dashboard-shifts">
-                <ShiftList shifts={shifts} />
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col className="section-lowStocks">
-              <div className="section-header">
-                <h2 className="section-title">Sotto scorta</h2>
-                <Link to="/admin/stock" className="section-show-more">
-                  Vedi tutti
-                </Link>
-              </div>
-              {lowStocks.length === 0 && <p>Nessun prodotto sotto scorta</p>}
-              <div className="dashboard-low-stocks">
-                <LowStockList stocks={lowStocks} />
-              </div>
-            </Col>
-          </Row>
+
+        <Col lg={5} className="d-flex flex-column gap-4">
+          <section className="dashboard-panel" aria-labelledby="shifts-title">
+            <div className="section-header">
+              <h2 id="shifts-title" className="section-title">
+                Turni di oggi
+              </h2>
+              <Link to="/admin/shifts" className="section-show-more">
+                Vedi tutti
+              </Link>
+            </div>
+            {shifts.length === 0 && <p>Nessun turno oggi</p>}
+            <div className="dashboard-list">
+              <ShiftList shifts={shifts} />
+            </div>
+          </section>
+
+          <section
+            className="dashboard-panel"
+            aria-labelledby="low-stock-title"
+          >
+            <div className="section-header">
+              <h2 id="low-stock-title" className="section-title">
+                Sotto scorta
+              </h2>
+              <Link to="/admin/stock" className="section-show-more">
+                Vedi tutti
+              </Link>
+            </div>
+            {lowStocks.length === 0 && <p>Nessun prodotto sotto scorta</p>}
+            <div className="dashboard-list">
+              <LowStockList stocks={lowStocks} />
+            </div>
+          </section>
         </Col>
       </Row>
     </Container>

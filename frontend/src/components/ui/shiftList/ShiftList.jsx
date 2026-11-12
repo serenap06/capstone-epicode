@@ -1,10 +1,5 @@
+import { formatTime } from "../../../utils/formatTime";
 import "./shiftList.css";
-
-const formatTime = (date) =>
-  new Date(date).toLocaleTimeString("it-IT", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
 // elenco di turni raggruppati per negozio, per dashboard e home
 const ShiftList = ({ shifts }) => {

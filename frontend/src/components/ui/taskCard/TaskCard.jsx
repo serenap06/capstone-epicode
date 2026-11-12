@@ -1,3 +1,4 @@
+import { formatTime } from "../../../utils/formatTime";
 import "./taskCard.css";
 
 const PRIORITY = { low: "bassa", medium: "media", high: "alta" };
@@ -8,10 +9,7 @@ const TaskCard = ({ task }) => {
   const doneCount = task.assignees.filter((a) => a.status === "done").length;
   const total = task.assignees.length;
   const percent = Math.round((doneCount / total) * 100);
-  const dueTime = new Date(task.dueDate).toLocaleTimeString("it-IT", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const dueTime = formatTime(task.dueDate);
 
   return (
     <div className="task-card">

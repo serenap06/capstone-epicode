@@ -1,3 +1,5 @@
+import { translateError } from "./errors";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 // api helper per non riscrivere sempre la fetch
@@ -16,7 +18,7 @@ const api = async (path, { method = "GET", body } = {}) => {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Request failed");
+    throw new Error(translateError(data.message || res.status));
   }
   return data;
 };

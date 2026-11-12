@@ -23,6 +23,8 @@
   /* schede colorate */
   --turquoise: #0a769f;
   --orange: #ee8631;
+  --blue: #34479e;
+
 
   /* avvisi: "da fare", scorta bassa */
   --warning-soft: #ffebd6;
@@ -42,4 +44,27 @@ a {
 
 a:hover {
   color: var(--primary-dark);
+}
+
+/* titolo e sottotitolo di ogni pagina */
+.page-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.page-subtitle::first-letter {
+  text-transform: uppercase;
+}
+/* titolo di una sezione dentro la pagina */
+.section-title {
+  margin: 1rem 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 800;
 }

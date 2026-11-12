@@ -13,6 +13,8 @@
   flex: 1;
   min-width: 0;
   padding: clamp(1.25rem, 3vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 767px) {

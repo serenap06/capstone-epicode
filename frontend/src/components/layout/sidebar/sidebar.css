@@ -8,7 +8,7 @@
 .app-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 1rem;
 }
 
 .app-link {
@@ -20,8 +20,11 @@
   color: var(--text-muted);
   font-weight: 600;
   text-decoration: none;
+  gap: 0.75rem;
 }
-
+.app-link-icon {
+  flex-shrink: 0;
+}
 .app-link:hover {
   background: var(--bg);
   color: var(--text);
@@ -32,6 +35,16 @@
   color: var(--primary-dark);
   font-weight: 700;
 }
+.app-more {
+  display: none;
+}
+.btn.app-more-toggle{
+  border: 0;
+  background: transparent;
+}
+.app-more .btn.app-more-toggle::after {
+  display: none;
+}
 
 @media (max-width: 767px) {
   .app-sidebar {
@@ -41,6 +54,7 @@
     right: 0;
     z-index: 10;
     flex: none;
+    background: var(--surface);
     padding: 0.5rem;
     border-right: 0;
     border-top: 1px solid var(--border);
@@ -48,11 +62,27 @@
 
   .app-nav {
     flex-direction: row;
-    overflow-x: auto;
+    justify-content: space-around;
   }
 
   .app-link {
     flex: 0 0 auto;
+    padding: 0.5rem;
+    justify-content: center;
+  }
+  .app-link.hide-mobile {
+    display: none;
+  }
+  .app-link-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
     white-space: nowrap;
   }
+  .app-more {
+  display: block;
+}
+
 }

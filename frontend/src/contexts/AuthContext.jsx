@@ -5,9 +5,6 @@ import api from "../api/api";
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(
-    localStorage.getItem("token") || sessionStorage.getItem("token"),
-  );
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +22,6 @@ const AuthProvider = ({ children }) => {
       } catch {
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
-        setToken(null);
         setUser(null);
       } finally {
         setLoading(false);
@@ -41,14 +37,12 @@ const AuthProvider = ({ children }) => {
     });
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem("token", data.token);
-    setToken(data.token);
     setUser(data.user);
     return data.user;
   };
   const logout = () => {
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    setToken(null);
     setUser(null);
   };
 

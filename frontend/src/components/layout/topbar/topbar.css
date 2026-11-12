@@ -15,12 +15,16 @@
   font-weight: 800;
   font-size: clamp(1.25rem, 2.5vw, 1.5rem);
   letter-spacing: -0.03em;
-  color: var(--secondary);
   text-decoration: none;
+  color: var(--secondary);
+  background: linear-gradient(90deg, var(--secondary) 35%, var(--primary)55%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .app-logo span {
-  color: var(--primary);
+  color: inherit;
 }
 
 .btn.app-user {

@@ -56,7 +56,11 @@ const create = async (taskData, currentUser) => {
 
   const assigneeIds = isGlobal
     ? await getStoreEmployeeIds(store)
-    : [(await checkUserBelongsToStore(assignedTo, store))._id];
+    : (
+        await Promise.all(
+          assignedTo.map((userId) => checkUserBelongsToStore(userId, store)),
+        )
+      ).map((user) => user._id);
 
   const groupId = new mongoose.Types.ObjectId();
 

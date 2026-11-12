@@ -28,8 +28,13 @@ const taskBodyRules = [
     .toBoolean(),
   body("assignedTo")
     .if((value, { req }) => !req.body.isGlobal)
+    .toArray()
+    .isArray({ min: 1 })
+    .withMessage("assignedTo is required"),
+  body("assignedTo.*")
+    .if((value, { req }) => !req.body.isGlobal)
     .isMongoId()
-    .withMessage("assignedTo is required and must be a valid user id"),
+    .withMessage("assignedTo must contain valid user ids"),
   body("category")
     .optional()
     .isIn(["operations", "administrative"])

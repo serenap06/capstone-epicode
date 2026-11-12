@@ -224,39 +224,56 @@ const seed = async () => {
 
     const tasks = [];
 
-    // Task di oggi per ogni dipendente
-    employees.forEach((employee, i) => {
-      tasks.push(
-        {
-          ...base(employee),
-          title: "Apertura cassa",
-          description: "Controllo del fondo cassa e accensione del POS",
-          dueDate: at(0, 10),
-          priority: "high",
-          status: i % 2 === 0 ? "done" : "pending",
-          category: "operations",
-          type: "daily",
-        },
-        {
-          ...base(employee),
-          title: "Riordino espositori",
-          description: "Riallestimento degli espositori di cartoline e gadget",
-          dueDate: at(0, 15),
-          priority: "medium",
-          status: i === 0 ? "done" : "pending",
-          category: "operations",
-          type: "daily",
-        },
-        {
-          ...base(employee),
-          title: "Controllo corrispettivi giornalieri",
-          description: "Verifica dei corrispettivi e chiusura della cassa",
-          dueDate: at(0, 20),
-          priority: "high",
-          category: "administrative",
-          type: "daily",
-        },
+    // Task di oggi: una per negozio, con una copia per ogni dipendente
+    // di quel negozio, tutte con lo stesso groupId
+    const dailyTasks = [
+      {
+        title: "Apertura cassa",
+        description: "Controllo del fondo cassa e accensione del POS",
+        dueDate: at(0, 10),
+        priority: "high",
+        category: "operations",
+        doneBy: [marta, luca],
+      },
+      {
+        title: "Riordino espositori",
+        description: "Riallestimento degli espositori di cartoline e gadget",
+        dueDate: at(0, 15),
+        priority: "medium",
+        category: "operations",
+        doneBy: [marta],
+      },
+      {
+        title: "Controllo corrispettivi giornalieri",
+        description: "Verifica dei corrispettivi e chiusura della cassa",
+        dueDate: at(0, 20),
+        priority: "high",
+        category: "administrative",
+        doneBy: [],
+      },
+    ];
+
+    [storeA, storeB].forEach((store) => {
+      const storeEmployees = employees.filter(
+        (e) => e.store.toString() === store._id.toString(),
       );
+
+      dailyTasks.forEach(({ doneBy, ...taskData }) => {
+        const groupId = new mongoose.Types.ObjectId();
+
+        storeEmployees.forEach((employee) => {
+          tasks.push({
+            ...taskData,
+            createdBy: manager._id,
+            assignedTo: employee._id,
+            store: store._id,
+            groupId,
+            isGlobal: true,
+            type: "daily",
+            status: doneBy.includes(employee) ? "done" : "pending",
+          });
+        });
+      });
     });
 
     // Task mensili

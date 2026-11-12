@@ -196,12 +196,23 @@ const seed = async () => {
       })),
     );
 
-    // 6. Turni: da oggi a 6 giorni, ognuno riposa un giorno diverso
+    // 6. Turni: settimana in corso e settimana prossima, da lunedì.
+    // Ogni dipendente lavora tanti giorni quanti ne servono per il suo
+    // contratto (turni da 8 ore); offset sfalsa i giorni di riposo, così
+    // in ogni negozio i due colleghi si incrociano alcuni giorni.
+    const mondayOffset = -((new Date().getDay() + 6) % 7);
+    const shiftPlan = [
+      { employee: marta, workDays: 5, offset: 0, morning: true },
+      { employee: giulia, workDays: 4, offset: 4, morning: false },
+      { employee: luca, workDays: 5, offset: 0, morning: true },
+      { employee: paolo, workDays: 3, offset: 3, morning: false },
+    ];
+
     const shifts = [];
-    employees.forEach((employee, i) => {
-      for (let day = 0; day <= 6; day++) {
-        if ((day + i) % 4 === 3) continue; // giorno di riposo
-        const morning = i % 2 === 0;
+    shiftPlan.forEach(({ employee, workDays, offset, morning }) => {
+      for (let d = 0; d < 14; d++) {
+        if ((d + offset) % 7 >= workDays) continue; // giorno di riposo
+        const day = mondayOffset + d;
         shifts.push({
           user: employee._id,
           store: employee.store,

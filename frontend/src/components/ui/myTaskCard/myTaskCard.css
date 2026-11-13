@@ -77,7 +77,14 @@
   font-size: 0.8rem;
 }
 
+/* "Completata alle…" e il bottone Annulla, affiancati */
 .my-task-card-completed {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.my-task-card-completed-text {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 700;
@@ -85,17 +92,35 @@
 }
 
 .my-task-card-button {
-  min-height: 45px;
+  min-height: 40px;
   padding: 0 1.4rem;
   border: 0;
-  border-radius: 12px;
+  border-radius: 15px;
   background: var(--primary);
   color: #fff;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .my-task-card-button:hover {
   background: var(--primary-dark);
+}
+
+.my-task-card-undo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.55rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.my-task-card-undo:hover {
+  background: var(--primary-dark);
+  color: #fff;
 }
 
 @media (max-width: 575.98px) {
@@ -104,9 +129,18 @@
   }
 }
 
+/* su telefono e tablet: "Completata alle…" a sinistra, Annulla a destra */
+@media (max-width: 991.98px) {
+  .my-task-card-completed {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
 @media (min-width: 768px) {
   .my-task-card-header {
     flex-direction: row;
     align-items: center;
   }
+  
 }

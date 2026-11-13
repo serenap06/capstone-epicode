@@ -1,5 +1,6 @@
 import "./myTasks.css";
 import api from "../../../api/api";
+import { toggleTaskStatus } from "../../../api/tasks";
 
 import { useState, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
@@ -33,6 +34,21 @@ const MyTasks = () => {
     loadTasks();
   }, []);
 
+  const toggleTask = async (task) => {
+    try {
+      const updatedTask = await toggleTaskStatus(task);
+      setMyTasks((prevTasks) =>
+        prevTasks.map((prevTask) =>
+          prevTask._id === task._id
+            ? { ...prevTask, ...updatedTask }
+            : prevTask,
+        ),
+      );
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
   const todayTasks = myTasks.filter((task) =>
     isSameDay(task.dueDate, new Date()),
   );
@@ -40,6 +56,18 @@ const MyTasks = () => {
   const percent = todayTasks.length
     ? Math.round((doneTodayTasks.length / todayTasks.length) * 100)
     : 0;
+
+  const upcomingTasks = myTasks.filter(
+    (task) => !isSameDay(task.dueDate, new Date()),
+  );
+  const nextDaysTasks = upcomingTasks.filter((task) => task.type === "daily");
+  const monthlyTasks = upcomingTasks.filter((task) => task.type === "monthly");
+
+  const sections = [
+    { title: "Oggi", tasks: todayTasks },
+    { title: "Prossimi giorni", tasks: nextDaysTasks },
+    { title: "Questo mese", tasks: monthlyTasks },
+  ];
 
   return (
     <Container fluid>
@@ -63,13 +91,19 @@ const MyTasks = () => {
           </div>
         </Col>
       </Row>
-      <Row>
-        <Col className="my-tasks-list">
-          {myTasks.map((task) => (
-            <MyTaskCard key={task._id} task={task} />
-          ))}
-        </Col>
-      </Row>
+      {myTasks.length === 0 && !error && <p>Nessuna task in programma</p>}
+      {sections
+        .filter((section) => section.tasks.length > 0)
+        .map((section) => (
+          <Row as="section" key={section.title} className="mb-4">
+            <Col className="my-tasks-list">
+              <h2 className="my-tasks-section-title">{section.title}</h2>
+              {section.tasks.map((task) => (
+                <MyTaskCard key={task._id} task={task} onToggle={toggleTask} />
+              ))}
+            </Col>
+          </Row>
+        ))}
     </Container>
   );
 };

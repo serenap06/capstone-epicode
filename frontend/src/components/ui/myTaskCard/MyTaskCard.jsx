@@ -38,11 +38,21 @@ const MyTaskCard = ({ task, onToggle }) => {
         </p>
       </div>
       {isDone ? (
-        <p className="my-task-card-completed">
-          {task.completedAt
-            ? `Completata alle ${formatTime(task.completedAt)}`
-            : "Completata"}
-        </p>
+        <div className="my-task-card-completed">
+          <p className="my-task-card-completed-text">
+            {task.completedAt
+              ? `Fatto alle ${formatTime(task.completedAt)}`
+              : "Fatto"}
+          </p>
+          <button
+            type="button"
+            className="my-task-card-undo"
+            aria-label={`Annulla il completamento di ${task.title}`}
+            onClick={() => onToggle(task)}
+          >
+            <span className="my-task-card-undo-label">Annulla</span>
+          </button>
+        </div>
       ) : (
         <button
           type="button"

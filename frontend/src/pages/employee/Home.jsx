@@ -1,7 +1,8 @@
 import "./home.css";
 import api from "../../api/api";
+import { toggleTaskStatus } from "../../api/tasks";
 import { useAuth } from "../../hooks/useAuth";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -81,15 +82,13 @@ const Home = () => {
   }, [user._id]);
 
   const toggleTask = async (task) => {
-    const status = task.status === "done" ? "pending" : "done";
     try {
-      const data = await api(`/tasks/${task._id}/status`, {
-        method: "PATCH",
-        body: { status },
-      });
+      const updatedTask = await toggleTaskStatus(task);
       setTasks((prevTasks) =>
         prevTasks.map((prevTask) =>
-          prevTask._id === task._id ? { ...prevTask, ...data.task } : prevTask,
+          prevTask._id === task._id
+            ? { ...prevTask, ...updatedTask }
+            : prevTask,
         ),
       );
     } catch (e) {
@@ -128,7 +127,8 @@ const Home = () => {
 
       <Row
         as="section"
-        xs={2} sm={3}
+        xs={2}
+        sm={3}
         className="g-3 mt-1 home-kpis"
         aria-label="Bacheca utente"
       >
@@ -174,10 +174,7 @@ const Home = () => {
               </span>
             </div>
             <div className="progress-track home-progress" aria-hidden="true">
-              <div
-                className="progress-fill"
-                style={{ width: `${percent}%` }}
-              />
+              <div className="progress-fill" style={{ width: `${percent}%` }} />
             </div>
             {tasks.length === 0 && <p>Nessuna task per oggi</p>}
             <MyTaskList tasks={tasks} onToggle={toggleTask} />

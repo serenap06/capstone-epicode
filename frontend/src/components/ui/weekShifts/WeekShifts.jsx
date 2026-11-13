@@ -9,7 +9,7 @@ const WeekShifts = ({ shifts }) => {
   return (
     <ol className="week-shifts">
       {getWeekDays().map((day) => {
-        const shift = shifts.find((s) => isSameDay(s.startAt, day));
+        const shift = shifts.find((shift) => isSameDay(shift.startAt, day));
         const isToday = isSameDay(day, now);
         const dayName = day.toLocaleDateString("it-IT", { weekday: "short" });
 

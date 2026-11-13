@@ -7,7 +7,6 @@
   border-radius: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
-  margin-top: rem;
 }
 
 .home-panel-header {
@@ -24,22 +23,14 @@
 }
 
 .home-progress {
-  height: 8px;
   margin-bottom: 0.75rem;
-  border-radius: 999px;
-  background: var(--primary-soft);
-}
-
-.home-progress-fill {
-  height: 8px;
-  border-radius: 999px;
-  background: var(--primary);
 }
 
 .home-panel-link {
   align-self: flex-start;
   margin-top: auto;
   padding-top: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
 }
 
@@ -51,4 +42,15 @@
 .home-kpis .kpi-card-value {
   margin-top: 0.2rem;
   font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+}
+
+/* su telefono meno spazio interno ai pannelli, così il contenuto respira */
+@media (max-width: 575.98px) {
+  .home-panel {
+    padding: 1rem;
+  }
+
+  .home-panel-link {
+    font-size: 0.85rem;
+  }
 }

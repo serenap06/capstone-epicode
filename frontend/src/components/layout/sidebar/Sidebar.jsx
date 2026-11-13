@@ -35,7 +35,11 @@ const Sidebar = () => {
         })}
         {showMore && (
           <Dropdown drop="up" align="end" className="app-more">
-            <DropdownToggle variant="light" className="app-link app-more-toggle">
+            <DropdownToggle
+              variant="light"
+              className="app-link app-more-toggle"
+              aria-label="Altre sezioni"
+            >
               <MoreHorizontalIcon className="app-link-icon" size={20}/>
             </DropdownToggle>
             <DropdownMenu>

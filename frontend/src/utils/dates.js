@@ -27,13 +27,13 @@ export const getWeek = () => {
 // I sette giorni della settimana in corso, da lunedì a domenica
 export const getWeekDays = () => {
   const monday = new Date(getWeek().from);
-  return Array.from({ length: 7 }, (_, i) => {
+  return Array.from({ length: 7 }, (_, index) => {
     const day = new Date(monday);
-    day.setDate(monday.getDate() + i);
+    day.setDate(monday.getDate() + index);
     return day;
   });
 };
 
 // true se le due date cadono nello stesso giorno
-export const isSameDay = (a, b) =>
-  new Date(a).toDateString() === new Date(b).toDateString();
+export const isSameDay = (firstDate, secondDate) =>
+  new Date(firstDate).toDateString() === new Date(secondDate).toDateString();

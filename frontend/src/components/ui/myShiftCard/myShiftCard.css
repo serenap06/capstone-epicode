@@ -52,6 +52,7 @@
 }
 
 .my-shift-badge {
+  white-space: nowrap;
   padding: 0.3rem 0.75rem;
   border-radius: 999px;
   background: #ffffff;

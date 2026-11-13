@@ -23,6 +23,7 @@
 }
 
 .task-card-badge {
+  white-space: nowrap;
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
   background: var(--primary-soft);
@@ -61,6 +62,7 @@
 }
 
 .task-card-person {
+  white-space: nowrap;
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
   background: var(--warning-soft);

@@ -1,17 +1,18 @@
-import { useAuth } from "../../hooks/useAuth";
-import { useState } from "react";
 import "./home.css";
-import KpiCard from "../../components/ui/kpiCard/KpiCard";
-import { useEffect } from "react";
-import { getToday, getWeek, isSameDay } from "../../utils/dates";
 import api from "../../api/api";
+import { useAuth } from "../../hooks/useAuth";
+import { useState,useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Container, Row, Col } from "react-bootstrap";
+
+import { getToday, getWeek, isSameDay } from "../../utils/dates";
 import { formatEuro } from "../../utils/formatEuro";
 import { formatLongDate } from "../../utils/formatLongDate";
+
+import KpiCard from "../../components/ui/kpiCard/KpiCard";
 import MyShiftCard from "../../components/ui/myShiftCard/MyShiftCard";
 import MyTaskList from "../../components/ui/myTaskList/MyTaskList";
 import WeekShifts from "../../components/ui/weekShifts/WeekShifts";
-import { Link } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap";
 
 const Home = () => {
   const { user } = useAuth();
@@ -86,8 +87,10 @@ const Home = () => {
         method: "PATCH",
         body: { status },
       });
-      setTasks((prev) =>
-        prev.map((t) => (t._id === task._id ? { ...t, ...data.task } : t)),
+      setTasks((prevTasks) =>
+        prevTasks.map((prevTask) =>
+          prevTask._id === task._id ? { ...prevTask, ...data.task } : prevTask,
+        ),
       );
     } catch (e) {
       setError(e.message);
@@ -112,8 +115,11 @@ const Home = () => {
         <Col>
           <h1 className="page-title">Ciao, {user.name}!</h1>
           <p className="page-subtitle">
-            {today}
-            {storeName && ` · ${storeName}`}
+            <span className="text-nowrap">
+              {today}
+              {storeName && " ·"}
+            </span>{" "}
+            {storeName && <span className="text-nowrap">{storeName}</span>}
           </p>
           {error && <p role="alert">{error}</p>}
           <MyShiftCard shift={myShift} colleagues={colleagueShift} />
@@ -161,15 +167,15 @@ const Home = () => {
           <section className="home-panel" aria-labelledby="home-tasks-title">
             <div className="home-panel-header">
               <h2 id="home-tasks-title" className="section-title">
-                Le tue task di oggi
+                Task di oggi
               </h2>
               <span className="home-panel-count">
                 {doneTasks} su {tasks.length}
               </span>
             </div>
-            <div className="home-progress" aria-hidden="true">
+            <div className="progress-track home-progress" aria-hidden="true">
               <div
-                className="home-progress-fill"
+                className="progress-fill"
                 style={{ width: `${percent}%` }}
               />
             </div>

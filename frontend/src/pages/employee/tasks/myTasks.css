@@ -1,0 +1,14 @@
+.my-tasks-progress {
+  width: 220px;
+}
+.my-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  .my-tasks-progress {
+    width: 100%;
+  }
+}

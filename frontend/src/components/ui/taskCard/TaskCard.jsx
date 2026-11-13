@@ -1,12 +1,10 @@
 import { formatTime } from "../../../utils/formatTime";
+import { CATEGORY, PRIORITY } from "../../../utils/taskLabel";
 import "./taskCard.css";
-
-const PRIORITY = { low: "bassa", medium: "media", high: "alta" };
-const CATEGORY = { operations: "Operativa", administrative: "Amministrativa" };
 
 // scheda di una task con le persone assegnate, per dashboard e pagina task
 const TaskCard = ({ task }) => {
-  const doneCount = task.assignees.filter((a) => a.status === "done").length;
+  const doneCount = task.assignees.filter((assignee) => assignee.status === "done").length;
   const total = task.assignees.length;
   const percent = Math.round((doneCount / total) * 100);
   const dueTime = formatTime(task.dueDate);
@@ -23,8 +21,12 @@ const TaskCard = ({ task }) => {
       </div>
 
       <p className="task-card-meta">
-        Scade alle {dueTime} · {CATEGORY[task.category]} · Priorità{" "}
-        {PRIORITY[task.priority]} · {doneCount} su {total} completate
+        <span className="text-nowrap">Scade alle {dueTime} ·</span>{" "}
+        <span className="text-nowrap">{CATEGORY[task.category]} ·</span>{" "}
+        <span className="text-nowrap">Priorità {PRIORITY[task.priority]} ·</span>{" "}
+        <span className="text-nowrap">
+          {doneCount} su {total} completate
+        </span>
       </p>
 
       <div className="task-card-bar" aria-hidden="true">
@@ -32,13 +34,13 @@ const TaskCard = ({ task }) => {
       </div>
 
       <div className="task-card-people">
-        {task.assignees.map((a) => (
+        {task.assignees.map((assignee) => (
           <span
-            key={a.taskId}
-            className={`task-card-person ${a.status === "done" ? "task-card-person-done" : ""}`}
+            key={assignee.taskId}
+            className={`task-card-person ${assignee.status === "done" ? "task-card-person-done" : ""}`}
           >
-            {a.user.name} {a.user.surname} ·{" "}
-            {a.status === "done" ? "Fatto" : "Da fare"}
+            {assignee.user.name} {assignee.user.surname} ·{" "}
+            {assignee.status === "done" ? "Fatto" : "Da fare"}
           </span>
         ))}
       </div>

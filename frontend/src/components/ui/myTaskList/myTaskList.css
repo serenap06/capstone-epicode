@@ -6,7 +6,7 @@
 
 .my-task-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   padding: 0.25rem 0;
   border-top: 1px solid var(--border);
@@ -16,7 +16,7 @@
   flex: 0 0 auto;
   width: 22px;
   height: 22px;
-  margin: 0;
+  margin: 0.6rem 0 0;
   accent-color: var(--primary);
   cursor: pointer;
 }
@@ -27,8 +27,26 @@
   min-height: 48px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.5rem 0;
   cursor: pointer;
+}
+
+/* titolo e badge: in colonna sotto i 375px, affiancati da 375px in su */
+.my-task-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+@media (min-width: 375px) {
+  .my-task-heading {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
 }
 
 .my-task-title {
@@ -46,11 +64,11 @@
 }
 
 .my-task-badge {
-  flex: 0 0 auto;
-  padding: 0.2rem 0.7rem;
+  white-space: nowrap;
+  padding: 0.15rem 0.6rem;
   border-radius: 999px;
   background: var(--secondary-soft);
   color: var(--secondary-dark);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }

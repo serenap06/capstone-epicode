@@ -18,7 +18,7 @@ const api = async (path, { method = "GET", body } = {}) => {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(translateError(data.message || res.status));
+    throw new Error(translateError(data.message, res.status));
   }
   return data;
 };

@@ -68,3 +68,16 @@ a:hover {
   font-size: 1.25rem;
   font-weight: 800;
 }
+
+/* Barra di avanzamento comune (Home e Le mie task) */
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+}
+
+.progress-fill {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--primary);
+}

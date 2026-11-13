@@ -1,7 +1,6 @@
 import { formatTime } from "../../../utils/formatTime";
+import { CATEGORY } from "../../../utils/taskLabel";
 import "./myTaskList.css";
-
-const CATEGORY = { operations: "Operativa", administrative: "Amministrativa" };
 
 // task del dipendente con la casella per segnarle come fatte
 const MyTaskList = ({ tasks, onToggle }) => {
@@ -22,17 +21,23 @@ const MyTaskList = ({ tasks, onToggle }) => {
               htmlFor={`task-${task._id}`}
               className={`my-task-label ${isDone ? "my-task-done" : ""}`}
             >
-              <span className="my-task-title">{task.title}</span>
+              <span className="my-task-heading">
+                <span className="my-task-title">{task.title}</span>
+                {task.isGlobal && (
+                  <span className="my-task-badge">Globale</span>
+                )}
+              </span>
               <span className="my-task-meta">
-                {CATEGORY[task.category]} ·{" "}
-                {isDone
-                  ? task.completedAt
-                    ? `fatta alle ${formatTime(task.completedAt)}`
-                    : "fatta"
-                  : `scade alle ${formatTime(task.dueDate)}`}
+                <span className="text-nowrap">{CATEGORY[task.category]} ·</span>{" "}
+                <span className="text-nowrap">
+                  {isDone
+                    ? task.completedAt
+                      ? `fatta alle ${formatTime(task.completedAt)}`
+                      : "fatta"
+                    : `scade alle ${formatTime(task.dueDate)}`}
+                </span>
               </span>
             </label>
-            {task.isGlobal && <span className="my-task-badge">Globale</span>}
           </li>
         );
       })}

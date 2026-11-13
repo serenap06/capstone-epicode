@@ -4,6 +4,7 @@ import Dashboard from "./pages/admin/dashboard/Dashboard.jsx";
 import Home from "./pages/employee/Home.jsx";
 import ProtectedRoute from "./strategies/ProtectedRoute.jsx";
 import AppLayout from "./components/layout/appLayout/AppLayout.jsx";
+import MyTasks from "./pages/employee/tasks/MyTasks.jsx";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
       <Route element={<ProtectedRoute role={"employee"} />}>
         <Route path="/employee" element={<AppLayout />}>
           <Route index element={<Home />} />
+          <Route path="tasks" element={<MyTasks />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

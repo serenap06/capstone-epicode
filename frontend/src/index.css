@@ -10,12 +10,12 @@
   --text: #1e2440;
   --text-muted: #5a6078;
 
-  /* colore principale: pulsanti, link, voce attiva */
+  /* colore principale: pulsanti, link, voce attiva, "fatto" */
   --primary: #c2185b;
   --primary-dark: #9b1450;
   --primary-soft: #fce4ef;
 
-  /* colore secondario: logo, titoli, "fatto" */
+  /* colore secondario: logo, titoli, "globale" */
   --secondary: #6c4bc4;
   --secondary-dark: #4a2fa3;
   --secondary-soft: #ece7fa;
@@ -69,15 +69,12 @@ a:hover {
   font-weight: 800;
 }
 
-/* Barra di avanzamento comune (Home e Le mie task) */
-.progress-track {
-  height: 8px;
-  border-radius: 999px;
-  background: var(--primary-soft);
-}
-
-.progress-fill {
-  height: 8px;
-  border-radius: 999px;
-  background: var(--primary);
+/* titoletto piccolo e maiuscolo per i gruppi dentro una pagina (Oggi, Giorni…) */
+.section-label {
+  margin: 0 0.05rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--secondary);
 }

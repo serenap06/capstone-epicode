@@ -5,6 +5,7 @@ import Home from "./pages/employee/Home.jsx";
 import ProtectedRoute from "./strategies/ProtectedRoute.jsx";
 import AppLayout from "./components/layout/appLayout/AppLayout.jsx";
 import MyTasks from "./pages/employee/tasks/MyTasks.jsx";
+import MyShifts from "./pages/employee/shifts/MyShifts.jsx";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/employee" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="tasks" element={<MyTasks />} />
+          <Route path="shifts" element={<MyShifts />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

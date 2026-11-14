@@ -1,0 +1,11 @@
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+}
+
+.progress-fill {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--primary);
+}

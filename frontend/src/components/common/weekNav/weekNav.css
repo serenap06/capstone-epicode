@@ -1,0 +1,38 @@
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.week-nav-arrow,
+.week-nav-today {
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.week-nav-arrow {
+  flex: 0 0 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+
+.week-nav-today {
+  flex: 1 1 auto;
+  padding: 0 1.1rem;
+  color: var(--primary-dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.week-nav-arrow:hover,
+.week-nav-today:hover:not(:disabled) {
+  background: var(--primary-soft);
+}
+
+.week-nav-today:disabled {
+  color: var(--text-muted);
+}

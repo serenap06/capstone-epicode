@@ -7,23 +7,9 @@
   padding-right: 1rem;
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* allinea il link "Vedi tutte" alle card, che lasciano spazio alla barra di scorrimento */
+.dashboard-tasks-header {
   padding-right: 1rem;
-}
-
-.section-show-more {
-  font-weight: 600;
-  font-size: 0.93rem;
-}
-
-.dashboard-panel {
-  padding: 1.25rem;
-  border-radius: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
 }
 
 .dashboard-list {

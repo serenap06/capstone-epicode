@@ -1,0 +1,30 @@
+/* forma comune a tutti i badge */
+.app-badge {
+  flex-shrink: 0;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* i colori: uno per significato, uguali in tutta l'app */
+.app-badge-primary {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+.app-badge-secondary {
+  background: var(--secondary-soft);
+  color: var(--secondary-dark);
+}
+
+.app-badge-warning {
+  background: var(--warning-soft);
+  color: var(--warning-text);
+}
+
+.app-badge-white {
+  background: #fff;
+  color: var(--primary-dark);
+}

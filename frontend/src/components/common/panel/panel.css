@@ -1,0 +1,21 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.25rem;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* il footer resta in fondo anche quando il riquadro è più alto del contenuto */
+.panel-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+@media (max-width: 575.98px) {
+  .panel {
+    padding: 1rem;
+  }
+}

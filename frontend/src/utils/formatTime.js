@@ -5,6 +5,16 @@ export const formatTime = (date) => {
   return `${time.getHours()}:${minutes}`;
 };
 
-// Fascia oraria compatta, per esempio "9–17"
+// Orario corto: solo l'ora se i minuti sono zero ("9"), altrimenti completo ("9:30")
+const formatShortTime = (date) =>
+  new Date(date).getMinutes() === 0
+    ? String(new Date(date).getHours())
+    : formatTime(date);
+
+// Fascia oraria compatta, per esempio "9 – 17" oppure "9:30 – 17"
 export const formatHourRange = (start, end) =>
-  `${new Date(start).getHours()}–${new Date(end).getHours()}`;
+  `${formatShortTime(start)} – ${formatShortTime(end)}`;
+
+// Fascia oraria completa, per esempio "9:00 – 17:00"
+export const formatTimeRange = (start, end) =>
+  `${formatTime(start)} – ${formatTime(end)}`;

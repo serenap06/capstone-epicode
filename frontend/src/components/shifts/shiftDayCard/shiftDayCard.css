@@ -1,0 +1,124 @@
+.shift-day {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* casella con giorno e numero: viola, il colore dei turni */
+.shift-day-title {
+  flex: 0 0 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-radius: 12px;
+  background: var(--secondary-soft);
+  color: var(--secondary-dark);
+}
+
+.shift-day-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.shift-day-number {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* orario a sinistra, colleghi a destra; su schermi stretti i colleghi vanno sotto */
+.shift-day-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.25rem;
+}
+
+.shift-day-time {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.shift-day-hours,
+.shift-day-alone {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* icona dei colleghi davanti ai badge */
+.shift-day-with {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.shift-day-today .shift-day-with {
+  color: var(--primary-dark);
+}
+
+.shift-day-colleagues {
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* se la card è stretta il badge può restringersi e andare a capo
+   tra nome e orario, invece di uscire dal riquadro */
+.shift-day-colleagues .app-badge {
+  flex-shrink: 1;
+  min-width: 0;
+  white-space: normal;
+  border-radius: 14px;
+}
+
+/* giorno di riposo: tratteggiato e grigio */
+.shift-day-rest {
+  background: transparent;
+  border-style: dashed;
+}
+
+.shift-day-rest .shift-day-title {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.shift-day-rest .shift-day-time {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* oggi: magenta, come nella Home (dopo il riposo, così vince se oggi è riposo) */
+.shift-day-today {
+  background: var(--primary-soft);
+  border: 2px solid var(--primary);
+}
+
+.shift-day-today .shift-day-title {
+  background: var(--primary);
+  color: #fff;
+}
+
+@media (max-width: 575.98px) {
+  .shift-day {
+    gap: 0.85rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .shift-day-title {
+    flex-basis: 44px;
+  }
+}

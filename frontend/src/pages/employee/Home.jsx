@@ -1,23 +1,27 @@
 import "./home.css";
-import api from "../../api/api";
-import { toggleTaskStatus } from "../../api/tasks";
+import { loadData } from "../../api/loadData";
+import { replaceTask, toggleTaskStatus } from "../../api/tasks";
 import { useAuth } from "../../hooks/useAuth";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
-import { getToday, getWeek, isSameDay } from "../../utils/dates";
+import { getToday, getWeek, isSameDay, toQuery } from "../../utils/dates";
+import { getPercent } from "../../utils/getPercent";
 import { formatEuro } from "../../utils/formatEuro";
 import { formatLongDate } from "../../utils/formatLongDate";
 
-import KpiCard from "../../components/ui/kpiCard/KpiCard";
-import MyShiftCard from "../../components/ui/myShiftCard/MyShiftCard";
-import MyTaskList from "../../components/ui/myTaskList/MyTaskList";
-import WeekShifts from "../../components/ui/weekShifts/WeekShifts";
+import KpiCard from "../../components/common/kpiCard/KpiCard";
+import Message from "../../components/common/message/Message";
+import PageHeader from "../../components/common/pageHeader/PageHeader";
+import Panel from "../../components/common/panel/Panel";
+import ProgressBar from "../../components/common/progressBar/ProgressBar";
+import MyShiftCard from "../../components/shifts/myShiftCard/MyShiftCard";
+import MyTaskList from "../../components/tasks/myTaskList/MyTaskList";
+import WeekShifts from "../../components/shifts/weekShifts/WeekShifts";
 
 const Home = () => {
   const { user } = useAuth();
-  const [storeName, setStoreName] = useState("");
   const [shifts, setShifts] = useState([]);
   const [hours, setHours] = useState(null);
   const [tasks, setTasks] = useState([]);
@@ -25,72 +29,38 @@ const Home = () => {
   const [error, setError] = useState("");
 
   const today = formatLongDate();
+  const storeName = user.store?.name ?? "";
 
   useEffect(() => {
-    const todayQuery = new URLSearchParams(getToday()).toString();
-    const weekQuery = new URLSearchParams(getWeek()).toString();
+    const todayQuery = toQuery(getToday());
+    const weekQuery = toQuery(getWeek());
 
-    const loadStore = async () => {
-      try {
-        const data = await api("/users/me");
-        setStoreName(data.user.store?.name ?? "");
-      } catch (e) {
-        setError(e.message);
-      }
-    };
-
-    const loadShifts = async () => {
-      try {
-        const data = await api(`/shifts?${weekQuery}`);
-        setShifts(data.shifts);
-      } catch (e) {
-        setError(e.message);
-      }
-    };
-
-    const loadHours = async () => {
-      try {
-        const data = await api(`/shifts/hours?${weekQuery}`);
-        setHours(data.hours[0]);
-      } catch (e) {
-        setError(e.message);
-      }
-    };
-
-    const loadTasks = async () => {
-      try {
-        const data = await api(`/tasks/mine?${todayQuery}`);
-        setTasks(data.tasks);
-      } catch (e) {
-        setError(e.message);
-      }
-    };
-
-    const loadSales = async () => {
-      try {
-        const data = await api(`/sales?soldBy=${user._id}&${todayQuery}`);
-        setSales(data.totals);
-      } catch (e) {
-        setError(e.message);
-      }
-    };
-    loadStore();
-    loadShifts();
-    loadHours();
-    loadTasks();
-    loadSales();
+    loadData(
+      `/shifts?${weekQuery}`,
+      (data) => setShifts(data.shifts),
+      setError,
+    );
+    loadData(
+      `/shifts/hours?${weekQuery}`,
+      (data) => setHours(data.hours[0]),
+      setError,
+    );
+    loadData(
+      `/tasks/mine?${todayQuery}`,
+      (data) => setTasks(data.tasks),
+      setError,
+    );
+    loadData(
+      `/sales?soldBy=${user._id}&${todayQuery}`,
+      (data) => setSales(data.totals),
+      setError,
+    );
   }, [user._id]);
 
   const toggleTask = async (task) => {
     try {
       const updatedTask = await toggleTaskStatus(task);
-      setTasks((prevTasks) =>
-        prevTasks.map((prevTask) =>
-          prevTask._id === task._id
-            ? { ...prevTask, ...updatedTask }
-            : prevTask,
-        ),
-      );
+      setTasks((prevTasks) => replaceTask(prevTasks, updatedTask));
     } catch (e) {
       setError(e.message);
     }
@@ -104,23 +74,25 @@ const Home = () => {
     (shift) => shift.user._id !== user._id,
   );
   const doneTasks = tasks.filter((task) => task.status === "done").length;
-  const percent = tasks.length
-    ? Math.round((doneTasks / tasks.length) * 100)
-    : 0;
+  const percent = getPercent(doneTasks, tasks.length);
 
   return (
     <Container fluid>
-      <Row>
-        <Col>
-          <h1 className="page-title">Ciao, {user.name}!</h1>
-          <p className="page-subtitle">
+      <PageHeader
+        title={`Ciao, ${user.name}!`}
+        subtitle={
+          <>
             <span className="text-nowrap">
               {today}
               {storeName && " ·"}
             </span>{" "}
             {storeName && <span className="text-nowrap">{storeName}</span>}
-          </p>
-          {error && <p role="alert">{error}</p>}
+          </>
+        }
+        error={error}
+      />
+      <Row>
+        <Col>
           <MyShiftCard shift={myShift} colleagues={colleagueShift} />
         </Col>
       </Row>
@@ -164,36 +136,38 @@ const Home = () => {
 
       <Row className="g-4 mt-1">
         <Col lg={6}>
-          <section className="home-panel" aria-labelledby="home-tasks-title">
-            <div className="home-panel-header">
-              <h2 id="home-tasks-title" className="section-title">
-                Task di oggi
-              </h2>
-              <span className="home-panel-count">
+          <Panel
+            className="h-100"
+            title="Task di oggi"
+            aside={
+              <span className="section-count">
                 {doneTasks} su {tasks.length}
               </span>
-            </div>
-            <div className="progress-track home-progress" aria-hidden="true">
-              <div className="progress-fill" style={{ width: `${percent}%` }} />
-            </div>
-            {tasks.length === 0 && <p>Nessuna task per oggi</p>}
+            }
+            footer={
+              <Link to="/employee/tasks" className="section-link">
+                Vedi tutte le task
+              </Link>
+            }
+          >
+            <ProgressBar percent={percent} className="home-progress" />
+            {tasks.length === 0 && <Message>Nessuna task per oggi</Message>}
             <MyTaskList tasks={tasks} onToggle={toggleTask} />
-            <Link to="/employee/tasks" className="home-panel-link">
-              Vedi tutte le task
-            </Link>
-          </section>
+          </Panel>
         </Col>
 
         <Col lg={6}>
-          <section className="home-panel" aria-labelledby="home-week-title">
-            <h2 id="home-week-title" className="section-title">
-              La tua settimana
-            </h2>
+          <Panel
+            className="h-100"
+            title="La tua settimana"
+            footer={
+              <Link to="/employee/shifts" className="section-link">
+                Vedi tutti i turni
+              </Link>
+            }
+          >
             <WeekShifts shifts={myWeekShifts} />
-            <Link to="/employee/shifts" className="home-panel-link">
-              Vedi tutti i turni
-            </Link>
-          </section>
+          </Panel>
         </Col>
       </Row>
     </Container>

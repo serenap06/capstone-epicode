@@ -1,49 +1,37 @@
 import "./myTasks.css";
-import api from "../../../api/api";
-import { toggleTaskStatus } from "../../../api/tasks";
+import { loadData } from "../../../api/loadData";
+import { replaceTask, toggleTaskStatus } from "../../../api/tasks";
+import { useAuth } from "../../../hooks/useAuth";
 
 import { useState, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
 import { getToday, isSameDay } from "../../../utils/dates";
-import MyTaskCard from "../../../components/ui/myTaskCard/MyTaskCard";
+import { getPercent } from "../../../utils/getPercent";
+import Message from "../../../components/common/message/Message";
+import PageHeader from "../../../components/common/pageHeader/PageHeader";
+import ProgressBar from "../../../components/common/progressBar/ProgressBar";
+import MyTaskCard from "../../../components/tasks/myTaskCard/MyTaskCard";
 
 const MyTasks = () => {
+  const { user } = useAuth();
   const [myTasks, setMyTasks] = useState([]);
   const [error, setError] = useState("");
-  const [storeName, setStoreName] = useState("");
+
+  const storeName = user.store?.name ?? "";
 
   useEffect(() => {
-    const loadStore = async () => {
-      try {
-        const data = await api("/users/me");
-        setStoreName(data.user.store?.name ?? "");
-      } catch (e) {
-        setError(e.message);
-      }
-    };
-    const loadTasks = async () => {
-      try {
-        const data = await api(`/tasks/mine?from=${getToday().from}`);
-        setMyTasks(data.tasks);
-      } catch (e) {
-        setError(e.message);
-      }
-    };
-    loadStore();
-    loadTasks();
+    loadData(
+      `/tasks/mine?from=${getToday().from}`,
+      (data) => setMyTasks(data.tasks),
+      setError,
+    );
   }, []);
 
   const toggleTask = async (task) => {
     try {
       const updatedTask = await toggleTaskStatus(task);
-      setMyTasks((prevTasks) =>
-        prevTasks.map((prevTask) =>
-          prevTask._id === task._id
-            ? { ...prevTask, ...updatedTask }
-            : prevTask,
-        ),
-      );
+      setMyTasks((prevTasks) => replaceTask(prevTasks, updatedTask));
     } catch (e) {
       setError(e.message);
     }
@@ -53,9 +41,7 @@ const MyTasks = () => {
     isSameDay(task.dueDate, new Date()),
   );
   const doneTodayTasks = todayTasks.filter((task) => task.status === "done");
-  const percent = todayTasks.length
-    ? Math.round((doneTodayTasks.length / todayTasks.length) * 100)
-    : 0;
+  const percent = getPercent(doneTodayTasks.length, todayTasks.length);
 
   const upcomingTasks = myTasks.filter(
     (task) => !isSameDay(task.dueDate, new Date()),
@@ -71,33 +57,29 @@ const MyTasks = () => {
 
   return (
     <Container fluid>
-      <Row className="align-items-end g-3 mb-4">
-        <Col>
-          <h1 className="page-title">Le mie task</h1>
-          <p className="page-subtitle">
+      <PageHeader
+        title="Le mie task"
+        subtitle={
+          <>
             {storeName && <span className="text-nowrap">{storeName} ·</span>}{" "}
             <span className="text-nowrap">
               {doneTodayTasks.length} su {todayTasks.length} completate oggi
             </span>
-          </p>
-          {error && <p role="alert">{error}</p>}
-        </Col>
-        <Col xs={12} md="auto">
-          <div className="progress-track my-tasks-progress" aria-hidden="true">
-            <div
-              className="progress-fill"
-              style={{ width: `${percent}%` }}
-            ></div>
-          </div>
-        </Col>
-      </Row>
-      {myTasks.length === 0 && !error && <p>Nessuna task in programma</p>}
+          </>
+        }
+        error={error}
+      >
+        <ProgressBar percent={percent} className="my-tasks-progress" />
+      </PageHeader>
+      {myTasks.length === 0 && !error && (
+        <Message>Nessuna task in programma</Message>
+      )}
       {sections
         .filter((section) => section.tasks.length > 0)
         .map((section) => (
           <Row as="section" key={section.title} className="mb-4">
             <Col className="my-tasks-list">
-              <h2 className="my-tasks-section-title">{section.title}</h2>
+              <h2 className="section-label">{section.title}</h2>
               {section.tasks.map((task) => (
                 <MyTaskCard key={task._id} task={task} onToggle={toggleTask} />
               ))}

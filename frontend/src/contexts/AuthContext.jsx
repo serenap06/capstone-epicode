@@ -4,6 +4,12 @@ import api from "../api/api";
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
+// utente collegato, con il nome del suo negozio (user.store.name)
+const fetchProfile = async () => {
+  const data = await api("/users/me");
+  return data.user;
+};
+
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,8 +23,8 @@ const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const me = await api("/auth/me");
-        setUser(me);
+        const profile = await fetchProfile();
+        setUser(profile);
       } catch {
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
@@ -37,8 +43,9 @@ const AuthProvider = ({ children }) => {
     });
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem("token", data.token);
-    setUser(data.user);
-    return data.user;
+    const profile = await fetchProfile();
+    setUser(profile);
+    return profile;
   };
   const logout = () => {
     localStorage.removeItem("token");

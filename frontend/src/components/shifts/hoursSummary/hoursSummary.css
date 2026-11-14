@@ -1,0 +1,39 @@
+.hours-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: 1.25rem;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.hours-summary-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.hours-summary-value {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+/* barra e riga del contratto: prendono lo spazio che resta, su telefono vanno sotto */
+.hours-summary-progress {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hours-summary-detail {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

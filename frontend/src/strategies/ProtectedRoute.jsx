@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { getHomePath } from "../utils/getHomePath";
 
 const ProtectedRoute = ({ role }) => {
   const { user, loading } = useAuth();
@@ -9,9 +10,7 @@ const ProtectedRoute = ({ role }) => {
   if (!user) return <Navigate to="/" replace />;
 
   if (user && user.role !== role) {
-    return (
-      <Navigate to={user.role === "admin" ? "/admin" : "/employee"} replace />
-    );
+    return <Navigate to={getHomePath(user.role)} replace />;
   }
   return <Outlet />;
 };

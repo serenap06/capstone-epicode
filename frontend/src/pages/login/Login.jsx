@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
+import { getHomePath } from "../../utils/getHomePath";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -27,16 +28,14 @@ const Login = () => {
 
   if (loading) return null;
   if (user) {
-    return (
-      <Navigate to={user.role === "admin" ? "/admin" : "/employee"} replace />
-    );
+    return <Navigate to={getHomePath(user.role)} replace />;
   }
 
   const onSubmit = async ({ email, password, remember }) => {
     setServerError("");
     try {
       const loggedUser = await login(email, password, remember);
-      navigate(loggedUser.role === "admin" ? "/admin" : "/employee");
+      navigate(getHomePath(loggedUser.role));
     } catch (e) {
       setServerError(e.message);
     }

@@ -1,9 +1,11 @@
+/* tolgo margini e pallini della lista <ul> */
 .my-task-list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* una riga: casella e testo affiancati, con una linea sopra */
 .my-task-row {
   display: flex;
   align-items: flex-start;
@@ -12,6 +14,7 @@
   border-top: 1px solid var(--border);
 }
 
+/* la casella: accent-color la colora di magenta quando è spuntata */
 .my-task-check {
   flex: 0 0 auto;
   width: 22px;
@@ -21,6 +24,8 @@
   cursor: pointer;
 }
 
+/* il testo della riga: alto almeno 48px, così è facile da toccare.
+   cursor: pointer mostra la manina, perché cliccando si spunta la casella */
 .my-task-label {
   flex: 1 1 auto;
   min-width: 0;
@@ -49,15 +54,18 @@
   }
 }
 
+/* il titolo della task */
 .my-task-title {
   font-weight: 600;
 }
 
+/* categoria e orario, piccoli e grigi */
 .my-task-meta {
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
+/* task fatta: titolo barrato e grigio */
 .my-task-done .my-task-title {
   text-decoration: line-through;
   color: var(--text-muted);

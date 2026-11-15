@@ -1,3 +1,5 @@
+/* card di una task: corpo a sinistra e bottone a destra; con flex-wrap
+   il bottone va sotto quando lo spazio non basta */
 .my-task-card {
   display: flex;
   flex-wrap: wrap;
@@ -10,6 +12,7 @@
   border: 1px solid var(--border);
 }
 
+/* il corpo cresce e si stringe, ma prova a restare largo almeno 320px */
 .my-task-card-body {
   flex: 1 1 320px;
   min-width: 0;
@@ -18,6 +21,7 @@
   gap: 0.5rem;
 }
 
+/* titolo e badge: in colonna su telefono (in riga da 768px, vedi in fondo) */
 .my-task-card-header {
   display: flex;
   flex-direction: column;
@@ -25,6 +29,7 @@
   gap: 0.5rem;
 }
 
+/* overflow-wrap: anywhere fa andare a capo anche una parola lunghissima */
 .my-task-card-title {
   min-width: 0;
   margin: 0;
@@ -33,11 +38,13 @@
   font-weight: 700;
 }
 
+/* i badge in riga */
 .my-task-card-badges {
   display: flex;
   gap: 0.5rem;
 }
 
+/* descrizione e dettagli grigi */
 .my-task-card-description,
 .my-task-card-meta {
   margin: 0;
@@ -59,6 +66,7 @@
   gap: 0.75rem;
 }
 
+/* "Fatto alle 9:42" */
 .my-task-card-completed-text {
   margin: 0;
   font-size: 0.9rem;
@@ -66,6 +74,7 @@
   color: var(--primary-dark);
 }
 
+/* bottone magenta "Segna come fatto" */
 .my-task-card-button {
   min-height: 40px;
   padding: 0 1.4rem;
@@ -80,6 +89,7 @@
   background: var(--primary-dark);
 }
 
+/* pillola magenta chiaro "Annulla" */
 .my-task-card-undo {
   display: inline-flex;
   align-items: center;
@@ -93,11 +103,13 @@
   font-weight: 600;
 }
 
+/* al passaggio del mouse i colori si invertono */
 .my-task-card-undo:hover {
   background: var(--primary-dark);
   color: #fff;
 }
 
+/* su telefono il bottone è largo tutta la card, più facile da toccare */
 @media (max-width: 575.98px) {
   .my-task-card-button {
     width: 100%;
@@ -112,6 +124,7 @@
   }
 }
 
+/* da tablet in su titolo e badge tornano affiancati */
 @media (min-width: 768px) {
   .my-task-card-header {
     flex-direction: row;

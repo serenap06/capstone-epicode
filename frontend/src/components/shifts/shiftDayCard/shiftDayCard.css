@@ -1,3 +1,4 @@
+/* card di un giorno: casella del giorno a sinistra e contenuto a destra */
 .shift-day {
   display: flex;
   align-items: center;
@@ -20,6 +21,7 @@
   color: var(--secondary-dark);
 }
 
+/* "LUN", piccolo e maiuscolo */
 .shift-day-name {
   font-size: 0.75rem;
   font-weight: 800;
@@ -27,6 +29,7 @@
   text-transform: uppercase;
 }
 
+/* il numero del giorno, grande */
 .shift-day-number {
   font-size: 1.5rem;
   font-weight: 800;
@@ -44,12 +47,14 @@
   gap: 0.5rem 1.25rem;
 }
 
+/* l'orario del turno, oppure "Riposo" */
 .shift-day-time {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 700;
 }
 
+/* "8 ore" e "Nessun collega in turno", piccoli e grigi */
 .shift-day-hours,
 .shift-day-alone {
   margin: 0;
@@ -63,10 +68,12 @@
   color: var(--text-muted);
 }
 
+/* nella card di oggi l'icona diventa magenta scuro, per leggersi sullo sfondo magenta chiaro */
 .shift-day-today .shift-day-with {
   color: var(--primary-dark);
 }
 
+/* icona e badge dei colleghi in riga; min-width e max-width li tengono dentro la card */
 .shift-day-colleagues {
   min-width: 0;
   max-width: 100%;
@@ -91,6 +98,7 @@
   border-style: dashed;
 }
 
+/* nel giorno di riposo la casella non ha colore */
 .shift-day-rest .shift-day-title {
   background: transparent;
   color: var(--text-muted);
@@ -107,11 +115,13 @@
   border: 2px solid var(--primary);
 }
 
+/* nel giorno di oggi la casella è magenta piena con testo bianco */
 .shift-day-today .shift-day-title {
   background: var(--primary);
   color: #fff;
 }
 
+/* su telefono card e casella un po' più strette */
 @media (max-width: 575.98px) {
   .shift-day {
     gap: 0.85rem;

@@ -1,13 +1,18 @@
+/* stili solo di "Le mie task" */
+
+/* barra accanto al titolo, larga 220px */
 .my-tasks-progress {
   width: 220px;
 }
 
+/* le card di una sezione una sotto l'altra */
 .my-tasks-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+/* su telefono la barra va sotto il titolo, larga tutta la riga */
 @media (max-width: 767.98px) {
   .my-tasks-progress {
     width: 100%;

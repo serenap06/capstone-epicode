@@ -1,3 +1,4 @@
+/* card di una task del responsabile: gli elementi uno sotto l'altro */
 .task-card {
   display: flex;
   flex-direction: column;
@@ -8,6 +9,7 @@
   border: 1px solid var(--border);
 }
 
+/* titolo a sinistra e badge del negozio a destra */
 .task-card-header {
   display: flex;
   flex-wrap: wrap;
@@ -22,18 +24,26 @@
   font-weight: 700;
 }
 
+/* riga con scadenza, categoria, priorità e completate */
 .task-card-meta {
   margin: 0;
   font-size: 0.9rem;
   color: var(--text-muted);
 }
 
+/* badge delle persone assegnate, a capo se non ci stanno */
 .task-card-people {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+/* bottone "Elimina per tutti" in fondo alla card, a destra */
+.task-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
 
+/* su telefono meno spazio tra gli elementi */
 @media (max-width: 767px) {
   .task-card {
     display: flex;

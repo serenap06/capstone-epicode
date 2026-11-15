@@ -1,14 +1,17 @@
+/* struttura della pagina: barra in alto e sotto il corpo, alta almeno tutto lo schermo (100vh) */
 .app-layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+/* il corpo prende tutto lo spazio che resta: menu a sinistra e pagina a destra */
 .app-body {
   flex: 1;
   display: flex;
 }
 
+/* la pagina prende tutta la larghezza rimasta; in colonna, così il footer può andare in fondo */
 .app-main {
   flex: 1;
   min-width: 0;
@@ -17,7 +20,8 @@
   flex-direction: column;
 }
 
-@media (max-width: 767px) {
+/* su telefono e tablet il menu è una barra fissa in basso: lascio spazio sotto, così non copre il contenuto */
+@media (max-width: 1023.98px) {
   .app-main {
     padding-bottom: 5.5rem;
   }

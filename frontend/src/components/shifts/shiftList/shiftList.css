@@ -1,9 +1,11 @@
+/* gruppi di turni (uno per negozio), uno sotto l'altro */
 .shift-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+/* nome del negozio, viola */
 .shift-list-store {
   margin: 0 0 0.25rem;
   font-size: 0.9rem;
@@ -11,6 +13,7 @@
   color: var(--secondary);
 }
 
+/* una riga: nome, eventuale badge "In turno" e orario, con una linea sopra */
 .shift-list-row {
   display: flex;
   align-items: center;
@@ -19,12 +22,14 @@
   border-top: 1px solid var(--border);
 }
 
+/* il nome prende tutto lo spazio che resta e spinge l'orario a destra */
 .shift-list-name {
   flex: 1 1 auto;
   min-width: 0;
   font-weight: 600;
 }
 
+/* l'orario non si stringe e non va a capo */
 .shift-list-time {
   flex: 0 0 auto;
   color: var(--text-muted);

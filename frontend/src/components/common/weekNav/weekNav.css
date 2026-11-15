@@ -1,9 +1,11 @@
+/* frecce e "Questa settimana" in riga */
 .week-nav {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
+/* parte comune ai tre bottoni: alti 44px, la misura minima comoda da toccare col dito */
 .week-nav-arrow,
 .week-nav-today {
   min-height: 44px;
@@ -12,6 +14,7 @@
   background: var(--surface);
 }
 
+/* frecce quadrate (44x44) con l'icona centrata */
 .week-nav-arrow {
   flex: 0 0 44px;
   display: inline-flex;
@@ -20,6 +23,7 @@
   color: var(--text);
 }
 
+/* il bottone centrale prende lo spazio che resta */
 .week-nav-today {
   flex: 1 1 auto;
   padding: 0 1.1rem;
@@ -28,11 +32,13 @@
   font-weight: 700;
 }
 
+/* sfondo magenta chiaro al passaggio del mouse, ma non sul bottone disattivato */
 .week-nav-arrow:hover,
 .week-nav-today:hover:not(:disabled) {
   background: var(--primary-soft);
 }
 
+/* "Questa settimana" grigio quando sei già nella settimana in corso */
 .week-nav-today:disabled {
   color: var(--text-muted);
 }

@@ -1,3 +1,5 @@
+/* riquadro bianco del riepilogo ore: numero grande a sinistra, barra a destra.
+   gap con due valori: 0.75rem tra le righe, 1.5rem tra le colonne */
 .hours-summary {
   display: flex;
   flex-wrap: wrap;
@@ -9,6 +11,7 @@
   border: 1px solid var(--border);
 }
 
+/* "Ore pianificate", piccolo e grigio */
 .hours-summary-label {
   margin: 0;
   font-size: 0.8rem;
@@ -16,6 +19,7 @@
   color: var(--text-muted);
 }
 
+/* "40 su 40 h", grande; nowrap per non spezzarlo su due righe */
 .hours-summary-value {
   margin: 0;
   font-size: 1.75rem;
@@ -32,6 +36,7 @@
   gap: 0.5rem;
 }
 
+/* riga "Contratto di 40 ore a settimana · 5 turni" */
 .hours-summary-detail {
   margin: 0;
   font-size: 0.8rem;

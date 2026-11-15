@@ -1,3 +1,4 @@
+// elenco di tutte le pagine dell'app e dell'indirizzo a cui si trovano
 import { Navigate, Routes, Route } from "react-router-dom";
 import Login from "./pages/login/Login.jsx";
 import Dashboard from "./pages/admin/dashboard/Dashboard.jsx";
@@ -6,16 +7,25 @@ import ProtectedRoute from "./strategies/ProtectedRoute.jsx";
 import AppLayout from "./components/layout/appLayout/AppLayout.jsx";
 import MyTasks from "./pages/employee/tasks/MyTasks.jsx";
 import MyShifts from "./pages/employee/shifts/MyShifts.jsx";
+import Tasks from "./pages/admin/tasks/Tasks.jsx";
 
 const App = () => {
   return (
     <Routes>
+      {/* pagina di accesso, l'unica aperta a tutti */}
       <Route path="/" element={<Login />} />
+
+      {/* pagine del responsabile: ProtectedRoute fa entrare solo chi ha ruolo "admin",
+          AppLayout disegna barra in alto, menu e footer intorno alla pagina */}
       <Route element={<ProtectedRoute role={"admin"} />}>
         <Route path="/admin" element={<AppLayout />}>
+          {/* index = la pagina che si apre su /admin */}
           <Route index element={<Dashboard />} />
+          <Route path="tasks" element={<Tasks />} />
         </Route>
       </Route>
+
+      {/* pagine del dipendente, stessa logica con ruolo "employee" */}
       <Route element={<ProtectedRoute role={"employee"} />}>
         <Route path="/employee" element={<AppLayout />}>
           <Route index element={<Home />} />
@@ -23,6 +33,8 @@ const App = () => {
           <Route path="shifts" element={<MyShifts />} />
         </Route>
       </Route>
+
+      {/* qualsiasi indirizzo che non esiste riporta al login */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

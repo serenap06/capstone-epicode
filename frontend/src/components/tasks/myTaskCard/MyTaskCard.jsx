@@ -6,10 +6,13 @@ import { formatDue } from "../../../utils/formatDue";
 import Badge from "../../common/badge/Badge";
 import TaskStatusBadge from "../taskStatusBadge/TaskStatusBadge";
 
+// card di una task del dipendente, nella pagina "Le mie task".
+// task: la task da mostrare; onToggle: la funzione della pagina che la segna come fatta o da fare
 const MyTaskCard = ({ task, onToggle }) => {
   const isDone = task.status === "done";
   return (
     <article className="my-task-card">
+      {/* a sinistra: titolo, badge, descrizione e dettagli */}
       <div className="my-task-card-body">
         <div className="my-task-card-header">
           <h3 className="my-task-card-title">{task.title}</h3>
@@ -21,6 +24,7 @@ const MyTaskCard = ({ task, onToggle }) => {
         {task.description && (
           <p className="my-task-card-description">{task.description}</p>
         )}
+        {/* ogni pezzo in un text-nowrap: va a capo intero, mai a metà */}
         <p className="my-task-card-meta">
           <span className="text-nowrap">
             {isDone ? "Scadeva" : "Scade"} {formatDue(task.dueDate)} ·
@@ -31,6 +35,7 @@ const MyTaskCard = ({ task, onToggle }) => {
           </span>
         </p>
       </div>
+      {/* a destra: se è fatta, l'orario e "Annulla"; altrimenti il bottone "Segna come fatto" */}
       {isDone ? (
         <div className="my-task-card-completed">
           <p className="my-task-card-completed-text">
@@ -38,6 +43,7 @@ const MyTaskCard = ({ task, onToggle }) => {
               ? `Fatto alle ${formatTime(task.completedAt)}`
               : "Fatto"}
           </p>
+          {/* aria-label con il titolo: in pagina ci sono più "Annulla" uguali */}
           <button
             type="button"
             className="my-task-card-undo"

@@ -1,3 +1,4 @@
+/* margin-top: auto spinge il footer in fondo alla pagina anche quando il contenuto è corto */
 .app-footer {
   margin-top: auto;
   padding-top: 2rem;

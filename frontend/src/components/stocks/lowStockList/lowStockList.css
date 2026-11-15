@@ -1,8 +1,10 @@
+/* righe dei prodotti sotto scorta, una sotto l'altra */
 .low-stock-list {
   display: flex;
   flex-direction: column;
 }
 
+/* una riga: prodotto e negozio a sinistra, quantità a destra */
 .low-stock-row {
   display: flex;
   align-items: top;
@@ -12,6 +14,7 @@
   border-top: 1px solid var(--border);
 }
 
+/* nome del prodotto e, sotto, il negozio */
 .low-stock-info {
   display: flex;
   flex-direction: column;
@@ -27,6 +30,7 @@
   color: var(--text-muted);
 }
 
+/* i pezzi rimasti, in arancio scuro come avviso */
 .low-stock-amount {
   font-weight: 600;
   color: var(--warning-text);

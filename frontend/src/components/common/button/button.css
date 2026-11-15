@@ -1,0 +1,59 @@
+/* forma comune a tutti i bottoni: alti almeno 44px (comodi da toccare col dito),
+   icona e testo affiancati e centrati */
+.app-button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0rem 1rem;
+  border-radius: 15px;
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* azione principale: magenta pieno */
+.app-button-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.app-button-primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+/* azione secondaria: bianco con bordo */
+.app-button-secondary {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.app-button-secondary:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+/* eliminare: bianco con testo arancio scuro, così non si clicca per sbaglio pensando sia l'azione principale */
+.app-button-danger {
+  background: var(--surface);
+  border-color: var(--warning-soft);
+  color: var(--warning-text);
+}
+
+.app-button-danger:hover:not(:disabled) {
+  background: var(--warning-soft);
+}
+
+/* bottone disattivato (per esempio mentre aspetto il server) */
+.app-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* bordo magenta quando ci si arriva con la tastiera */
+.app-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

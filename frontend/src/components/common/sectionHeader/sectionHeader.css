@@ -1,3 +1,5 @@
+/* titolo a sinistra e link o conteggio a destra.
+   align-items: baseline allinea i testi sulla stessa linea di base, anche se hanno grandezze diverse */
 .section-header {
   display: flex;
   align-items: baseline;

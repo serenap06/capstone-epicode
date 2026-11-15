@@ -1,0 +1,182 @@
+/* riga dei filtri: flex-wrap li manda a capo quando non ci stanno */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* pulsanti a scelta singola, dentro un contenitore bianco a pillola */
+.filter-chips {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.filter-chip {
+  min-height: 40px;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* testo più scuro al passaggio del mouse */
+.filter-chip:hover {
+  color: var(--text);
+}
+
+/* il pulsante scelto: [aria-pressed="true"] seleziona solo quello con aria-pressed vero */
+.filter-chip[aria-pressed="true"] {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+/* menu a tendina a forma di pillola.
+   appearance: none toglie l'aspetto del sistema operativo: senza, sul Mac il menu
+   resta squadrato e ignora il border-radius. Ma toglie anche la freccina, quindi
+   la rimetto come immagine di sfondo: un'icona SVG scritta direttamente nel CSS,
+   a destra (right 1rem) e centrata in verticale (center). Il padding a destra le lascia spazio */
+.filter-select {
+  appearance: none;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0 2.5rem 0 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%235a6078' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 14px 10px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* bordo magenta quando ci si arriva con la tastiera (Tab): serve a chi non usa il mouse */
+.filter-select:focus-visible,
+.filter-chip:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* su telefono i pulsanti dello stato prendono tutta la riga e si dividono lo spazio */
+@media (max-width: 575.98px) {
+  .filter-chips {
+    flex: 1 1 100%;
+  }
+
+  .filter-chip {
+    flex: 1 1 auto;
+    padding: 0 0.5rem;
+  }
+}
+
+/* --- versione compatta: menu a tendina "Filtri" --- */
+
+/* bottone "Filtri" a pillola bianca, come i menu dei filtri */
+.btn.filter-dropdown-toggle {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* tolgo la freccina di Bootstrap: c'è già l'icona */
+.btn.filter-dropdown-toggle::after {
+  display: none;
+}
+
+/* pallino magenta con il numero di filtri attivi */
+.filter-dropdown-count {
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.75rem;
+}
+
+/* il menu: largo 20rem, ma mai più largo dello schermo meno 2rem di margine */
+.filter-dropdown-menu {
+  width: min(20rem, calc(100vw - 2rem));
+  padding: 0.75rem;
+}
+
+/* i filtri uno sotto l'altro, larghi tutto il menu */
+.filter-dropdown-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filter-dropdown-content .filter-select {
+  width: 100%;
+}
+
+/* --- da 768px in su: tutti i filtri sulla stessa riga --- */
+
+/* nowrap: la riga non va più a capo; flex-shrink: 0: i gruppi di pulsanti non si schiacciano */
+@media (min-width: 768px) {
+  .filter-bar {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+
+  .filter-bar > * {
+    flex-shrink: 0;
+  }
+}
+
+/* tra 768 e 1199px lo spazio non basta con le misure normali:
+   pulsanti e menu più piccoli, e i due menu si dividono lo spazio che resta.
+   flex: 1 1 0 + min-width: 0 li lasciano stringere; se il testo non ci sta finisce con "…" */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .filter-bar .filter-chips {
+    gap: 0.1rem;
+    padding: 0.2rem;
+  }
+
+  .filter-bar .filter-chip {
+    min-height: 34px;
+    padding: 0 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  /* il div che contiene ogni menu (in FilterSelect) */
+  .filter-bar > div:not(.filter-chips) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .filter-bar .filter-select {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 1.8rem 0 0.75rem;
+    background-position: right 0.7rem center;
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+  }
+}

@@ -1,5 +1,7 @@
 /* telefono: lun-gio su una riga (4), ven-dom sotto (3)
    da tablet in su: lun-ven su una riga (5), sab e dom sotto (2) */
+/* griglia di 12 colonne uguali (repeat). minmax(0, 1fr) permette alle colonne di stringersi.
+   list-style: none toglie i numeri della lista <ol> */
 .week-shifts {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -9,6 +11,7 @@
   list-style: none;
 }
 
+/* su telefono ogni giorno occupa 3 colonne su 12: ne stanno 4 per riga (lun-gio) */
 .week-day {
   grid-column: span 3;
   display: flex;
@@ -21,10 +24,12 @@
   border: 1px solid var(--border);
 }
 
+/* :nth-child(n + 5) prende dal 5° elemento in poi (ven, sab, dom): 4 colonne, 3 per riga */
 .week-day:nth-child(n + 5) {
   grid-column: span 4;
 }
 
+/* nome del giorno; capitalize mette la prima lettera maiuscola ("lun" → "Lun") */
 .week-day-name {
   font-size: 0.8rem;
   font-weight: 700;
@@ -32,12 +37,14 @@
   text-transform: capitalize;
 }
 
+/* l'orario, senza andare a capo */
 .week-day-time {
   font-size: 0.9rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
+/* il giorno di oggi: magenta chiaro con bordo magenta */
 .week-day-today {
   background: var(--primary-soft);
   border: 2px solid var(--primary);
@@ -48,6 +55,8 @@
   font-weight: 800;
 }
 
+/* da tablet in su: griglia di 10 colonne. Lun-ven 2 colonne ciascuno (5 per riga),
+   sab e dom 5 colonne ciascuno (sotto, più larghi) */
 @media (min-width: 576px) {
   .week-shifts {
     grid-template-columns: repeat(10, minmax(0, 1fr));

@@ -1,9 +1,11 @@
+/* la "pista" della barra, magenta chiaro */
 .progress-track {
   height: 8px;
   border-radius: 999px;
   background: var(--primary-soft);
 }
 
+/* la parte piena, magenta: la larghezza la decide lo style nel componente */
 .progress-fill {
   height: 8px;
   border-radius: 999px;

@@ -10,18 +10,24 @@ import {
 } from "react-bootstrap";
 import { MoreHorizontalIcon } from "lucide-react";
 
+// menu delle sezioni: a sinistra su computer, barra in basso su telefono
 const Sidebar = () => {
   const { user } = useAuth();
+  // prendo le voci del ruolo dell'utente (vedi menu.js)
   const links = MENU[user.role];
+  // voci che su telefono non stanno nella barra
   const hiddenLinks = links.filter((link) => link.hideOnMobile);
+  // il bottone "Altro" serve solo al responsabile, che ha più voci
   const showMore = user.role === "admin" && hiddenLinks.length > 0;
 
   return (
     <aside className="app-sidebar">
       <nav className="app-nav" aria-label="Sezioni">
         {links.map((link) => {
+          // l'icona è un componente: per usarla nel JSX il nome deve iniziare con la maiuscola
           const Icon = link.icon;
           return (
+            // NavLink aggiunge da solo la classe "active" alla voce della pagina aperta
             <NavLink
               key={link.to}
               to={link.to}
@@ -33,6 +39,7 @@ const Sidebar = () => {
             </NavLink>
           );
         })}
+        {/* menu "Altro" con le voci nascoste su telefono; drop="up" lo apre verso l'alto */}
         {showMore && (
           <Dropdown drop="up" align="end" className="app-more">
             <DropdownToggle

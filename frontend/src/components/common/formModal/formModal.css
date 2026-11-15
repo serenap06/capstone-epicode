@@ -1,0 +1,74 @@
+/* finestra del modulo: angoli tondi come i riquadri dell'app, senza le linee di Bootstrap.
+   .form-modal davanti fa valere queste regole solo per i nostri moduli, non per altri Modal */
+.form-modal .modal-content {
+  border: 0;
+  border-radius: 24px;
+}
+
+/* intestazione senza la linea sotto e con lo stesso spazio ai lati del contenuto */
+.form-modal .modal-header {
+  padding: 1.5rem 1.5rem 0.5rem;
+  border-bottom: 0;
+}
+
+.form-modal .modal-body {
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.form-modal-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+/* da 576px in su (schermi orizzontali): finestra un po' più larga dei 500px di Bootstrap
+   e intestazione più vicina al modulo */
+@media (min-width: 576px) {
+  .form-modal .modal-dialog {
+    max-width: 600px;
+  }
+
+  .form-modal .modal-header {
+    padding-bottom: 0.25rem;
+  }
+
+  .form-modal .modal-body {
+    padding-top: 0.75rem;
+  }
+}
+
+/* da 992px in su il modale "largo" (wide) arriva a 880px, così il modulo sta su due colonne */
+@media (min-width: 992px) {
+  .form-modal-wide .modal-dialog {
+    max-width: 880px;
+  }
+}
+
+/* sotto i 576px il modale è a tutto schermo (fullscreen="sm-down"): niente angoli tondi,
+   altrimenti negli angoli si vede lo sfondo scuro */
+@media (max-width: 575.98px) {
+  .form-modal .modal-content {
+    border-radius: 0;
+  }
+
+  /* su telefono 1rem ai lati invece di 1.5rem: i campi affiancati hanno più spazio.
+     Niente spazio sotto il corpo: ci pensano i bottoni attaccati in fondo */
+  .form-modal .modal-header {
+    padding: 1rem 1rem 0.25rem;
+  }
+
+  .form-modal .modal-body {
+    padding: 0.75rem 1rem 0;
+  }
+
+  /* il modulo può essere più alto dello schermo: i bottoni restano attaccati in fondo
+     (sticky) mentre si scorre, così "Crea task" si preme senza scendere.
+     Il margine negativo li allarga fino ai bordi del modale */
+  .form-modal .form-actions {
+    position: sticky;
+    bottom: 0;
+    margin: 0 -1rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+}

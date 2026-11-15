@@ -1,3 +1,5 @@
+/* card colorata degli indicatori: display block perché a volte è un link (che di base è in linea),
+   height 100% per avere le card della stessa riga alte uguali */
 .kpi-card {
   display: block;
   height: 100%;
@@ -7,10 +9,12 @@
   text-decoration: none;
 }
 
+/* quando la card è un link, il testo resta bianco anche passandoci sopra */
 .kpi-card:hover {
   color: #ffffff;
 }
 
+/* tolgo il margine di Bootstrap ai paragrafi dentro la card */
 .kpi-card p {
   margin: 0;
 }
@@ -20,6 +24,7 @@
   font-weight: 700;
 }
 
+/* il numero grande: cresce con lo schermo tra 1.5 e 2.25rem */
 .kpi-card-value {
   margin-top: 0.5rem;
   font-size: clamp(1.5rem, 3vw, 2.25rem);
@@ -32,6 +37,7 @@
   font-weight: 500;
 }
 
+/* i colori delle card: la classe si compone con la prop color (kpi-card-primary, kpi-card-blue...) */
 .kpi-card-primary {
   background: var(--primary);
 }

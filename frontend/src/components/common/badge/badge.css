@@ -1,4 +1,6 @@
 /* forma comune a tutti i badge */
+/* flex-shrink: 0 → il badge non si stringe; white-space: nowrap → il testo non va a capo;
+   border-radius: 999px → angoli completamente tondi, forma a pillola */
 .app-badge {
   flex-shrink: 0;
   padding: 0.2rem 0.7rem;
@@ -24,6 +26,7 @@
   color: var(--warning-text);
 }
 
+/* bianco: per i badge sopra le card colorate (turno di oggi) */
 .app-badge-white {
   background: #fff;
   color: var(--primary-dark);

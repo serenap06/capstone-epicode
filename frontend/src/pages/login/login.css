@@ -1,3 +1,4 @@
+/* pagina di login: modulo stretto (350px) centrato in verticale nello schermo */
 .login-page {
   max-width: 350px;
   min-height: 100vh;
@@ -6,6 +7,7 @@
   justify-content: center;
 }
 
+/* titolo "LOGIN" magenta */
 .login-title {
   color: var(--primary);
   font-weight: 800;
@@ -13,10 +15,13 @@
   margin-bottom: 2rem;
 }
 
+/* contenitore di campo e icona: position relative fa da riferimento per l'icona */
 .login-field {
   position: relative;
 }
 
+/* icona dentro il campo: position absolute la mette sopra il campo,
+   top 50% + translateY(-50%) la centrano in verticale */
 .login-icon {
   position: absolute;
   left: 1.4rem;
@@ -25,6 +30,7 @@
   color: var(--secondary);
 }
 
+/* campo a pillola; il padding a sinistra lascia spazio all'icona */
 .login-input {
   background: var(--surface);
   border: 2px solid var(--border);
@@ -40,6 +46,7 @@
   font-weight: 400;
 }
 
+/* campo selezionato: bordo magenta e niente ombra blu di Bootstrap */
 .login-input:focus {
   background: var(--surface);
   color: var(--text);
@@ -47,12 +54,14 @@
   box-shadow: none;
 }
 
+/* messaggio sotto il campo sbagliato */
 .login-error {
   color: var(--primary-dark);
   font-size: 0.9rem;
   margin: 0.4rem 0 0 1.5rem;
 }
 
+/* "Ricordami" centrato */
 .login-remember {
   font-size: 1.1rem;
   color: var(--text);
@@ -62,11 +71,13 @@
   gap: 0.5rem;
 }
 
+/* casella spuntata magenta invece che blu */
 .login-remember .form-check-input:checked {
   background-color: var(--primary);
   border-color: var(--primary);
 }
 
+/* bottone "accedi" a pillola; .btn davanti per vincere su Bootstrap */
 .btn.login-button {
   background: var(--primary);
   border: none;

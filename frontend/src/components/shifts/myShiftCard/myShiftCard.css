@@ -12,16 +12,19 @@
   color: #ffffff;
 }
 
+/* tolgo il margine di Bootstrap ai paragrafi dentro la card */
 .my-shift-card p {
   margin: 0;
 }
 
+/* "Il tuo turno di oggi" */
 .my-shift-label {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 700;
 }
 
+/* l'orario grande; scrivo .my-shift-card davanti per vincere sulla regola "p { margin: 0 }" qui sopra */
 .my-shift-card .my-shift-time {
   margin-top: 0.15rem;
   font-size: clamp(1.6rem, 4vw, 2.1rem);
@@ -29,20 +32,24 @@
   letter-spacing: -0.03em;
 }
 
+/* colonna dei colleghi; min-width: 0 le permette di stringersi invece di uscire dalla card */
 .my-shift-colleagues {
   min-width: 0;
 }
 
+/* "Con te oggi" */
 .my-shift-subtitle {
   font-size: 0.85rem;
   font-weight: 600;
 }
 
+/* "Nessun collega in turno" */
 .my-shift-card .my-shift-empty {
   margin-top: 0.25rem;
   font-size: 0.9rem;
 }
 
+/* badge dei colleghi in riga, a capo se non ci stanno */
 .my-shift-badges {
   display: flex;
   flex-wrap: wrap;

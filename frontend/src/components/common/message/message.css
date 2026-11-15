@@ -1,8 +1,10 @@
+/* messaggio normale: testo grigio, per avvisi come "Nessuna task" */
 .message {
   margin: 0;
   color: var(--text-muted);
 }
 
+/* errore: riquadro arancio chiaro con testo arancio scuro */
 .message-error {
   margin-top: 0.75rem;
   padding: 0.75rem 1rem;

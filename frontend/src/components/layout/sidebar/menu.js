@@ -1,3 +1,7 @@
+// voci del menu laterale, una lista per ruolo.
+// Ogni voce ha: to = indirizzo, label = testo, icon = icona di lucide-react,
+// end = true solo per la Dashboard (resta attiva solo sull'indirizzo esatto, non sulle sottopagine),
+// hideOnMobile = true per le voci che su telefono finiscono nel menu "Altro"
 import { 
   Home,  
   Calendar,
@@ -13,6 +17,7 @@ import {
 } from "lucide-react";
 
 export const MENU = {
+  // menu del responsabile
   admin: [
     { to: "/admin", label: "Dashboard", icon: Home, end: true },
     { to: "/admin/shifts", label: "Turni", icon: Calendar },
@@ -25,6 +30,7 @@ export const MENU = {
     { to: "/admin/users", label: "Utenti", icon: Users, hideOnMobile: true },
     { to: "/admin/stores", label: "Negozi", icon: Store, hideOnMobile: true },
   ],
+  // menu del dipendente (la Cassa su telefono è nascosta di proposito)
   employee: [
     { to: "/employee", label: "Dashboard", icon: Home, end: true },
     { to: "/employee/checkout", label: "Cassa", icon: CreditCard, hideOnMobile: true },

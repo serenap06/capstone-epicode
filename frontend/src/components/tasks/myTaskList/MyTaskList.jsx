@@ -3,7 +3,8 @@ import { CATEGORY } from "../../../utils/taskLabel";
 import Badge from "../../common/badge/Badge";
 import "./myTaskList.css";
 
-// task del dipendente con la casella per segnarle come fatte
+// lista delle task di oggi nella Home, con la casella per segnarle come fatte.
+// tasks: le task di oggi; onToggle: la funzione della pagina che cambia lo stato
 const MyTaskList = ({ tasks, onToggle }) => {
   return (
     <ul className="my-task-list">
@@ -11,6 +12,8 @@ const MyTaskList = ({ tasks, onToggle }) => {
         const isDone = task.status === "done";
         return (
           <li key={task._id} className="my-task-row">
+            {/* casella e etichetta sono collegate da id e htmlFor:
+                cliccando sul testo si spunta anche la casella */}
             <input
               type="checkbox"
               id={`task-${task._id}`}
@@ -28,6 +31,7 @@ const MyTaskList = ({ tasks, onToggle }) => {
               </span>
               <span className="my-task-meta">
                 <span className="text-nowrap">{CATEGORY[task.category]} ·</span>{" "}
+                {/* fatta con orario, fatta senza orario, oppure la scadenza */}
                 <span className="text-nowrap">
                   {isDone
                     ? task.completedAt

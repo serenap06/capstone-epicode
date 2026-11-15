@@ -1,0 +1,47 @@
+/* stili solo del Profilo */
+
+/* la pagina non si allarga troppo sugli schermi grandi */
+.profile-page {
+  max-width: 1000px;
+  margin-left: 0;
+}
+
+/* foto, bottone e indicazioni centrati uno sotto l'altro */
+.profile-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+/* "Dati salvati" magenta, come "Fatto" */
+.profile-saved {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+/* righe dell'incarico: nome del dato a sinistra, valore a destra, con una linea sopra */
+.profile-info {
+  margin: 0 0 0.75rem;
+}
+
+.profile-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.profile-info-row dt {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.profile-info-row dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}

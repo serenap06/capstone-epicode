@@ -11,6 +11,7 @@ const MESSAGES = {
   "One or more products are not available":
     "Uno o più prodotti non sono disponibili",
   "No employees in this store": "In questo negozio non ci sono dipendenti",
+  "Upload error": "Foto non valida: usa png, jpg o webp fino a 2 MB",
 };
 
 // messaggi di riserva in base al codice, se il messaggio non è nell'elenco sopra

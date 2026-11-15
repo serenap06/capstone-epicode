@@ -9,17 +9,20 @@ const api = async (path, { method = "GET", body } = {}) => {
   // il token salvato al login
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
+  // i file viaggiano in un FormData: niente JSON, il Content-Type lo scrive il browser
+  const isFormData = body instanceof FormData;
+
   let res;
   try {
     res = await fetch(`${API_URL}${path}`, {
       method,
       headers: {
-        "Content-Type": "application/json",
+        ...(!isFormData && { "Content-Type": "application/json" }),
         // se c'è il token lo aggiungo: così il backend sa chi sono
         ...(token && { Authorization: `Bearer ${token}` }),
       },
-      // il corpo va mandato come testo JSON
-      body: body ? JSON.stringify(body) : undefined,
+      // il corpo: il FormData così com'è, il resto come testo JSON
+      body: isFormData ? body : JSON.stringify(body),
     });
   } catch {
     // fetch fallisce senza risposta quando il server è spento o manca la connessione

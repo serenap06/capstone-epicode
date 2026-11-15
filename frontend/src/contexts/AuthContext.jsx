@@ -63,10 +63,12 @@ const AuthProvider = ({ children }) => {
   };
 
   // value: quello che i componenti leggono con useAuth()
+  // (setUser serve al Profilo, per rimettere l'utente aggiornato)
   return (
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         loading,
         login,
         logout,

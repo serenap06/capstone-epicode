@@ -42,21 +42,6 @@
   color: var(--text);
 }
 
-/* cerchio viola con le iniziali o la foto (object-fit: cover non la deforma) */
-.app-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--secondary);
-  color: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  object-fit: cover;
-}
-
 /* su telefono si vede solo l'avatar, il nome sparisce */
 @media (max-width: 767.98px) {
   .app-user-name {

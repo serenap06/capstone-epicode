@@ -1,0 +1,12 @@
+/* cerchio viola con le iniziali, oppure la foto ritagliata senza deformarla (object-fit: cover) */
+.avatar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--secondary);
+  color: #fff;
+  font-weight: 700;
+  object-fit: cover;
+}

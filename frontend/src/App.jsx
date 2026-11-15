@@ -8,6 +8,7 @@ import AppLayout from "./components/layout/appLayout/AppLayout.jsx";
 import MyTasks from "./pages/employee/tasks/MyTasks.jsx";
 import MyShifts from "./pages/employee/shifts/MyShifts.jsx";
 import Tasks from "./pages/admin/tasks/Tasks.jsx";
+import Profile from "./pages/profile/Profile.jsx";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           {/* index = la pagina che si apre su /admin */}
           <Route index element={<Dashboard />} />
           <Route path="tasks" element={<Tasks />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
 
@@ -30,6 +32,7 @@ const App = () => {
           <Route index element={<Home />} />
           <Route path="tasks" element={<MyTasks />} />
           <Route path="shifts" element={<MyShifts />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
 

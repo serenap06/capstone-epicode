@@ -13,6 +13,15 @@ export const updateProfile = async (profileData) => {
 export const uploadAvatar = async (file) => {
   const formData = new FormData();
   formData.append("avatar", file);
-  const data = await api("/users/me/avatar", { method: "PATCH", body: formData });
+  const data = await api("/users/me/avatar", {
+    method: "PATCH",
+    body: formData,
+  });
+  return data.user;
+};
+
+// toglie la foto profilo: al suo posto tornano le iniziali
+export const removeAvatar = async () => {
+  const data = await api("/users/me/avatar", { method: "DELETE" });
   return data.user;
 };

@@ -68,12 +68,23 @@ const uploadAvatar = async (userId, avatarUrl) => {
   return user;
 };
 
+const removeAvatar = async (userId) => {
+  const user = await User.findById(userId).populate("store", "name city");
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+  user.avatar = undefined;
+  await user.save();
+  return user;
+};
+
 const deleteUser = async (userId) => {
   const user = await User.findByIdAndDelete(userId);
   if (!user) {
     throw new NotFoundException("User not found");
   }
 };
+
 module.exports = {
   findAll,
   findOne,
@@ -82,5 +93,6 @@ module.exports = {
   update,
   updateMe,
   uploadAvatar,
+  removeAvatar,
   deleteUser,
 };

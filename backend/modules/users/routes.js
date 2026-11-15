@@ -23,6 +23,7 @@ usersRouter.patch(
   uploadAvatar.single("avatar"),
   userController.uploadAvatar,
 );
+usersRouter.delete("/me/avatar", userController.removeAvatar);
 
 // Rotte per l'admin
 

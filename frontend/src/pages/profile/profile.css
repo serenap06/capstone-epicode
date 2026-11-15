@@ -15,6 +15,71 @@
   text-align: center;
 }
 
+/* contenitore del cerchio: position relative fa da riferimento al bottone della fotocamera */
+.profile-avatar {
+  position: relative;
+  display: flex;
+}
+
+/* bottone tondo magenta in alto a destra del cerchio; il bordo bianco lo stacca dalla foto */
+.profile-avatar-camera {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+}
+
+.profile-avatar-camera:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.profile-avatar-camera:disabled {
+  opacity: 0.6;
+}
+
+/* bordo magenta quando ci si arriva con la tastiera */
+.profile-avatar-camera:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* "Rimuovi foto": solo testo magenta, più scuro al passaggio del mouse.
+   transition: il colore cambia in 0,2 secondi invece che di colpo.
+   Alto 44px per toccarlo comodo; i margini negativi non allontanano le righe vicine */
+.profile-remove-photo {
+  min-height: 44px;
+  margin: -0.5rem 0;
+  padding: 0 0.75rem;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.profile-remove-photo:hover:not(:disabled) {
+  color: var(--primary-dark);
+}
+
+.profile-remove-photo:disabled {
+  opacity: 0.6;
+}
+
+.profile-remove-photo:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
 /* "Dati salvati" magenta, come "Fatto" */
 .profile-saved {
   font-size: 0.9rem;

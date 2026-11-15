@@ -117,6 +117,19 @@ const uploadAvatar = async (req, res, next) => {
   }
 };
 
+const removeAvatar = async (req, res, next) => {
+  try {
+    const user = await userService.removeAvatar(req.user._id);
+    res.status(200).send({
+      statusCode: 200,
+      message: "User avatar removed successfully",
+      user,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
@@ -133,6 +146,8 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+
+
 module.exports = {
   findAll,
   findOne,
@@ -141,5 +156,6 @@ module.exports = {
   update,
   updateMe,
   uploadAvatar,
+  removeAvatar,
   deleteUser,
 };

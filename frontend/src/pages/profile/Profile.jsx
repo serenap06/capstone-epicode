@@ -1,11 +1,11 @@
 import "./profile.css";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Spinner } from "react-bootstrap";
 import { Camera } from "lucide-react";
 
 import { useAuth } from "../../hooks/useAuth";
-import { updateProfile, uploadAvatar } from "../../api/users";
+import { removeAvatar, updateProfile, uploadAvatar } from "../../api/users";
 import { formatFullName } from "../../utils/formatFullName";
 
 import Avatar from "../../components/common/avatar/Avatar";
@@ -27,6 +27,7 @@ const Profile = () => {
   // true dopo un salvataggio riuscito, per il messaggio "Dati salvati"
   const [isSaved, setIsSaved] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   // aggancio all'input del file, che è nascosto: lo apre il bottone "Cambia foto"
   const fileInputRef = useRef(null);
 
@@ -81,6 +82,23 @@ const Profile = () => {
     }
   };
 
+  // apre la finestra per scegliere il file (l'input vero è nascosto)
+  const openFilePicker = () => fileInputRef.current.click();
+
+  // tolgo la foto e rimetto l'utente nel contesto: anche in alto tornano le iniziali
+  const removePhoto = async () => {
+    setError("");
+    setIsRemoving(true);
+    try {
+      const updatedUser = await removeAvatar();
+      setUser(updatedUser);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   return (
     <Container fluid className="profile-page">
       <PageHeader
@@ -93,7 +111,25 @@ const Profile = () => {
         <Col lg={4}>
           <Panel title="Foto profilo">
             <div className="profile-photo">
-              <Avatar user={user} size={120} />
+              {/* il cerchio fa da riferimento per il bottone della fotocamera (position absolute) */}
+              <div className="profile-avatar">
+                <Avatar user={user} size={120} />
+                {/* bottone tondo con la fotocamera in alto a destra del cerchio;
+                    mentre carico al posto dell'icona gira lo spinner */}
+                <button
+                  type="button"
+                  className="profile-avatar-camera"
+                  aria-label={isUploading ? "Caricamento della foto" : "Cambia foto"}
+                  onClick={openFilePicker}
+                  disabled={isUploading || isRemoving}
+                >
+                  {isUploading ? (
+                    <Spinner animation="border" size="sm" aria-hidden="true" />
+                  ) : (
+                    <Camera size={18} aria-hidden="true" />
+                  )}
+                </button>
+              </div>
               {/* input nascosto: accept mostra solo i formati che il backend accetta */}
               <input
                 ref={fileInputRef}
@@ -102,14 +138,17 @@ const Profile = () => {
                 className="d-none"
                 onChange={changeAvatar}
               />
-              <Button
-                variant="secondary"
-                onClick={() => fileInputRef.current.click()}
-                disabled={isUploading}
-              >
-                <Camera size={18} aria-hidden="true" />
-                {isUploading ? "Caricamento..." : "Cambia foto"}
-              </Button>
+              {/* "Rimuovi foto" solo se c'è una foto: un link discreto sotto il cerchio */}
+              {user.avatar && (
+                <button
+                  type="button"
+                  className="profile-remove-photo"
+                  onClick={removePhoto}
+                  disabled={isUploading || isRemoving}
+                >
+                  {isRemoving ? "Rimozione..." : "Rimuovi foto"}
+                </button>
+              )}
               <p className="form-hint m-0">png, jpg o webp · massimo 2 MB</p>
             </div>
           </Panel>

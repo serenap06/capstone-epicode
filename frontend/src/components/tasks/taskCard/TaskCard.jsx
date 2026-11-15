@@ -12,10 +12,9 @@ import TaskStatusBadge from "../taskStatusBadge/TaskStatusBadge";
 import { Trash2 } from "lucide-react";
 import "./taskCard.css";
 
-// scheda di una task con le persone assegnate, per dashboard e pagina task del responsabile.
-// task arriva dal server già raggruppata: una task con dentro assignees, l'elenco delle persone
+// card di una task del responsabile; assignees: le persone assegnate, ognuna con il suo stato
 const TaskCard = ({ task, onDelete }) => {
-  // quante persone l'hanno finita, su quante sono assegnate
+  // quante persone l'hanno finita
   const doneCount = task.assignees.filter(
     (assignee) => assignee.status === "done",
   ).length;
@@ -27,7 +26,7 @@ const TaskCard = ({ task, onDelete }) => {
     <div className="task-card">
       <div className="task-card-header">
         <h3 className="task-card-title">{task.title}</h3>
-        {/* badge viola se è globale (per tutto il negozio), magenta se è per alcune persone */}
+        {/* viola se è globale, magenta se è per alcune persone */}
         <Badge color={task.isGlobal ? "secondary" : "primary"}>
           {task.isGlobal ? `Globale · ${task.store.name}` : task.store.name}
         </Badge>
@@ -57,8 +56,7 @@ const TaskCard = ({ task, onDelete }) => {
         ))}
       </div>
 
-      {/* bottone solo se la pagina passa onDelete (la Dashboard non lo passa).
-          aria-label con il titolo: in pagina ci sono più bottoni uguali */}
+      {/* solo se la pagina passa onDelete (la Dashboard no); aria-label con il titolo */}
       {onDelete && (
         <div className="task-card-actions">
           <Button

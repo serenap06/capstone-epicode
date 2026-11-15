@@ -1,11 +1,8 @@
 import "./button.css";
 
-// bottone comune dell'app.
-// variant: "primary" (magenta pieno, l'azione principale), "secondary" (bianco con bordo,
-// per Annulla e azioni secondarie), "danger" (per eliminare).
-// type: di default "button"; nei moduli il bottone che invia va scritto con type="submit".
-// ...props raccoglie tutte le altre props (onClick, disabled, aria-label...)
-// e le passa al <button> così come sono, senza doverle elencare una per una
+// bottone comune. variant: "primary" (magenta), "secondary" (bianco), "danger" (eliminare).
+// type di base "button": per inviare un modulo scrivo type="submit".
+// ...props passa al <button> tutto il resto (onClick, disabled, aria-label...)
 const Button = ({
   variant = "primary",
   type = "button",

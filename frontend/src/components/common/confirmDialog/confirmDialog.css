@@ -1,4 +1,4 @@
-/* finestra di conferma: angoli tondi e senza le linee di Bootstrap, come i moduli */
+/* angoli tondi e senza le linee di Bootstrap, come i moduli */
 .confirm-dialog .modal-content {
   border: 0;
   border-radius: 24px;

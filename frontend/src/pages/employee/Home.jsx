@@ -10,6 +10,7 @@ import { getToday, getWeek, isSameDay, toQuery } from "../../utils/dates";
 import { getPercent } from "../../utils/getPercent";
 import { formatEuro } from "../../utils/formatEuro";
 import { formatLongDate } from "../../utils/formatLongDate";
+import { formatHours } from "../../utils/formatHours";
 
 import KpiCard from "../../components/common/kpiCard/KpiCard";
 import Message from "../../components/common/message/Message";
@@ -23,22 +24,21 @@ import WeekShifts from "../../components/shifts/weekShifts/WeekShifts";
 // pagina iniziale del dipendente: turno di oggi, indicatori, task di oggi e settimana
 const Home = () => {
   const { user } = useAuth();
-  // shifts: i turni della settimana di tutto il negozio (servono anche per i colleghi)
+  // shifts: i turni della settimana di tutto il negozio (anche dei colleghi)
   const [shifts, setShifts] = useState([]);
-  // hours: ore pianificate e ore di contratto della settimana
+  // hours: ore pianificate e di contratto
   const [hours, setHours] = useState(null);
   // tasks: le task di oggi del dipendente
   const [tasks, setTasks] = useState([]);
-  // sales: incasso e numero di vendite di oggi del dipendente
+  // sales: incasso e vendite di oggi
   const [sales, setSales] = useState(null);
   const [error, setError] = useState("");
 
-  // data di oggi per esteso e nome del negozio (arriva con l'utente, dall'AuthContext)
+  // data di oggi e nome del negozio
   const today = formatLongDate();
   const storeName = user.store?.name ?? "";
 
-  // all'apertura carico tutto in parallelo.
-  // [user._id] in fondo: se cambia l'utente ricarico (in pratica succede solo all'inizio)
+  // all'apertura carico tutto in parallelo (si ricarica solo se cambia l'utente)
   useEffect(() => {
     const todayQuery = toQuery(getToday());
     const weekQuery = toQuery(getWeek());
@@ -65,8 +65,7 @@ const Home = () => {
     );
   }, [user._id]);
 
-  // spunta o toglie la spunta a una task: la cambio sul server,
-  // poi metto la task aggiornata nella lista senza ricaricare tutto
+  // spunta o toglie la spunta, poi aggiorna la task nella lista
   const toggleTask = async (task) => {
     try {
       const updatedTask = await toggleTaskStatus(task);
@@ -76,27 +75,26 @@ const Home = () => {
     }
   };
 
-  // valori calcolati: si ricalcolano da soli ogni volta che cambia lo stato
-  // i turni di oggi, di tutti
+  // valori calcolati dallo stato: i turni di oggi di tutti
   const now = new Date();
   const todayShifts = shifts.filter((shift) => isSameDay(shift.startAt, now));
-  // i miei turni della settimana, per la striscia dei giorni
+  // i miei turni della settimana
   const myWeekShifts = shifts.filter((shift) => shift.user._id === user._id);
-  // il mio turno di oggi (find: uno solo), oppure undefined se riposo
+  // il mio turno di oggi, oppure undefined se riposo
   const myShift = todayShifts.find((shift) => shift.user._id === user._id);
-  // i turni di oggi degli altri, per i badge dei colleghi
-  const colleagueShift = todayShifts.filter(
+  // i turni di oggi dei colleghi
+  const colleagueShifts = todayShifts.filter(
     (shift) => shift.user._id !== user._id,
   );
-  // quante task di oggi ho già fatto (è un numero, per il .length in fondo) e la percentuale
-  const doneTasks = tasks.filter((task) => task.status === "done").length;
-  const percent = getPercent(doneTasks, tasks.length);
+  // task di oggi fatte e percentuale
+  const doneCount = tasks.filter((task) => task.status === "done").length;
+  const percent = getPercent(doneCount, tasks.length);
 
   return (
     <Container fluid>
       <PageHeader
         title={`Ciao, ${user.name}!`}
-        // sottotitolo: "sabato 14 novembre · Bookshop Museo", i due pezzi vanno a capo interi
+        // "sabato 14 novembre · Bookshop Museo": i due pezzi vanno a capo interi
         subtitle={
           <>
             <span className="text-nowrap">
@@ -110,12 +108,12 @@ const Home = () => {
       />
       <Row>
         <Col>
-          {/* card magenta con il turno di oggi */}
-          <MyShiftCard shift={myShift} colleagues={colleagueShift} />
+          {/* turno di oggi */}
+          <MyShiftCard shift={myShift} colleagues={colleagueShifts} />
         </Col>
       </Row>
 
-      {/* tre card: due per riga su telefono (la terza a tutta larghezza), tre su tablet e computer */}
+      {/* tre card: 2 per riga su telefono (la terza intera), 3 da sm */}
       <Row
         as="section"
         xs={2}
@@ -129,7 +127,9 @@ const Home = () => {
             color="secondary"
             label="Le tue ore"
             value={
-              hours ? `${hours.scheduledHours} / ${hours.weeklyHours} h` : "–"
+              hours
+                ? `${formatHours(hours.scheduledHours)} / ${hours.weeklyHours} h`
+                : "–"
             }
             detail="questa settimana"
           />
@@ -139,7 +139,7 @@ const Home = () => {
             to="/employee/tasks"
             color="turquoise"
             label="Task di oggi"
-            value={`${doneTasks} su ${tasks.length}`}
+            value={`${doneCount} su ${tasks.length}`}
             detail="completate"
           />
         </Col>
@@ -153,7 +153,7 @@ const Home = () => {
         </Col>
       </Row>
 
-      {/* due riquadri affiancati da lg in su, alti uguali grazie a h-100 */}
+      {/* due riquadri affiancati da lg, alti uguali (h-100) */}
       <Row className="g-4 mt-1">
         <Col lg={6}>
           <Panel
@@ -161,7 +161,7 @@ const Home = () => {
             title="Task di oggi"
             aside={
               <span className="section-count">
-                {doneTasks} su {tasks.length}
+                {doneCount} su {tasks.length}
               </span>
             }
             footer={
@@ -170,7 +170,7 @@ const Home = () => {
               </Link>
             }
           >
-            {/* barra, lista con le caselle e link in fondo */}
+            {/* barra e lista con le caselle */}
             <ProgressBar percent={percent} className="home-progress" />
             {tasks.length === 0 && <Message>Nessuna task per oggi</Message>}
             <MyTaskList tasks={tasks} onToggle={toggleTask} />

@@ -1,4 +1,4 @@
-/* card di una task del responsabile: gli elementi uno sotto l'altro */
+/* card di una task del responsabile */
 .task-card {
   display: flex;
   flex-direction: column;
@@ -37,22 +37,16 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-/* bottone "Elimina per tutti" in fondo alla card, a destra */
+/* "Elimina" in fondo a destra */
 .task-card-actions {
   display: flex;
   justify-content: flex-end;
 }
 
 /* su telefono meno spazio tra gli elementi */
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   .task-card {
-    display: flex;
-    flex-direction: column;
     gap: 0.5rem;
-    padding: 1.25rem;
     margin-right: 0.15rem;
-    border-radius: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
   }
 }

@@ -8,21 +8,21 @@ import "./topbar.css";
 // barra in alto: logo a sinistra, menu dell'utente a destra
 const Topbar = () => {
   const { user, logout } = useAuth();
-  // iniziali per l'avatar quando non c'è la foto: prima lettera di nome e cognome
+  // iniziali per l'avatar senza foto
   const initials = `${user.name[0]}${user.surname[0]}`;
   return (
     <header className="app-topbar">
-      {/* il logo riporta alla pagina iniziale del ruolo */}
+      {/* il logo riporta alla pagina iniziale */}
       <Link to={getHomePath(user.role)} className="app-logo">
         Store<span>Squad</span>
       </Link>
 
-      {/* align="end" apre il menu allineato a destra, così non esce dallo schermo */}
+      {/* align="end": il menu si apre a destra, dentro lo schermo */}
       <Dropdown align="end">
         <Dropdown.Toggle variant="light" className="app-user">
           {/* foto se c'è, altrimenti le iniziali */}
           {user.avatar ? (
-            <img src={user.avatar} alt="" className="app-avatar"></img>
+            <img src={user.avatar} alt="" className="app-avatar" />
           ) : (
             <span className="app-avatar">{initials}</span>
           )}

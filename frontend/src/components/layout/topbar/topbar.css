@@ -1,4 +1,4 @@
-/* barra in alto: sticky + top: 0 la tiene ferma in cima mentre la pagina scorre */
+/* barra in alto, ferma mentre la pagina scorre (sticky) */
 .app-topbar {
   position: sticky;
   top: 0;
@@ -11,9 +11,7 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* logo StoreSquad con il colore che sfuma dal viola al magenta:
-   lo sfondo è un gradiente, background-clip: text lo mostra solo dentro le lettere
-   e il testo trasparente lascia vedere lo sfondo */
+/* logo sfumato dal viola al magenta: il gradiente si vede solo dentro le lettere */
 .app-logo,
 .app-logo:hover {
   font-weight: 800;
@@ -21,7 +19,7 @@
   letter-spacing: -0.03em;
   text-decoration: none;
   color: var(--secondary);
-  background: linear-gradient(90deg, var(--secondary) 35%, var(--primary)55%);
+  background: linear-gradient(90deg, var(--secondary) 35%, var(--primary) 55%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -31,7 +29,7 @@
   color: inherit;
 }
 
-/* bottone del menu utente: avatar e nome, senza lo stile grigio di Bootstrap */
+/* bottone del menu utente senza lo stile di Bootstrap */
 .btn.app-user {
   display: flex;
   align-items: center;
@@ -44,7 +42,7 @@
   color: var(--text);
 }
 
-/* cerchio viola con le iniziali o la foto; object-fit: cover ritaglia la foto senza deformarla */
+/* cerchio viola con le iniziali o la foto (object-fit: cover non la deforma) */
 .app-avatar {
   width: 40px;
   height: 40px;
@@ -60,7 +58,7 @@
 }
 
 /* su telefono si vede solo l'avatar, il nome sparisce */
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   .app-user-name {
     display: none;
   }

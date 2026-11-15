@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { MENU } from "./menu";
 import "./sidebar.css";
@@ -10,44 +10,50 @@ import {
 } from "react-bootstrap";
 import { MoreHorizontalIcon } from "lucide-react";
 
-// menu delle sezioni: a sinistra su computer, barra in basso su telefono
+// menu delle sezioni: a sinistra su computer, in basso su telefono e tablet
 const Sidebar = () => {
   const { user } = useAuth();
-  // prendo le voci del ruolo dell'utente (vedi menu.js)
+  // l'indirizzo della pagina aperta
+  const location = useLocation();
+  // le voci del ruolo (menu.js)
   const links = MENU[user.role];
-  // voci che su telefono non stanno nella barra
+  // voci che su telefono vanno in "Altro" (le desktopOnly no: su telefono non ci sono)
   const hiddenLinks = links.filter((link) => link.hideOnMobile);
-  // il bottone "Altro" serve solo al responsabile, che ha più voci
-  const showMore = user.role === "admin" && hiddenLinks.length > 0;
+  // "Altro" solo se ha delle voci
+  const showMore = hiddenLinks.length > 0;
+  // "Altro" evidenziato quando la pagina aperta è una delle sue voci
+  const isMoreActive = hiddenLinks.some((link) =>
+    location.pathname.startsWith(link.to),
+  );
 
   return (
     <aside className="app-sidebar">
       <nav className="app-nav" aria-label="Sezioni">
         {links.map((link) => {
-          // l'icona è un componente: per usarla nel JSX il nome deve iniziare con la maiuscola
+          // l'icona è un componente: il nome deve iniziare con la maiuscola
           const Icon = link.icon;
           return (
-            // NavLink aggiunge da solo la classe "active" alla voce della pagina aperta
+            // NavLink mette da solo la classe "active" sulla pagina aperta
             <NavLink
               key={link.to}
               to={link.to}
               end={link.end}
-              className={`app-link ${link.hideOnMobile ? "hide-mobile" : ""}`}
+              className={`app-link ${link.hideOnMobile || link.desktopOnly ? "hide-mobile" : ""}`}
             >
-              {Icon && <Icon className="app-link-icon" size={20}></Icon>}
+              {Icon && <Icon className="app-link-icon" size={20} />}
               <span className="app-link-text">{link.label}</span>
             </NavLink>
           );
         })}
-        {/* menu "Altro" con le voci nascoste su telefono; drop="up" lo apre verso l'alto */}
+        {/* "Altro" con le voci nascoste su telefono; drop="up": si apre verso l'alto */}
         {showMore && (
           <Dropdown drop="up" align="end" className="app-more">
             <DropdownToggle
               variant="light"
-              className="app-link app-more-toggle"
+              className={`app-link app-more-toggle ${isMoreActive ? "active" : ""}`}
               aria-label="Altre sezioni"
             >
-              <MoreHorizontalIcon className="app-link-icon" size={20}/>
+              <MoreHorizontalIcon className="app-link-icon" size={20} />
             </DropdownToggle>
             <DropdownMenu>
               {hiddenLinks.map((link) => (

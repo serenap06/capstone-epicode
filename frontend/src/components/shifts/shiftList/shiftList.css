@@ -13,7 +13,7 @@
   color: var(--secondary);
 }
 
-/* una riga: nome, eventuale badge "In turno" e orario, con una linea sopra */
+/* una riga: nome, "In turno" e orario */
 .shift-list-row {
   display: flex;
   align-items: center;
@@ -22,7 +22,7 @@
   border-top: 1px solid var(--border);
 }
 
-/* il nome prende tutto lo spazio che resta e spinge l'orario a destra */
+/* il nome prende lo spazio e spinge l'orario a destra */
 .shift-list-name {
   flex: 1 1 auto;
   min-width: 0;

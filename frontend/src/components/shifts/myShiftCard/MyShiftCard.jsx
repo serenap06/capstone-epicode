@@ -2,8 +2,8 @@ import { formatTimeRange } from "../../../utils/formatTime";
 import ColleagueBadge from "../colleagueBadge/ColleagueBadge";
 import "./myShiftCard.css";
 
-// card magenta della Home: turno di oggi del dipendente, con i colleghi in turno nello stesso giorno.
-// shift: il turno di oggi, oppure undefined se oggi riposa; colleagues: i turni di oggi degli altri
+// card magenta della Home: il turno di oggi e i colleghi in turno.
+// shift: undefined se oggi riposa; colleagues: i turni di oggi degli altri
 const MyShiftCard = ({ shift, colleagues }) => {
   return (
     <section className="my-shift-card" aria-labelledby="my-shift-title">
@@ -16,7 +16,7 @@ const MyShiftCard = ({ shift, colleagues }) => {
           {shift ? formatTimeRange(shift.startAt, shift.endAt) : "Riposo"}
         </p>
       </div>
-      {/* a destra: i colleghi, in badge bianchi perché la card è magenta */}
+      {/* a destra i colleghi, in badge bianchi sulla card magenta */}
       <div className="my-shift-colleagues">
         <p className="my-shift-subtitle">Con te oggi</p>
         {colleagues.length === 0 && (

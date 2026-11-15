@@ -5,7 +5,7 @@
   background: var(--primary-soft);
 }
 
-/* la parte piena, magenta: la larghezza la decide lo style nel componente */
+/* la parte piena: la larghezza arriva dal componente */
 .progress-fill {
   height: 8px;
   border-radius: 999px;

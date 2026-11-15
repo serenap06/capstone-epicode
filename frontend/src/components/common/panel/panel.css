@@ -1,5 +1,4 @@
-/* riquadro bianco con bordo e angoli tondi; in colonna, così il footer può andare in fondo.
-   min-width: 0 evita che un contenuto lungo allarghi il riquadro oltre la sua colonna */
+/* riquadro bianco in colonna (il footer va in fondo); min-width: 0 non lo fa allargare */
 .panel {
   display: flex;
   flex-direction: column;
@@ -10,13 +9,13 @@
   border: 1px solid var(--border);
 }
 
-/* il footer resta in fondo anche quando il riquadro è più alto del contenuto */
+/* footer sempre in fondo */
 .panel-footer {
   margin-top: auto;
   padding-top: 1rem;
 }
 
-/* su telefono meno spazio interno, così il contenuto ha più larghezza */
+/* su telefono meno spazio interno */
 @media (max-width: 575.98px) {
   .panel {
     padding: 1rem;

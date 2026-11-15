@@ -2,10 +2,9 @@ import "./panel.css";
 import { useId } from "react";
 import SectionHeader from "../sectionHeader/SectionHeader";
 
-// riquadro bianco con titolo. aside: a destra del titolo; footer: in fondo al riquadro.
-// className serve per aggiungere classi da fuori, per esempio "h-100" per riquadri alti uguali
+// riquadro bianco con titolo; aside: a destra del titolo; footer: in fondo
 const Panel = ({ title, aside, footer, className = "", children }) => {
-  // id unico per collegare il riquadro al suo titolo (aria-labelledby)
+  // id unico per collegare il riquadro al titolo
   const titleId = useId();
 
   return (

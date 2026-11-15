@@ -1,5 +1,4 @@
-// traduzione dei messaggi del backend: a sinistra il messaggio in inglese
-// che arriva dal server, a destra quello che legge l'utente
+// messaggi del backend (a sinistra) tradotti per l'utente (a destra)
 const MESSAGES = {
   "Invalid email or password": "Email o password non corrette",
   "Validation failed": "Controlla i dati inseriti",
@@ -14,8 +13,7 @@ const MESSAGES = {
   "No employees in this store": "In questo negozio non ci sono dipendenti",
 };
 
-// messaggi di riserva, in base al codice della risposta,
-// per quando il messaggio del server non è nell'elenco sopra
+// messaggi di riserva in base al codice, se il messaggio non è nell'elenco sopra
 const BY_STATUS = {
   400: "Richiesta non valida",
   401: "Sessione scaduta, accedi di nuovo",
@@ -25,10 +23,8 @@ const BY_STATUS = {
   500: "Errore del server, riprova più tardi",
 };
 
-// sceglie il messaggio da mostrare, in quest'ordine:
-// 1. traduzione esatta del messaggio
-// 2. caso speciale della giacenza, che contiene il nome del prodotto
-// 3. messaggio in base al codice, oppure uno generico
+// sceglie il messaggio: traduzione esatta, poi giacenza (contiene il nome del prodotto),
+// poi il codice, altrimenti uno generico
 export const translateError = (message, status) => {
   if (MESSAGES[message]) return MESSAGES[message];
   // ?. evita l'errore se message è vuoto

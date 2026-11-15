@@ -2,14 +2,10 @@ import "./formModal.css";
 import { useId } from "react";
 import { Modal } from "react-bootstrap";
 
-// finestra che si apre sopra la pagina e contiene un modulo, per esempio "Nuova task".
-// show: true per aprirla; title: il titolo; onClose: la funzione della pagina che la chiude;
-// children: il modulo, scritto dalla pagina tra i tag;
-// wide: true per i moduli lunghi su due colonne, così da 992px in su la finestra è più larga.
-// Il Modal di react-bootstrap fa già da solo le cose importanti:
-// Esc e il clic fuori la chiudono, il Tab resta dentro la finestra e la pagina sotto non scorre
+// finestra con un modulo, per esempio "Nuova task"; wide: più larga, per i moduli su due colonne.
+// Il Modal di Bootstrap si chiude con Esc o cliccando fuori e tiene il Tab dentro la finestra
 const FormModal = ({ show, title, onClose, wide = false, children }) => {
-  // id unico per collegare la finestra al suo titolo (lo legge lo screen reader all'apertura)
+  // id unico per collegare la finestra al titolo
   const titleId = useId();
 
   return (
@@ -22,7 +18,7 @@ const FormModal = ({ show, title, onClose, wide = false, children }) => {
       aria-labelledby={titleId}
       className={wide ? "form-modal form-modal-wide" : "form-modal"}
     >
-      {/* closeButton aggiunge la X in alto a destra; closeLabel è il suo nome per gli screen reader */}
+      {/* closeButton: la X in alto; closeLabel: il suo nome per gli screen reader */}
       <Modal.Header closeButton closeLabel="Chiudi">
         <Modal.Title id={titleId} className="form-modal-title">
           {title}

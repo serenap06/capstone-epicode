@@ -20,15 +20,13 @@
   gap: 0.75rem;
 }
 
-/* campi della riga: partono da 140px e si allargano per dividersi lo spazio.
-   Lo scrivo solo qui e non su .form-field: in un contenitore in colonna (.form-stack)
-   flex-basis vale come altezza, e ogni campo diventava alto 140px anche se vuoto */
+/* nella riga i campi partono da 140px e si dividono lo spazio. Solo qui: in colonna
+   flex-basis diventa l'altezza e i campi erano alti 140px */
 .form-row > .form-field {
   flex: 1 1 140px;
 }
 
-/* input, select e textarea: stessa forma per tutti.
-   width: 100% li allarga quanto il loro contenitore */
+/* input, select e textarea: stessa forma, larghi quanto il contenitore */
 .form-input {
   box-sizing: border-box;
   width: 100%;
@@ -41,7 +39,7 @@
   font-size: 0.95rem;
 }
 
-/* il textarea ha più righe: spazio sopra e sotto, e si può allungare solo in verticale */
+/* textarea: spazio sopra e sotto, si allunga solo in verticale */
 textarea.form-input {
   padding: 0.6rem 0.9rem;
   resize: vertical;
@@ -65,7 +63,7 @@ select.form-input {
   box-shadow: 0 0 0 3px var(--primary-soft);
 }
 
-/* campo sbagliato: bordo arancio. aria-invalid="true" lo mette la pagina quando c'è un errore */
+/* campo sbagliato: bordo arancio (aria-invalid lo mette la pagina) */
 .form-input[aria-invalid="true"] {
   border-color: var(--warning-text);
 }
@@ -77,7 +75,7 @@ select.form-input {
   color: var(--warning-text);
 }
 
-/* gruppo di caselle con un titolo (fieldset e legend), per esempio "Assegnazione" */
+/* gruppo di caselle con titolo (fieldset e legend), per esempio "Assegnazione" */
 .form-fieldset {
   margin: 0;
   padding: 0.75rem 1rem;
@@ -97,7 +95,7 @@ select.form-input {
   font-weight: 700;
 }
 
-/* una casella con il suo testo: tutta la riga è cliccabile e alta 44px */
+/* casella con il suo testo: tutta la riga è cliccabile */
 .form-check-row {
   min-height: 44px;
   display: flex;
@@ -114,7 +112,7 @@ select.form-input {
   accent-color: var(--primary);
 }
 
-/* testo piccolo e grigio accanto o sotto, per esempio il negozio di una persona */
+/* testo di aiuto, piccolo e grigio */
 .form-hint {
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -128,21 +126,20 @@ select.form-input {
   gap: 0.5rem;
 }
 
-/* i pezzi del modulo uno sotto l'altro: 1rem di spazio su telefono, 0.75rem da 576px in su */
+/* pezzi del modulo uno sotto l'altro */
 .form-stack {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-/* moduli lunghi divisi in due blocchi (per esempio dettagli e assegnazione):
-   uno sotto l'altro, e affiancati da 992px in su (vedi sotto) */
+/* moduli lunghi in due blocchi: uno sotto l'altro, affiancati da 992px */
 .form-columns {
   display: grid;
   gap: 1rem;
 }
 
-/* da 576px in su si usa il mouse: caselle più basse e gruppi più compatti */
+/* da 576px (col mouse): caselle più basse e gruppi più compatti */
 @media (min-width: 576px) {
   .form-stack {
     gap: 0.75rem;
@@ -162,8 +159,7 @@ select.form-input {
   }
 }
 
-/* da 992px in su (computer): i due blocchi affiancati.
-   3fr 2fr: il primo prende 3 parti dello spazio e il secondo 2 */
+/* da 992px: blocchi affiancati, il primo largo 3 parti e il secondo 2 */
 @media (min-width: 992px) {
   .form-columns {
     grid-template-columns: 3fr 2fr;

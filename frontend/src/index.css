@@ -1,10 +1,9 @@
 /* stili comuni a tutta l'app: colori, sfondo, titoli */
 
-/* font Inter da Google Fonts, con i quattro spessori che uso (400 normale, 600, 700, 800 grassetto) */
+/* font Inter con i quattro spessori usati (400, 600, 700, 800) */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");
 
-/* variabili dei colori: le scrivo una volta qui e le uso ovunque con var(--nome).
-   Se cambio un colore qui, cambia in tutta l'app */
+/* colori: li scrivo una volta qui e li uso ovunque con var(--nome) */
 :root {
   /* fondi e bordi */
   --bg: #f5f6fa;
@@ -36,7 +35,7 @@
   --warning-text: #8a3f05;
 }
 
-/* sfondo grigio chiaro, testo scuro e font Inter per tutta la pagina */
+/* sfondo, testo e font di tutta la pagina */
 body {
   margin: 0;
   background: var(--bg);
@@ -44,7 +43,7 @@ body {
   font-family: "Inter", system-ui, sans-serif;
 }
 
-/* link magenta, più scuri quando ci passo sopra col mouse */
+/* link magenta, più scuri al passaggio del mouse */
 a {
   color: var(--primary);
 }
@@ -53,9 +52,7 @@ a:hover {
   color: var(--primary-dark);
 }
 
-/* titolo e sottotitolo di ogni pagina */
-/* clamp(minimo, preferito, massimo): la dimensione cresce con lo schermo (3vw = 3% della larghezza)
-   ma non scende sotto 1.6rem e non supera 2rem */
+/* titolo e sottotitolo della pagina; clamp: il titolo cresce con lo schermo, tra 1.6 e 2rem */
 .page-title {
   margin: 0;
   font-size: clamp(1.6rem, 3vw, 2rem);
@@ -68,7 +65,7 @@ a:hover {
   color: var(--text-muted);
 }
 
-/* riga del sottotitolo: testo a sinistra e, se c'è, qualcosa a destra (per esempio "Filtri") */
+/* riga del sottotitolo: testo a sinistra, qualcosa a destra (per esempio "Filtri") */
 .page-subtitle-row {
   display: flex;
   align-items: center;
@@ -76,19 +73,18 @@ a:hover {
   gap: 0.75rem;
 }
 
-/* ::first-letter prende solo la prima lettera: la metto maiuscola
-   perché la data arriva in minuscolo ("sabato 14 novembre") */
+/* prima lettera maiuscola: la data arriva in minuscolo ("sabato 14 novembre") */
 .page-subtitle::first-letter {
   text-transform: uppercase;
 }
-/* titolo di una sezione dentro la pagina */
+/* titolo di una sezione */
 .section-title {
   margin: 1rem 0 1rem;
   font-size: 1.25rem;
   font-weight: 800;
 }
 
-/* titoletto piccolo e maiuscolo per i gruppi dentro una pagina (Oggi, Giorni…) */
+/* titoletto maiuscolo dei gruppi (Oggi, Giorni…) */
 .section-label {
   margin: 0 0.05rem;
   font-size: 0.875rem;
@@ -98,8 +94,7 @@ a:hover {
   color: var(--secondary);
 }
 
-/* menu a tendina di Bootstrap (accanto al nome nella barra in alto e "Altro" su telefono):
-   angoli tondi, bordo leggero, ombra morbida e un po' più grandi del normale.*/
+/* menu a tendina di Bootstrap (utente e "Altro"): angoli tondi, bordo leggero e ombra */
 .dropdown-menu {
   min-width: 12rem;
   padding: 0.5rem;
@@ -109,7 +104,7 @@ a:hover {
   box-shadow: 0 8px 24px rgba(30, 36, 64, 0.12);
 }
 
-/* le voci del menu: angoli tondi, testo scuro e un po' più di spazio intorno */
+/* voci del menu */
 .dropdown-item {
   padding: 0.6rem 0.9rem;
   border-radius: 10px;
@@ -117,7 +112,7 @@ a:hover {
   color: var(--text);
 }
 
-/* voce sotto il mouse, scelta con la tastiera o della pagina aperta: magenta chiaro */
+/* voce sotto il mouse, scelta con la tastiera o attiva: magenta chiaro */
 .dropdown-item:hover,
 .dropdown-item:focus,
 .dropdown-item.active,

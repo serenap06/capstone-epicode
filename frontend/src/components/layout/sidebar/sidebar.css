@@ -1,4 +1,4 @@
-/* menu laterale su computer (da 1024px in su): largo tra 180 e 240px in base allo schermo */
+/* menu a sinistra da 1024px: largo tra 180 e 240px */
 .app-sidebar {
   flex: 0 0 clamp(180px, 20vw, 240px);
   padding: 1.5rem clamp(0.5rem, 1.2vw, 1rem);
@@ -12,7 +12,7 @@
   gap: 1rem;
 }
 
-/* una voce del menu: icona e testo affiancati, alta almeno 44px */
+/* una voce: icona e testo, alta almeno 44px */
 .app-link {
   display: flex;
   align-items: center;
@@ -33,29 +33,27 @@
   color: var(--text);
 }
 
-/* voce della pagina aperta: NavLink le aggiunge la classe "active" */
+/* pagina aperta (classe "active" di NavLink) */
 .app-link.active {
   background: var(--primary-soft);
   color: var(--primary-dark);
   font-weight: 700;
 }
-/* il menu "Altro" su computer non serve: lo nascondo */
+/* "Altro" su computer non serve */
 .app-more {
   display: none;
 }
-/* bottone "Altro" senza bordo e senza sfondo, come le altre voci.
-   Scrivo .btn davanti per vincere sulle regole di Bootstrap */
-.btn.app-more-toggle{
+/* "Altro" senza bordo e sfondo; .btn davanti per vincere su Bootstrap */
+.btn.app-more-toggle {
   border: 0;
   background: transparent;
 }
-/* tolgo la freccina che Bootstrap aggiunge da solo ai menu a tendina */
+/* tolgo la freccina di Bootstrap */
 .app-more .btn.app-more-toggle::after {
   display: none;
 }
 
-/* su telefono e tablet (fino a 1023px) il menu diventa una barra fissa in basso,
-   così la pagina ha tutta la larghezza dello schermo */
+/* fino a 1023px: barra fissa in basso */
 @media (max-width: 1023.98px) {
   .app-sidebar {
     position: fixed;
@@ -70,22 +68,25 @@
     border-top: 1px solid var(--border);
   }
 
-  /* voci in riga, distribuite su tutta la larghezza */
+  /* voci in riga, distribuite; gap: 0 perché con 1rem a 320px "Altro" usciva dallo schermo */
   .app-nav {
     flex-direction: row;
     justify-content: space-around;
+    gap: 0;
   }
 
+  /* ogni icona larga almeno 44px, comoda da toccare */
   .app-link {
     flex: 0 0 auto;
+    min-width: 44px;
     padding: 0.5rem;
     justify-content: center;
   }
-  /* le voci con hideOnMobile spariscono dalla barra (finiscono in "Altro") */
+  /* le voci hideOnMobile vanno in "Altro", le desktopOnly spariscono */
   .app-link.hide-mobile {
     display: none;
   }
-  /* su telefono si vede solo l'icona: il testo è nascosto alla vista ma lo legge lo screen reader */
+  /* solo l'icona: il testo lo legge solo lo screen reader */
   .app-link-text {
     position: absolute;
     width: 1px;
@@ -94,9 +95,8 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
   }
-  /* su telefono il menu "Altro" si vede */
+  /* qui "Altro" si vede */
   .app-more {
-  display: block;
-}
-
+    display: block;
+  }
 }

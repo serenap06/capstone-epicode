@@ -3,9 +3,7 @@ import { formatFullName } from "../../../utils/formatFullName";
 import { formatHourRange } from "../../../utils/formatTime";
 
 // badge di un collega in turno: "Giulia Neri · 13 – 21".
-// shift: il turno del collega; color: "white" sulle card magenta, altrimenti viola.
-// Nome e orario sono in due pezzi "text-nowrap": se non c'è spazio il badge
-// va a capo tra i due, mai a metà di un nome o di un orario
+// Nome e orario in due pezzi nowrap: se serve va a capo tra i due, mai a metà
 const ColleagueBadge = ({ shift, color = "secondary" }) => {
   return (
     <Badge color={color}>

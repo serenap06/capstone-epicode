@@ -6,8 +6,7 @@ import "./shiftList.css";
 // elenco di turni raggruppati per negozio, per dashboard e home
 const ShiftList = ({ shifts }) => {
   const now = new Date();
-  // nomi dei negozi senza doppioni: map prende il nome da ogni turno,
-  // new Set toglie i doppioni e [...] lo ritrasforma in array
+  // nomi dei negozi senza doppioni (new Set)
   const storeNames = [...new Set(shifts.map((shift) => shift.store.name))];
 
   return (
@@ -16,11 +15,11 @@ const ShiftList = ({ shifts }) => {
         <div key={storeName} className="shift-list-group">
           <p className="shift-list-store">{storeName}</p>
 
-          {/* i turni di questo negozio */}
+          {/* i turni del negozio */}
           {shifts
             .filter((shift) => shift.store.name === storeName)
             .map((shift) => {
-              // "In turno" se adesso siamo tra l'inizio e la fine del turno
+              // "In turno" se adesso è dentro il turno
               const isNow =
                 new Date(shift.startAt) <= now && now <= new Date(shift.endAt);
 

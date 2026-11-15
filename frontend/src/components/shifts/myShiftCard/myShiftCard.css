@@ -12,7 +12,7 @@
   color: #ffffff;
 }
 
-/* tolgo il margine di Bootstrap ai paragrafi dentro la card */
+/* niente margine ai paragrafi */
 .my-shift-card p {
   margin: 0;
 }
@@ -24,7 +24,7 @@
   font-weight: 700;
 }
 
-/* l'orario grande; scrivo .my-shift-card davanti per vincere sulla regola "p { margin: 0 }" qui sopra */
+/* orario grande (.my-shift-card davanti per vincere sul margin: 0 qui sopra) */
 .my-shift-card .my-shift-time {
   margin-top: 0.15rem;
   font-size: clamp(1.6rem, 4vw, 2.1rem);
@@ -32,7 +32,7 @@
   letter-spacing: -0.03em;
 }
 
-/* colonna dei colleghi; min-width: 0 le permette di stringersi invece di uscire dalla card */
+/* min-width: 0: la colonna si stringe invece di uscire dalla card */
 .my-shift-colleagues {
   min-width: 0;
 }
@@ -64,4 +64,3 @@
   white-space: normal;
   border-radius: 14px;
 }
-

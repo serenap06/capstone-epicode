@@ -1,4 +1,4 @@
-/* le card dei giorni una sotto l'altra, con 0.75rem di spazio tra loro */
+/* le card dei giorni una sotto l'altra */
 .shift-day-list {
   display: flex;
   flex-direction: column;

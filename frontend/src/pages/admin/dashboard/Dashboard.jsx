@@ -17,19 +17,19 @@ import "./dashboard.css";
 
 // pagina iniziale del responsabile: indicatori, task e turni di oggi, prodotti sotto scorta
 const Dashboard = () => {
-  // kpis parte da null: finché è null mostro "Caricamento..."
+  // kpis: null finché non arrivano (intanto "Caricamento...")
   const [kpis, setKpis] = useState(null);
   const [error, setError] = useState("");
   const [tasks, setTasks] = useState([]);
   const [shifts, setShifts] = useState([]);
   const [lowStocks, setLowStocks] = useState([]);
 
-  // data di oggi per esteso, per il sottotitolo
+  // oggi per esteso
   const today = formatLongDate();
 
-  // all'apertura carico tutto in parallelo: le quattro richieste partono insieme
+  // all'apertura le quattro richieste partono insieme
   useEffect(() => {
-    // "from=...&to=..." di oggi, per chiedere solo task e turni di oggi
+    // "from=...&to=..." di oggi
     const todayQuery = toQuery(getToday());
 
     loadData("/dashboard", (data) => setKpis(data.kpis), setError);
@@ -49,11 +49,10 @@ const Dashboard = () => {
   return (
     <Container fluid>
       <PageHeader title="Dashboard" subtitle={today} error={error} />
-      {/* "Caricamento..." solo finché non arrivano gli indicatori e non c'è un errore */}
+      {/* "Caricamento..." finché non ci sono gli indicatori */}
       {!error && !kpis && <Message>Caricamento...</Message>}
 
-      {/* le cinque card colorate: due per riga su telefono, tre su tablet, cinque su schermo grande.
-          Ogni card porta alla sua pagina */}
+      {/* cinque card: 2 per riga su telefono, 3 su tablet, 5 da xl; ognuna porta alla sua pagina */}
       {kpis && (
         <Row
           as="section"
@@ -111,7 +110,7 @@ const Dashboard = () => {
         </Row>
       )}
 
-      {/* sotto: a sinistra le task (7 colonne su 12), a destra turni e sotto scorta (5 colonne) */}
+      {/* sotto: task a sinistra (7 colonne), turni e sotto scorta a destra (5) */}
       <Row className="g-4 mt-2">
         <Col lg={7}>
           <SectionHeader
@@ -124,7 +123,7 @@ const Dashboard = () => {
             }
           />
           {tasks.length === 0 && <Message>Nessuna task per oggi</Message>}
-          {/* lista delle task con lo scorrimento interno (vedi dashboard.css) */}
+          {/* lista che scorre dentro (dashboard.css) */}
           <div className="dashboard-tasks">
             {tasks.map((task) => (
               <TaskCard key={task._id} task={task} />

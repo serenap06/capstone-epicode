@@ -17,28 +17,25 @@ import "./login.css";
 
 // pagina di accesso: email, password e "Ricordami"
 const Login = () => {
-  // useForm (react-hook-form) gestisce i campi del modulo:
-  // register collega un campo, handleSubmit controlla i campi prima di inviare,
-  // errors contiene i messaggi dei campi sbagliati, isSubmitting è true mentre aspetto il server
+  // useForm: register collega i campi, handleSubmit li controlla prima dell'invio
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // serverError: il messaggio di errore che arriva dal server (per esempio password sbagliata)
   const { user, loading, login } = useAuth();
   const navigate = useNavigate();
+  // serverError: l'errore del server (per esempio password sbagliata)
   const [serverError, setServerError] = useState("");
 
-  // mentre controllo se c'è già un utente salvato non mostro niente;
-  // se è già collegato lo mando direttamente alla sua pagina
+  // aspetto di sapere se c'è un utente; se è già collegato va alla sua pagina
   if (loading) return null;
   if (user) {
     return <Navigate to={getHomePath(user.role)} replace />;
   }
 
-  // all'invio del modulo: provo il login e, se va bene, vado alla pagina del ruolo
+  // invio: login e poi la pagina del ruolo
   const onSubmit = async ({ email, password, remember }) => {
     setServerError("");
     try {
@@ -53,7 +50,7 @@ const Login = () => {
     <Container className="login-page">
       <h1 className="login-title">LOGIN</h1>
 
-      {/* errore del server sopra il modulo */}
+      {/* errore del server */}
       {serverError && <Alert className="mx-3">{serverError}</Alert>}
 
       <Form
@@ -62,7 +59,7 @@ const Login = () => {
         noValidate
         className="login-form mt-4"
       >
-        {/* campo email: l'etichetta è nascosta ma la legge lo screen reader, l'icona sta dentro il campo */}
+        {/* etichetta solo per gli screen reader, icona dentro il campo */}
         <Form.Group className="mb-3" controlId="email">
           <FormLabel visuallyHidden>Email</FormLabel>
           <div className="login-field">
@@ -94,7 +91,7 @@ const Login = () => {
             <p className="login-error">{errors.password.message}</p>
           )}
         </Form.Group>
-        {/* "Ricordami": se spuntato il token resta anche chiudendo il browser */}
+        {/* "Ricordami": il token resta anche chiudendo il browser */}
         <FormCheck
           type="checkbox"
           id="remember"
@@ -103,7 +100,7 @@ const Login = () => {
           {...register("remember")}
         />
 
-        {/* il bottone è disattivato mentre aspetto la risposta, così non si invia due volte */}
+        {/* disattivato mentre aspetto: niente doppio invio */}
         <Button
           type="submit"
           disabled={isSubmitting}

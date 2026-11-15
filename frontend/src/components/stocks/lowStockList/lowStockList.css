@@ -7,7 +7,7 @@
 /* una riga: prodotto e negozio a sinistra, quantità a destra */
 .low-stock-row {
   display: flex;
-  align-items: top;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.6rem 0;
@@ -30,7 +30,7 @@
   color: var(--text-muted);
 }
 
-/* i pezzi rimasti, in arancio scuro come avviso */
+/* pezzi rimasti, in arancio come avviso */
 .low-stock-amount {
   font-weight: 600;
   color: var(--warning-text);

@@ -34,18 +34,15 @@
   color: var(--text);
 }
 
-/* il pulsante scelto: [aria-pressed="true"] seleziona solo quello con aria-pressed vero */
+/* il pulsante scelto */
 .filter-chip[aria-pressed="true"] {
   background: var(--primary-soft);
   color: var(--primary-dark);
   font-weight: 700;
 }
 
-/* menu a tendina a forma di pillola.
-   appearance: none toglie l'aspetto del sistema operativo: senza, sul Mac il menu
-   resta squadrato e ignora il border-radius. Ma toglie anche la freccina, quindi
-   la rimetto come immagine di sfondo: un'icona SVG scritta direttamente nel CSS,
-   a destra (right 1rem) e centrata in verticale (center). Il padding a destra le lascia spazio */
+/* menu a pillola. appearance: none toglie lo stile del sistema (sul Mac restava squadrato)
+   e anche la freccina, che rimetto come immagine SVG di sfondo */
 .filter-select {
   appearance: none;
   min-height: 44px;
@@ -64,7 +61,7 @@
   cursor: pointer;
 }
 
-/* bordo magenta quando ci si arriva con la tastiera (Tab): serve a chi non usa il mouse */
+/* bordo magenta quando ci si arriva con la tastiera */
 .filter-select:focus-visible,
 .filter-chip:focus-visible {
   outline: 2px solid var(--primary);
@@ -85,7 +82,7 @@
 
 /* --- versione compatta: menu a tendina "Filtri" --- */
 
-/* bottone "Filtri" a pillola bianca, come i menu dei filtri */
+/* bottone "Filtri" a pillola bianca */
 .btn.filter-dropdown-toggle {
   min-height: 44px;
   display: inline-flex;
@@ -119,7 +116,7 @@
   font-size: 0.75rem;
 }
 
-/* il menu: largo 20rem, ma mai più largo dello schermo meno 2rem di margine */
+/* largo 20rem, ma mai più dello schermo */
 .filter-dropdown-menu {
   width: min(20rem, calc(100vw - 2rem));
   padding: 0.75rem;
@@ -138,7 +135,7 @@
 
 /* --- da 768px in su: tutti i filtri sulla stessa riga --- */
 
-/* nowrap: la riga non va più a capo; flex-shrink: 0: i gruppi di pulsanti non si schiacciano */
+/* niente a capo, e i gruppi di pulsanti non si schiacciano */
 @media (min-width: 768px) {
   .filter-bar {
     flex-wrap: nowrap;
@@ -150,9 +147,8 @@
   }
 }
 
-/* tra 768 e 1199px lo spazio non basta con le misure normali:
-   pulsanti e menu più piccoli, e i due menu si dividono lo spazio che resta.
-   flex: 1 1 0 + min-width: 0 li lasciano stringere; se il testo non ci sta finisce con "…" */
+/* tra 768 e 1199px: pulsanti e menu più piccoli, i due menu si dividono lo spazio
+   (se il testo non ci sta finisce con "…") */
 @media (min-width: 768px) and (max-width: 1199.98px) {
   .filter-bar .filter-chips {
     gap: 0.1rem;

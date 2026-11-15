@@ -1,16 +1,14 @@
 import { formatTime } from "./formatTime";
-import { isSameDay } from "./dates";
+import { addDays, isSameDay } from "./dates";
 
-// scadenza di una task scritta in parole, da mettere dopo "Scade":
-// "alle 15:00" se è oggi, "domani alle 9:00" se è domani, altrimenti "il 30 novembre"
+// scadenza in parole, dopo "Scade": "alle 15:00", "domani alle 9:00" o "il 30 novembre"
 export const formatDue = (dueDate) => {
   const today = new Date();
-  const tomorrow = new Date();
-  tomorrow.setDate(today.getDate() + 1);
+  const tomorrow = addDays(today, 1);
 
   if (isSameDay(dueDate, today)) return `alle ${formatTime(dueDate)}`;
   if (isSameDay(dueDate, tomorrow)) return `domani alle ${formatTime(dueDate)}`;
-  // più avanti: solo giorno e mese, senza orario
+  // più avanti: solo giorno e mese
   return `il ${new Date(dueDate).toLocaleDateString("it-IT", {
     day: "numeric",
     month: "long",

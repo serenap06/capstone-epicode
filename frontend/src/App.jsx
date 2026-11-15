@@ -1,4 +1,4 @@
-// elenco di tutte le pagine dell'app e dell'indirizzo a cui si trovano
+// tutte le pagine dell'app con il loro indirizzo
 import { Navigate, Routes, Route } from "react-router-dom";
 import Login from "./pages/login/Login.jsx";
 import Dashboard from "./pages/admin/dashboard/Dashboard.jsx";
@@ -15,9 +15,8 @@ const App = () => {
       {/* pagina di accesso, l'unica aperta a tutti */}
       <Route path="/" element={<Login />} />
 
-      {/* pagine del responsabile: ProtectedRoute fa entrare solo chi ha ruolo "admin",
-          AppLayout disegna barra in alto, menu e footer intorno alla pagina */}
-      <Route element={<ProtectedRoute role={"admin"} />}>
+      {/* responsabile: ProtectedRoute controlla il ruolo, AppLayout aggiunge barra e menu */}
+      <Route element={<ProtectedRoute role="admin" />}>
         <Route path="/admin" element={<AppLayout />}>
           {/* index = la pagina che si apre su /admin */}
           <Route index element={<Dashboard />} />
@@ -26,7 +25,7 @@ const App = () => {
       </Route>
 
       {/* pagine del dipendente, stessa logica con ruolo "employee" */}
-      <Route element={<ProtectedRoute role={"employee"} />}>
+      <Route element={<ProtectedRoute role="employee" />}>
         <Route path="/employee" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="tasks" element={<MyTasks />} />

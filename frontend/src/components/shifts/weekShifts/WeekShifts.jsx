@@ -3,8 +3,7 @@ import { formatHourRange } from "../../../utils/formatTime";
 import { formatDayName } from "../../../utils/formatDayName";
 import "./weekShifts.css";
 
-// striscia della settimana nella Home: i sette giorni con il turno del dipendente o "Riposo".
-// shifts: solo i turni del dipendente nella settimana in corso
+// i sette giorni nella Home, con il mio turno o "Riposo"; shifts: solo i miei turni
 const WeekShifts = ({ shifts }) => {
   const now = new Date();
 
@@ -12,7 +11,7 @@ const WeekShifts = ({ shifts }) => {
     // <ol> perché i giorni hanno un ordine
     <ol className="week-shifts">
       {getWeekDays().map((day) => {
-        // il turno di quel giorno, se c'è
+        // il turno del giorno, se c'è
         const shift = shifts.find((shift) => isSameDay(shift.startAt, day));
         const isToday = isSameDay(day, now);
         const dayName = formatDayName(day);
@@ -24,7 +23,7 @@ const WeekShifts = ({ shifts }) => {
             aria-current={isToday ? "date" : undefined}
           >
             <span className="week-day-name">{isToday ? "Oggi" : dayName}</span>
-            {/* orario corto, "9 – 17", perché le caselle sono strette */}
+            {/* orario corto: le caselle sono strette */}
             <span className="week-day-time">
               {shift ? formatHourRange(shift.startAt, shift.endAt) : "Riposo"}
             </span>

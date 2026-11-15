@@ -7,7 +7,7 @@ import Button from "../../common/button/Button";
 import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 
-// opzioni fisse dei menu a tendina: value va al server, label è il testo che si legge
+// opzioni fisse: value va al server, label si legge
 const PRIORITY_OPTIONS = [
   { value: "high", label: "Alta" },
   { value: "medium", label: "Media" },
@@ -19,14 +19,12 @@ const TYPE_OPTIONS = [
   { value: "monthly", label: "Mensile" },
 ];
 
-// modulo per creare una task, dentro il modale "Nuova task".
-// stores ed employees arrivano dalla pagina; onCreated e onCancel sono funzioni della pagina
+// modulo "Nuova task"; stores, employees, onCreated e onCancel arrivano dalla pagina
 const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
-  // errore che arriva dal server (per esempio un negozio senza dipendenti)
+  // errore del server (per esempio un negozio senza dipendenti)
   const [serverError, setServerError] = useState("");
 
-  // useForm gestisce i campi. defaultValues sono i valori iniziali:
-  // priorità media, categoria operativa, tipo giornaliera, nessuna persona scelta
+  // useForm gestisce i campi; defaultValues: i valori iniziali
   const {
     register,
     handleSubmit,
@@ -47,37 +45,32 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
     },
   });
 
-  // useWatch legge un campo mentre l'utente compila e ridisegna il modulo quando cambia:
-  // mi serve per mostrare i dipendenti del negozio scelto e per nascondere
-  // l'elenco quando la task è "A tutto il negozio".
-  // control è il "collegamento" al modulo creato da useForm
+  // useWatch rilegge il campo a ogni modifica: mi serve per mostrare
+  // i dipendenti del negozio scelto e nasconderli se la task è globale
   const selectedStore = useWatch({ control, name: "store" });
   const isGlobal = useWatch({ control, name: "isGlobal" });
 
-  // solo i dipendenti del negozio scelto (il backend crea le task in un negozio solo)
+  // solo i dipendenti del negozio scelto
   const storeEmployees = employees.filter(
     (employee) => employee.store?._id === selectedStore,
   );
 
-  // quando cambio negozio tolgo le spunte: altrimenti resterebbe scelta
-  // una persona dell'altro negozio
+  // cambiando negozio tolgo le spunte (erano persone dell'altro negozio)
   useEffect(() => {
     setValue("assignedTo", []);
   }, [selectedStore, setValue]);
 
-  // all'invio: handleSubmit controlla prima i campi obbligatori,
-  // poi chiama onSubmit con tutti i valori in formData
+  // handleSubmit controlla i campi e poi chiama onSubmit con i valori
   const onSubmit = async (formData) => {
     setServerError("");
     try {
       await createTask({
         ...formData,
-        // descrizione vuota → undefined, cioè non la mando: il database non accetta testo vuoto
+        // descrizione vuota: non la mando (il database non accetta testo vuoto)
         description: formData.description || undefined,
-        // il campo dà "2026-11-15T17:00" senza fuso orario: toISOString lo trasforma
-        // nell'ora esatta, così il server non la legge come ora di un altro paese
+        // toISOString: l'ora giusta con il fuso orario, per il server
         dueDate: new Date(formData.dueDate).toISOString(),
-        // se è globale le persone le sceglie il server (tutti i dipendenti del negozio)
+        // globale: le persone le sceglie il server
         assignedTo: formData.isGlobal ? undefined : formData.assignedTo,
       });
       onCreated();
@@ -95,12 +88,11 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
     >
       {serverError && <Message type="error">{serverError}</Message>}
 
-      {/* form-columns: due blocchi affiancati da 992px in su, uno sotto l'altro prima */}
+      {/* due blocchi: affiancati da 992px, uno sotto l'altro prima */}
       <div className="form-columns">
         {/* a sinistra: i dettagli della task */}
         <div className="form-stack">
-          {/* errors.title?.message: il ?. serve perché errors.title esiste solo se il campo è sbagliato.
-              aria-invalid colora il bordo del campo sbagliato (vedi formField.css) */}
+          {/* errors.title c'è solo se il campo è sbagliato; aria-invalid colora il bordo */}
           <FormField
             label="Titolo"
             htmlFor="task-title"
@@ -115,7 +107,7 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
             />
           </FormField>
 
-          {/* textarea: un campo di testo su più righe (rows = quante righe si vedono) */}
+          {/* textarea: testo su più righe (rows = righe visibili) */}
           <FormField label="Descrizione" htmlFor="task-description">
             <textarea
               id="task-description"
@@ -132,7 +124,7 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
               htmlFor="task-due"
               error={errors.dueDate?.message}
             >
-              {/* datetime-local: il browser mostra il calendario con l'orario */}
+              {/* datetime-local: calendario con l'orario */}
               <input
                 id="task-due"
                 type="datetime-local"
@@ -159,8 +151,7 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
           {/* categoria e tipo sulla stessa riga */}
           <div className="form-row">
             <FormField label="Categoria" htmlFor="task-category">
-              {/* Object.entries trasforma CATEGORY in coppie ["operations", "Operativa"]:
-                  così le opzioni arrivano da taskLabel.js e non le riscrivo */}
+              {/* opzioni da taskLabel.js: Object.entries dà le coppie [valore, testo] */}
               <select
                 id="task-category"
                 className="form-input"
@@ -189,7 +180,7 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
           </div>
         </div>
 
-        {/* a destra: negozio e persone, raggruppati sotto il titolo "Assegnazione" (legend) */}
+        {/* a destra: negozio e persone, sotto il titolo "Assegnazione" */}
         <fieldset className="form-fieldset">
           <legend>Assegnazione</legend>
           <FormField
@@ -203,7 +194,7 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
               aria-invalid={errors.store ? "true" : "false"}
               {...register("store", { required: "Scegli il negozio" })}
             >
-              {/* prima voce vuota: finché resta questa, il campo è da compilare */}
+              {/* voce vuota: il campo resta da compilare */}
               <option value="">Scegli un negozio</option>
               {stores.map((store) => (
                 <option key={store._id} value={store._id}>
@@ -220,10 +211,8 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
           {!selectedStore && (
             <p className="form-hint m-0">Scegli prima il negozio</p>
           )}
-          {/* le caselle hanno tutte il nome "assignedTo": react-hook-form mette in un array
-              i value di quelle spuntate, cioè gli id delle persone, come vuole il backend.
-              validate: va bene se la task è globale, oppure se c'è almeno una persona,
-              altrimenti restituisce il messaggio di errore */}
+          {/* le caselle "assignedTo" danno un array con gli id spuntati, come vuole il backend.
+              validate: va bene se è globale o se c'è almeno una persona */}
           {!isGlobal &&
             storeEmployees.map((employee) => (
               <label key={employee._id} className="form-check-row">
@@ -251,8 +240,7 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
         </fieldset>
       </div>
 
-      {/* Annulla chiude il modale; Crea task invia il modulo (type="submit").
-          Mentre aspetto il server il bottone è disattivato, così non si crea due volte */}
+      {/* Crea task invia il modulo (type="submit") e si disattiva mentre aspetto il server */}
       <div className="form-actions">
         <Button variant="secondary" onClick={onCancel}>
           Annulla

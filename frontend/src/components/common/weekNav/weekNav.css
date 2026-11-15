@@ -5,7 +5,7 @@
   gap: 0.5rem;
 }
 
-/* parte comune ai tre bottoni: alti 44px, la misura minima comoda da toccare col dito */
+/* i tre bottoni, alti 44px */
 .week-nav-arrow,
 .week-nav-today {
   min-height: 44px;
@@ -32,13 +32,13 @@
   font-weight: 700;
 }
 
-/* sfondo magenta chiaro al passaggio del mouse, ma non sul bottone disattivato */
+/* magenta chiaro al passaggio del mouse (non sul bottone disattivato) */
 .week-nav-arrow:hover,
 .week-nav-today:hover:not(:disabled) {
   background: var(--primary-soft);
 }
 
-/* "Questa settimana" grigio quando sei già nella settimana in corso */
+/* "Questa settimana" grigio quando ci sei già */
 .week-nav-today:disabled {
   color: var(--text-muted);
 }

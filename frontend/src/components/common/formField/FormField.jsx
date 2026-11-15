@@ -1,9 +1,7 @@
 import "./formField.css";
 
-// un campo del modulo con la sua etichetta e il messaggio di errore.
-// label: il testo dell'etichetta; htmlFor: l'id del campo, così cliccando sull'etichetta
-// si va nel campo; error: il messaggio da mostrare se il campo è sbagliato;
-// children: il campo vero e proprio (input, select, textarea), scritto dalla pagina
+// campo del modulo con etichetta ed errore. htmlFor: l'id del campo (cliccando
+// l'etichetta si va nel campo); children: l'input, il select o il textarea
 const FormField = ({ label, htmlFor, error, children }) => {
   return (
     <div className="form-field">

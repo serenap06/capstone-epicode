@@ -1,8 +1,6 @@
 import "./footer.css";
 
-// piè di pagina con il nome dell'app e il link al mio GitHub.
-// target="_blank" apre il link in una nuova scheda; rel="noopener noreferrer" è per sicurezza,
-// così la nuova scheda non può controllare la pagina da cui è stata aperta
+// piè di pagina. rel="noopener noreferrer": la nuova scheda non può controllare questa
 const Footer = () => {
   return (
     <footer className="app-footer">

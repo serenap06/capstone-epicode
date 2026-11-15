@@ -1,7 +1,6 @@
 /* stili solo della Dashboard */
 
-/* lista delle task: alta al massimo il 71% dello schermo, poi scorre dentro (overflow-y: auto).
-   padding-right lascia spazio alla barra di scorrimento */
+/* task alte al massimo il 71% dello schermo, poi scorrono; spazio a destra per la barra */
 .dashboard-tasks {
   display: flex;
   flex-direction: column;
@@ -11,12 +10,12 @@
   padding-right: 1rem;
 }
 
-/* allinea il link "Vedi tutte" alle card, che lasciano spazio alla barra di scorrimento */
+/* "Vedi tutte" allineato alle card */
 .dashboard-tasks-header {
   padding-right: 1rem;
 }
 
-/* liste dei riquadri a destra (turni, sotto scorta): scorrono dopo il 30% dello schermo */
+/* liste a destra: scorrono oltre il 30% dello schermo */
 .dashboard-list {
   max-height: 30vh;
   overflow-y: auto;

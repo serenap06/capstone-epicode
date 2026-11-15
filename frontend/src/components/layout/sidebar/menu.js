@@ -29,14 +29,15 @@ export const MENU = {
     { to: "/admin/users", label: "Utenti", icon: Users, hideOnMobile: true },
     { to: "/admin/stores", label: "Negozi", icon: Store, hideOnMobile: true },
   ],
-  // menu del dipendente: su telefono niente Cassa, di proposito
+  // menu del dipendente: su telefono niente Cassa, di proposito;
+  // Giacenze e Catalogo in "Altro", come per il responsabile
   employee: [
     { to: "/employee", label: "Dashboard", icon: Home, end: true },
     { to: "/employee/checkout", label: "Cassa", icon: CreditCard, desktopOnly: true },
     { to: "/employee/tasks", label: "Task", icon: CheckSquare },
     { to: "/employee/shifts", label: "Turni", icon: Calendar },
-    { to: "/employee/stock", label: "Giacenze", icon: Boxes },
+    { to: "/employee/stock", label: "Giacenze", icon: Boxes, hideOnMobile: true },
     { to: "/employee/supply-requests", label: "Forniture", icon: PackagePlus },
-    { to: "/employee/products", label: "Catalogo", icon: ShoppingBag },
+    { to: "/employee/products", label: "Catalogo", icon: ShoppingBag, hideOnMobile: true },
   ],
 };

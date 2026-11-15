@@ -48,6 +48,19 @@
   border: 0;
   background: transparent;
 }
+
+/* la regola sopra copriva anche il grigio del mouse e il magenta della pagina aperta:
+   li riscrivo qui sotto, così valgono anche per "Altro" (show = menu aperto) */
+.btn.app-more-toggle:hover,
+.btn.app-more-toggle.show {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.btn.app-more-toggle.active {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
 /* tolgo la freccina di Bootstrap */
 .app-more .btn.app-more-toggle::after {
   display: none;

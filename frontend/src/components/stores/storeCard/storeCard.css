@@ -1,0 +1,52 @@
+/* card bianca di un negozio; height 100% per card alte uguali nella riga */
+.store-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.25rem;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.store-card-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.store-card-address {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* "Personale · 2", viola come i titoletti */
+.store-card-staff {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.store-card-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* margin-top: auto tiene i bottoni in fondo anche se la card è più alta */
+.store-card-actions {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* su telefono i due bottoni si dividono la riga */
+@media (max-width: 575.98px) {
+  .store-card-actions .app-button {
+    flex: 1 1 0;
+  }
+}

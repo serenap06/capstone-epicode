@@ -47,20 +47,28 @@
     border-radius: 0;
   }
 
-  /* margini più stretti; sotto ci pensano i bottoni */
+  /* più spazio sopra il titolo; ai lati margini stretti, sotto ci pensano i bottoni */
   .form-modal .modal-header {
-    padding: 1rem 1rem 0.25rem;
+    padding: 1.75rem 1rem 0.5rem;
   }
 
+  /* corpo in colonna: il modulo si allunga fino in fondo allo schermo */
   .form-modal .modal-body {
+    display: flex;
+    flex-direction: column;
     padding: 0.75rem 1rem 0;
   }
 
-  /* bottoni sempre visibili in fondo mentre si scorre (sticky), larghi fino ai bordi */
+  .form-modal .modal-body > form {
+    flex: 1 0 auto;
+  }
+
+  /* bottoni in fondo allo schermo (margin-top: auto) e sempre visibili mentre si scorre
+     (sticky); il margine negativo li allarga fino ai bordi */
   .form-modal .form-actions {
     position: sticky;
     bottom: 0;
-    margin: 0 -1rem;
+    margin: auto -1rem 0;
     padding: 0.75rem 1rem;
     background: var(--surface);
     border-top: 1px solid var(--border);

@@ -2,7 +2,7 @@
 const MESSAGES = {
   "Invalid email or password": "Email o password non corrette",
   "Validation failed": "Controlla i dati inseriti",
-  "Forbidden": "Non hai i permessi per questa operazione",
+  Forbidden: "Non hai i permessi per questa operazione",
   "Product not found": "Prodotto non trovato",
   "Task not found": "Task non trovata",
   "Handled requests cannot be deleted":
@@ -12,6 +12,8 @@ const MESSAGES = {
     "Uno o più prodotti non sono disponibili",
   "No employees in this store": "In questo negozio non ci sono dipendenti",
   "Upload error": "Foto non valida: usa png, jpg o webp fino a 2 MB",
+  "Store has employees":
+    "Il negozio ha ancora del personale: spostalo prima in un altro negozio",
 };
 
 // messaggi di riserva in base al codice, se il messaggio non è nell'elenco sopra
@@ -30,7 +32,10 @@ export const translateError = (message, status) => {
   if (MESSAGES[message]) return MESSAGES[message];
   // ?. evita l'errore se message è vuoto
   if (message?.startsWith("Not enough stock for:")) {
-    return message.replace("Not enough stock for:", "Giacenza insufficiente per:");
+    return message.replace(
+      "Not enough stock for:",
+      "Giacenza insufficiente per:",
+    );
   }
   return BY_STATUS[status] || "Si è verificato un errore";
 };

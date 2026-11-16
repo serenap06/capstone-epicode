@@ -9,6 +9,7 @@ import MyTasks from "./pages/employee/tasks/MyTasks.jsx";
 import MyShifts from "./pages/employee/shifts/MyShifts.jsx";
 import Tasks from "./pages/admin/tasks/Tasks.jsx";
 import Profile from "./pages/profile/Profile.jsx";
+import Stores from "./pages/admin/stores/Stores.jsx";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route index element={<Dashboard />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="stores" element={<Stores />} />
         </Route>
       </Route>
 

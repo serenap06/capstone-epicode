@@ -1,0 +1,44 @@
+/* lista senza margini e pallini */
+.week-hours-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* una riga: nome e contratto a sinistra, ore e stato a destra, con una linea sopra */
+.week-hours-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.week-hours-row p {
+  margin: 0;
+}
+
+.week-hours-name {
+  font-weight: 700;
+}
+
+.week-hours-contract {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ore, barra e badge in una colonna stretta */
+.week-hours-row .hours-status {
+  flex: 0 0 130px;
+}
+
+/* nome del negozio sopra le sue persone, quando si vedono tutti i negozi: come i titoletti */
+.week-hours-group {
+  padding: 0.75rem 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}

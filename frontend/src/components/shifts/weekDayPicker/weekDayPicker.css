@@ -1,0 +1,61 @@
+/* sette colonne uguali: i giorni stanno su una riga anche a 320px */
+.week-day-picker {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-bottom: 1.5rem;
+}
+
+/* un giorno: nome piccolo sopra, numero grande sotto */
+.week-day-picker-day {
+  position: relative;
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.week-day-picker-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.week-day-picker-number {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+/* oggi: un puntino magenta sotto il numero */
+.week-day-picker-today::after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+/* il giorno scelto: magenta chiaro con bordo magenta, come i filtri */
+.week-day-picker-day[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+.week-day-picker-day[aria-pressed="true"] .week-day-picker-name {
+  color: var(--primary-dark);
+}
+
+.week-day-picker-day:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

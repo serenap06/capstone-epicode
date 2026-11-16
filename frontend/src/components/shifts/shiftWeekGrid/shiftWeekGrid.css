@@ -1,0 +1,151 @@
+/* se la tabella non ci sta (tablet) scorre in orizzontale dentro il riquadro */
+.shift-grid-scroll {
+  overflow-x: auto;
+}
+
+/* border-spacing: lo spazio tra le celle (0.4rem in orizzontale, 0.5rem in verticale).
+   min-width: sotto i 640px la tabella scorre invece di schiacciarsi */
+.shift-grid {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: separate;
+  border-spacing: 0.4rem 0.5rem;
+}
+
+.shift-grid th,
+.shift-grid td {
+  vertical-align: middle;
+}
+
+/* intestazione: giorni piccoli e grigi, "Lun 16" con la maiuscola */
+.shift-grid thead th {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  text-transform: capitalize;
+}
+
+/* "Dipendente" e "Ore settimana" a sinistra e senza maiuscole forzate */
+.shift-grid thead th:first-child,
+.shift-grid thead th:last-child {
+  text-align: left;
+  text-transform: none;
+}
+
+/* il giorno di oggi in magenta, come nel resto dell'app */
+.shift-grid thead th.shift-grid-today {
+  color: var(--primary-dark);
+}
+
+/* prima colonna: nome e contratto */
+.shift-grid tbody th {
+  width: 150px;
+  text-align: left;
+  font-weight: 400;
+}
+
+.shift-grid-name {
+  display: block;
+  font-weight: 700;
+}
+
+.shift-grid-contract {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* riga con il nome del negozio, quando si vedono tutti i negozi: come i titoletti */
+.shift-grid .shift-grid-group th {
+  width: auto;
+  padding-top: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+
+/* ultima colonna: le ore */
+.shift-grid tbody td:last-child {
+  width: 170px;
+  padding-left: 0.5rem;
+}
+
+/* turno: pillola viola, il colore dei turni (come in "I miei turni") */
+.shift-grid-shift,
+.shift-grid-rest {
+  width: 100%;
+  min-height: 40px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.shift-grid-shift {
+  border: 0;
+  background: var(--secondary-soft);
+  color: var(--secondary-dark);
+  font-weight: 700;
+}
+
+.shift-grid-shift + .shift-grid-shift {
+  margin-top: 0.25rem;
+}
+
+.shift-grid-shift:hover {
+  background: var(--secondary-dark);
+  color: #fff;
+}
+
+/* riposo: testo grigio; al passaggio del mouse il bordo tratteggiato dice "qui puoi aggiungere" */
+.shift-grid-rest {
+  border: 1px dashed transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.shift-grid-rest:hover {
+  border-color: var(--secondary);
+  color: var(--secondary-dark);
+}
+
+.shift-grid-shift:focus-visible,
+.shift-grid-rest:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* tablet e computer piccoli (fino a 1199px): celle più strette e testo più piccolo,
+   così la settimana intera ci sta anche a 768px e a 1024px con il menu a sinistra */
+@media (max-width: 1199.98px) {
+  .shift-grid {
+    border-spacing: 0.25rem 0.4rem;
+  }
+
+  .shift-grid tbody th {
+    width: 110px;
+  }
+
+  .shift-grid-name {
+    font-size: 0.9rem;
+  }
+
+  .shift-grid tbody td:last-child {
+    width: 125px;
+    padding-left: 0.25rem;
+  }
+
+  .shift-grid-shift,
+  .shift-grid-rest {
+    min-height: 36px;
+    padding: 0 2px;
+    font-size: 0.75rem;
+  }
+}

@@ -1,0 +1,12 @@
+/* ore, barra e badge uno sotto l'altro */
+.hours-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.hours-status-value {
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}

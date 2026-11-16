@@ -1,0 +1,42 @@
+/* stili solo della pagina Turni */
+
+/* settimana e "Nuovo turno" sempre sulla stessa riga */
+.shifts-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* il titolo del giorno ("martedì 17 novembre") con la prima lettera maiuscola */
+.shifts-day-panel .section-title::first-letter {
+  text-transform: uppercase;
+}
+
+/* su telefono le frecce prendono tutto lo spazio e "Nuovo turno" è un quadrato con il + */
+@media (max-width: 575.98px) {
+  .shifts-header-actions .week-nav {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .shifts-header-actions .week-nav-today {
+    min-width: 0;
+    padding: 0 0.5rem;
+  }
+
+  .shifts-header-actions .app-button {
+    flex: 0 0 44px;
+    padding: 0;
+  }
+
+  .shifts-new-label {
+    display: none;
+  }
+}
+
+/* a 320px "Tutti", "Bookshop Museo" e "Shop Castello" non stanno in riga: testo un po' più piccolo */
+@media (max-width: 374.98px) {
+  .shifts-filters .filter-chip {
+    padding: 0 0.3rem;
+    font-size: 0.75rem;
+  }
+}

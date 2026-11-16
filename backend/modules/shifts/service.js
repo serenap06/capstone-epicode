@@ -50,7 +50,11 @@ const findWeeklyHours = async ({ store, from, to }, currentUser) => {
   const storeFilter = store ? { store } : {};
   const employeeFilter =
     currentUser.role === "employee" ? { _id: currentUser._id } : storeFilter;
-  const employees = await User.find({ role: "employee", ...employeeFilter });
+  // con il negozio di ognuno (serve quando il responsabile guarda tutti i negozi insieme);
+  // ordinati per negozio e nome, così le righe dello stesso negozio stanno vicine
+  const employees = await User.find({ role: "employee", ...employeeFilter })
+    .populate("store", "name")
+    .sort({ store: 1, name: 1 });
 
   const fromDate = new Date(from);
   const toDate = new Date(to);
@@ -72,7 +76,9 @@ const findWeeklyHours = async ({ store, from, to }, currentUser) => {
       0,
     );
     return {
+      employeeId: employee._id,
       employee: `${employee.name} ${employee.surname}`,
+      store: employee.store,
       weeklyHours: employee.weeklyHours,
       scheduledHours,
       difference: scheduledHours - employee.weeklyHours,

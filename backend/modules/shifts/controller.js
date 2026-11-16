@@ -48,7 +48,7 @@ const create = async (req, res, next) => {
       startAt,
       endAt,
     });
-    res.status(200).send({
+    res.status(201).send({
       statusCode: 201,
       message: "Shift created successfully",
       shift,

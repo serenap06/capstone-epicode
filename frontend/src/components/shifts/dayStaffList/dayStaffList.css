@@ -1,0 +1,63 @@
+/* lista senza margini e pallini */
+.day-staff-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* una riga: tutta cliccabile, nome a sinistra e orario a destra, con una linea sopra */
+.day-staff-row {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  text-align: left;
+}
+
+.day-staff-name {
+  font-weight: 700;
+}
+
+/* orario: pillola viola, il colore dei turni */
+.day-staff-time,
+.day-staff-rest {
+  flex-shrink: 0;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.day-staff-time {
+  background: var(--secondary-soft);
+  color: var(--secondary-dark);
+}
+
+/* riposo: pillola grigia */
+.day-staff-rest {
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.day-staff-row:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* nome del negozio sopra le sue persone, quando si vedono tutti i negozi: come i titoletti */
+.day-staff-group {
+  padding: 0.75rem 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}

@@ -61,3 +61,19 @@ export const addDays = (date, days) => {
   newDate.setDate(newDate.getDate() + days);
   return newDate;
 };
+
+// data per i campi <input type="date">: "2026-11-16", con il giorno di qui (non quello UTC)
+export const toDateInputValue = (date) => {
+  const day = new Date(date);
+  const month = String(day.getMonth() + 1).padStart(2, "0");
+  const dayNumber = String(day.getDate()).padStart(2, "0");
+  return `${day.getFullYear()}-${month}-${dayNumber}`;
+};
+
+// orario per i campi <input type="time">: "09:00"
+export const toTimeInputValue = (date) => {
+  const time = new Date(date);
+  const hours = String(time.getHours()).padStart(2, "0");
+  const minutes = String(time.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+};

@@ -12,6 +12,9 @@ const MESSAGES = {
     "Uno o più prodotti non sono disponibili",
   "No employees in this store": "In questo negozio non ci sono dipendenti",
   "Upload error": "Foto non valida: usa png, jpg o webp fino a 2 MB",
+  "User already has a shift in this time range":
+    "Questa persona ha già un turno in questo orario",
+  "User doesn't belong to this store": "Questa persona non lavora in questo negozio",
   "Store has employees":
     "Il negozio ha ancora del personale: spostalo prima in un altro negozio",
 };

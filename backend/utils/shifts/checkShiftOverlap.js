@@ -1,5 +1,5 @@
 const Shift = require("../../modules/shifts/schema");
-const HttpException = require("../../exceptions/auth/NotFoundException");
+const HttpException = require("../../exceptions");
 
 // Controlla che il dipendente non abbia già un turno nello stesso orario.
 const checkShiftOverlap = async (userId, startAt, endAt, currentShiftId) => {

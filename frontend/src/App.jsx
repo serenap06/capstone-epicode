@@ -10,6 +10,7 @@ import MyShifts from "./pages/employee/shifts/MyShifts.jsx";
 import Tasks from "./pages/admin/tasks/Tasks.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import Stores from "./pages/admin/stores/Stores.jsx";
+import Shifts from "./pages/admin/shifts/Shifts.jsx";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           {/* index = la pagina che si apre su /admin */}
           <Route index element={<Dashboard />} />
           <Route path="tasks" element={<Tasks />} />
+          <Route path="shifts" element={<Shifts/>} />
           <Route path="profile" element={<Profile />} />
           <Route path="stores" element={<Stores />} />
         </Route>

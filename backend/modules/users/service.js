@@ -1,4 +1,8 @@
+const bcrypt = require("bcrypt");
 const User = require("./schema");
+const HttpException = require("../../exceptions");
+const Shift = require("../shifts/schema");
+const Task = require("../tasks/schema");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 
 const findAll = async () => {
@@ -58,6 +62,24 @@ const updateMe = async (userId, userData) => {
   return user;
 };
 
+// la password è nascosta di default (select: false): con "+password" la chiedo esplicitamente.
+// La nuova la cripta il pre("save") dello schema
+const updateMyPassword = async (userId, currentPassword, newPassword) => {
+  const user = await User.findById(userId).select("+password");
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+  const isCurrentValid = await bcrypt.compare(currentPassword, user.password);
+  if (!isCurrentValid) {
+    throw new HttpException("Current password is wrong", 400);
+  }
+  if (currentPassword === newPassword) {
+    throw new HttpException("New password must be different", 400);
+  }
+  user.password = newPassword;
+  await user.save();
+};
+
 const uploadAvatar = async (userId, avatarUrl) => {
   const user = await User.findById(userId).populate("store", "name city");
   if (!user) {
@@ -83,6 +105,10 @@ const deleteUser = async (userId) => {
   if (!user) {
     throw new NotFoundException("User not found");
   }
+  await Promise.all([
+    Shift.deleteMany({ user: userId }),
+    Task.deleteMany({ assignedTo: userId }),
+  ]);
 };
 
 module.exports = {
@@ -92,6 +118,7 @@ module.exports = {
   create,
   update,
   updateMe,
+  updateMyPassword,
   uploadAvatar,
   removeAvatar,
   deleteUser,

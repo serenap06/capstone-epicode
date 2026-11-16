@@ -15,6 +15,9 @@ const MESSAGES = {
   "User already has a shift in this time range":
     "Questa persona ha già un turno in questo orario",
   "User doesn't belong to this store": "Questa persona non lavora in questo negozio",
+  "Current password is wrong": "La password attuale non è corretta",
+  "New password must be different":
+    "La nuova password deve essere diversa da quella attuale",
   "Store has employees":
     "Il negozio ha ancora del personale: spostalo prima in un altro negozio",
 };

@@ -10,6 +10,7 @@ const { param } = require("express-validator");
 const userBodyRules = require("../../middlewares/users/userBodyRules");
 const userUpdateRules = require("../../middlewares/users/userUpdateRules");
 const profileUpdateRules = require("../../middlewares/users/profileUpdateRules");
+const passwordUpdateRules = require("../../middlewares/users/passwordUpdateRules");
 const { uploadAvatar } = require("../../middlewares/upload/cloudinary");
 
 usersRouter.use(authenticate);
@@ -18,6 +19,12 @@ usersRouter.use(authenticate);
 
 usersRouter.get("/me", userController.findMe);
 usersRouter.patch("/me", profileUpdateRules, validate, userController.updateMe);
+usersRouter.patch(
+  "/me/password",
+  passwordUpdateRules,
+  validate,
+  userController.updateMyPassword,
+);
 usersRouter.patch(
   "/me/avatar",
   uploadAvatar.single("avatar"),

@@ -101,6 +101,24 @@ const updateMe = async (req, res, next) => {
   }
 };
 
+// cambio della propria password: il service controlla quella attuale prima di salvare la nuova
+const updateMyPassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    await userService.updateMyPassword(
+      req.user._id,
+      currentPassword,
+      newPassword,
+    );
+    res.status(200).send({
+      statusCode: 200,
+      message: "Password updated successfully",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const uploadAvatar = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -155,6 +173,7 @@ module.exports = {
   create,
   update,
   updateMe,
+  updateMyPassword,
   uploadAvatar,
   removeAvatar,
   deleteUser,

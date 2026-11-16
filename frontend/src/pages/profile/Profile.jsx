@@ -7,15 +7,14 @@ import { Camera } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { removeAvatar, updateProfile, uploadAvatar } from "../../api/users";
 import { formatFullName } from "../../utils/formatFullName";
+import { ROLE_LABEL } from "../../utils/roleLabel";
 
 import Avatar from "../../components/common/avatar/Avatar";
 import Button from "../../components/common/button/Button";
 import FormField from "../../components/common/formField/FormField";
 import PageHeader from "../../components/common/pageHeader/PageHeader";
 import Panel from "../../components/common/panel/Panel";
-
-// il ruolo scritto per l'utente
-const ROLE_LABEL = { admin: "Responsabile", employee: "Dipendente" };
+import PasswordForm from "../../components/users/passwordForm/PasswordForm";
 
 // peso massimo della foto, come nel backend: 2 MB = 2 × 1024 × 1024 byte
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
@@ -224,6 +223,11 @@ const Profile = () => {
                 </Button>
               </div>
             </form>
+          </Panel>
+
+          {/* la password demo è uguale per tutti: qui ognuno se la cambia */}
+          <Panel title="Password">
+            <PasswordForm />
           </Panel>
 
           {/* dati che decide il responsabile: qui si leggono e basta */}

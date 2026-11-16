@@ -13,6 +13,7 @@ import {
   FormCheck,
 } from "react-bootstrap";
 import { Lock, User } from "lucide-react";
+import PasswordInput from "../../components/common/passwordInput/PasswordInput";
 import "./login.css";
 
 // pagina di accesso: email, password e "Ricordami"
@@ -80,10 +81,13 @@ const Login = () => {
           <FormLabel visuallyHidden>Password</FormLabel>
           <div className="login-field">
             <Lock className="login-icon" />
-            <FormControl
+            {/* PasswordInput: il campo con l'occhio per vedere la password.
+                id="password" come il controlId del gruppo, così l'etichetta resta collegata */}
+            <PasswordInput
+              id="password"
               placeholder="password"
-              type="password"
-              className="login-input"
+              autoComplete="current-password"
+              className="form-control login-input"
               {...register("password", { required: "Password obbligatoria" })}
             />
           </div>

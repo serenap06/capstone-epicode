@@ -92,3 +92,13 @@
   background: var(--primary-dark);
   color: #ffffff;
 }
+
+/* l'occhio della password nel campo a pillola: un po' più a destra e viola come il lucchetto */
+.login-field .password-input-toggle {
+  right: 0.75rem;
+  color: var(--secondary);
+}
+
+.login-field .password-input .login-input {
+  padding-right: 3.5rem;
+}

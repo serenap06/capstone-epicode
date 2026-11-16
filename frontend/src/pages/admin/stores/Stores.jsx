@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
-import { Plus } from "lucide-react";
 
 import { loadData } from "../../../api/loadData";
 import { deleteStore } from "../../../api/stores";
-import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { useIsPhone } from "../../../hooks/useIsPhone";
 
-import Button from "../../../components/common/button/Button";
+import AddButton from "../../../components/common/addButton/AddButton";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
 import FormModal from "../../../components/common/formModal/FormModal";
 import Message from "../../../components/common/message/Message";
@@ -25,7 +24,7 @@ const Stores = () => {
   const [storeToDelete, setStoreToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   // su telefono "Nuovo negozio" è solo il "+" accanto al titolo
-  const isPhone = useMediaQuery("(max-width: 767.98px)");
+  const isPhone = useIsPhone();
   // aumentarlo ricarica la lista
   const [refreshCount, setRefreshCount] = useState(0);
 
@@ -70,14 +69,7 @@ const Stores = () => {
 
   // "Nuovo negozio": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
   const addButton = (
-    <Button
-      aria-label="Nuovo negozio"
-      className={isPhone ? "app-button-icon" : ""}
-      onClick={openNewForm}
-    >
-      <Plus size={18} aria-hidden="true" />
-      {!isPhone && "Nuovo negozio"}
-    </Button>
+    <AddButton label="Nuovo negozio" iconOnly={isPhone} onClick={openNewForm} />
   );
 
   return (

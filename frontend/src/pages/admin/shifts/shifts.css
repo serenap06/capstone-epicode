@@ -11,7 +11,7 @@
   text-transform: uppercase;
 }
 
-/* su telefono le frecce prendono tutto lo spazio e "Nuovo turno" è un quadrato con il + */
+/* su telefono le frecce prendono tutto lo spazio rimasto accanto al "+" */
 @media (max-width: 575.98px) {
   .shifts-header-actions .week-nav {
     flex: 1 1 auto;
@@ -21,15 +21,6 @@
   .shifts-header-actions .week-nav-today {
     min-width: 0;
     padding: 0 0.5rem;
-  }
-
-  .shifts-header-actions .app-button {
-    flex: 0 0 44px;
-    padding: 0;
-  }
-
-  .shifts-new-label {
-    display: none;
   }
 }
 

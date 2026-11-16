@@ -10,6 +10,7 @@ import {
   toTimeInputValue,
 } from "../../../utils/dates";
 import { formatHours } from "../../../utils/formatHours";
+import { getShiftHours } from "../../../utils/getShiftHours";
 import { groupByStore } from "../../../utils/groupByStore";
 
 import Button from "../../common/button/Button";
@@ -90,9 +91,7 @@ const ShiftForm = ({
   const duration = getDuration(startTime, endTime);
   const employee = employees.find((row) => row.employeeId === selectedUser);
   const oldDuration =
-    isEditing && shift.user._id === selectedUser
-      ? (new Date(shift.endAt) - new Date(shift.startAt)) / 3600000
-      : 0;
+    isEditing && shift.user._id === selectedUser ? getShiftHours(shift) : 0;
   const weekTotal = employee
     ? employee.scheduledHours - oldDuration + duration
     : 0;

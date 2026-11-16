@@ -23,7 +23,7 @@ const TaskCard = ({ task, onDelete }) => {
   const dueTime = formatTime(task.dueDate);
 
   return (
-    <div className="task-card">
+    <div className="app-card task-card">
       <div className="task-card-header">
         <h3 className="task-card-title">{task.title}</h3>
         {/* viola se è globale, magenta se è per alcune persone */}

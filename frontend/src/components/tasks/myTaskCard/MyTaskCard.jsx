@@ -10,7 +10,7 @@ import TaskStatusBadge from "../taskStatusBadge/TaskStatusBadge";
 const MyTaskCard = ({ task, onToggle }) => {
   const isDone = task.status === "done";
   return (
-    <article className="my-task-card">
+    <article className="app-card my-task-card">
       {/* a sinistra titolo, badge, descrizione e dettagli */}
       <div className="my-task-card-body">
         <div className="my-task-card-header">

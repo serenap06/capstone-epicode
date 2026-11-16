@@ -4,6 +4,13 @@ const checkShiftOverlap = require("../../utils/shifts/checkShiftOverlap");
 const checkUserBelongsToStore = require("../../utils/checkUserBelongsToStore");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
+const assignDefinedFields = require("../../utils/assignDefinedFields");
+
+// il turno con nome della persona e del negozio, come lo vuole il frontend
+const findShiftWithNames = (shiftId) =>
+  Shift.findById(shiftId)
+    .populate("user", "name surname")
+    .populate("store", "name");
 
 const findAll = async ({ store: storeId, from, to }, currentUser) => {
   const isAdmin = currentUser.role === "admin";
@@ -30,9 +37,7 @@ const findAll = async ({ store: storeId, from, to }, currentUser) => {
 };
 
 const findOne = async (shiftId, currentUser) => {
-  const shift = await Shift.findById(shiftId)
-    .populate("user", "name surname")
-    .populate("store", "name");
+  const shift = await findShiftWithNames(shiftId);
   if (!shift) {
     throw new NotFoundException("Shift not found");
   }
@@ -46,6 +51,8 @@ const findOne = async (shiftId, currentUser) => {
   return shift;
 };
 
+// ore della settimana di ogni dipendente: contratto, ore pianificate e differenza.
+// Il dipendente riceve solo la sua riga
 const findWeeklyHours = async ({ store, from, to }, currentUser) => {
   const storeFilter = store ? { store } : {};
   const employeeFilter =
@@ -71,6 +78,7 @@ const findWeeklyHours = async ({ store, from, to }, currentUser) => {
     const employeeShifts = shifts.filter(
       (shift) => shift.user.toString() === employee._id.toString(),
     );
+    // la differenza tra due date è in millisecondi: 3.600.000 in un'ora
     const scheduledHours = employeeShifts.reduce(
       (total, shift) => total + (shift.endAt - shift.startAt) / 3600000,
       0,
@@ -81,12 +89,14 @@ const findWeeklyHours = async ({ store, from, to }, currentUser) => {
       store: employee.store,
       weeklyHours: employee.weeklyHours,
       scheduledHours,
-      difference: scheduledHours - employee.weeklyHours,
+      // senza ore di contratto la differenza è tutto il pianificato (non NaN)
+      difference: scheduledHours - (employee.weeklyHours ?? 0),
     };
   });
   return hours;
 };
 
+// prima di salvare: la persona lavora in quel negozio e non ha già un turno in quell'orario
 const create = async (shiftData) => {
   const { user: userId, store: storeId, startAt, endAt } = shiftData;
   await checkUserBelongsToStore(userId, storeId);
@@ -95,9 +105,7 @@ const create = async (shiftData) => {
   const newShift = new Shift(shiftData);
   await newShift.save();
 
-  return Shift.findById(newShift._id)
-    .populate("user", "name surname")
-    .populate("store", "name");
+  return findShiftWithNames(newShift._id);
 };
 
 const update = async (shiftId, shiftData) => {
@@ -106,19 +114,13 @@ const update = async (shiftId, shiftData) => {
     throw new NotFoundException("Shift not found");
   }
 
-  Object.entries(shiftData).forEach(([field, value]) => {
-    if (value !== undefined) {
-      shift[field] = value;
-    }
-  });
+  assignDefinedFields(shift, shiftData);
 
   await checkUserBelongsToStore(shift.user, shift.store);
   await checkShiftOverlap(shift.user, shift.startAt, shift.endAt, shift._id);
   await shift.save();
 
-  return Shift.findById(shift._id)
-    .populate("user", "name surname")
-    .populate("store", "name");
+  return findShiftWithNames(shift._id);
 };
 
 const deleteShift = async (shiftId) => {

@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true, strict: true },
 );
-//criptaggio password
+// prima di salvare cripto la password, solo se è nuova o cambiata
 userSchema.pre("save", async function () {
   if (!this.password || !this.isModified("password")) return;
   this.password = await bcrypt.hash(this.password, 10);

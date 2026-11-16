@@ -4,6 +4,7 @@ import { isSameDay } from "../../../utils/dates";
 import { formatDayName } from "../../../utils/formatDayName";
 import { formatHourRange } from "../../../utils/formatTime";
 import { groupByStore } from "../../../utils/groupByStore";
+import { getDayShifts } from "../../../utils/getDayShifts";
 import HoursStatus from "../hoursStatus/HoursStatus";
 
 // settimana del negozio per il responsabile: una riga per dipendente, una colonna per giorno
@@ -57,11 +58,7 @@ const ShiftWeekGrid = ({ days, shifts, hours, onShiftClick, onEmptyClick }) => {
                   </th>
                   {days.map((day) => {
                     // i turni di questa persona in questo giorno (di solito uno)
-                    const dayShifts = shifts.filter(
-                      (shift) =>
-                        shift.user._id === row.employeeId &&
-                        isSameDay(shift.startAt, day),
-                    );
+                    const dayShifts = getDayShifts(shifts, row.employeeId, day);
                     return (
                       <td key={day.toDateString()}>
                         {/* il testo nascosto dice allo screen reader cosa fa il bottone */}

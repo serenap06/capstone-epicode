@@ -6,7 +6,8 @@ import { useAuth } from "../../../hooks/useAuth";
 import { useState, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
-import { getToday, isSameDay, toQuery } from "../../../utils/dates";
+import { getToday, isSameDay } from "../../../utils/dates";
+import { toQuery } from "../../../utils/toQuery";
 import { getPercent } from "../../../utils/getPercent";
 import Message from "../../../components/common/message/Message";
 import PageHeader from "../../../components/common/pageHeader/PageHeader";

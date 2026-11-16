@@ -3,54 +3,33 @@ const Task = require("./schema");
 const getStoreEmployeeIds = require("../../utils/tasks/getStoreEmployeeIds");
 const checkUserBelongsToStore = require("../../utils/checkUserBelongsToStore");
 const getTaskGroups = require("../../utils/tasks/getTaskGroups");
+const buildTaskFilter = require("../../utils/tasks/buildTaskFilter");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const HttpException = require("../../exceptions");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 
-const findAll = async ({
-  store,
-  assignedTo,
-  status,
-  category,
-  type,
-  isGlobal,
-  from,
-  to,
-}) => {
-  const taskFilter = {};
+// task del responsabile: cerco i gruppi che rispettano i filtri e li restituisco
+// raggruppati (una task con dentro tutte le persone assegnate)
+const findAll = async ({ store, assignedTo, ...filters }) => {
+  const taskFilter = buildTaskFilter(filters);
   if (store) taskFilter.store = store;
   if (assignedTo) taskFilter.assignedTo = assignedTo;
-  if (status) taskFilter.status = status;
-  if (category) taskFilter.category = category;
-  if (type) taskFilter.type = type;
-  if (isGlobal !== undefined) taskFilter.isGlobal = isGlobal;
-  if (from || to) {
-    taskFilter.dueDate = {};
-    if (from) taskFilter.dueDate.$gte = new Date(from);
-    if (to) taskFilter.dueDate.$lte = new Date(to);
-  }
 
   const groupIds = await Task.distinct("groupId", taskFilter);
   return getTaskGroups(groupIds);
 };
 
-const findMine = async (
-  { status, category, type, isGlobal, from, to },
-  currentUser,
-) => {
-  const taskFilter = { assignedTo: currentUser._id };
-  if (status) taskFilter.status = status;
-  if (category) taskFilter.category = category;
-  if (type) taskFilter.type = type;
-  if (isGlobal !== undefined) taskFilter.isGlobal = isGlobal;
-  if (from || to) {
-    taskFilter.dueDate = {};
-    if (from) taskFilter.dueDate.$gte = new Date(from);
-    if (to) taskFilter.dueDate.$lte = new Date(to);
-  }
+// task del dipendente: solo le sue copie, una per task
+const findMine = async (filters, currentUser) => {
+  const taskFilter = {
+    ...buildTaskFilter(filters),
+    assignedTo: currentUser._id,
+  };
   return Task.find(taskFilter).populate("store", "name").sort({ dueDate: 1 });
 };
 
+// crea una copia della task per ogni persona, tutte con lo stesso groupId.
+// Globale: tutti i dipendenti del negozio; altrimenti controllo che ognuno lavori lì
 const create = async (taskData, currentUser) => {
   const { isGlobal, assignedTo, store, ...commonFields } = taskData;
 
@@ -75,6 +54,7 @@ const create = async (taskData, currentUser) => {
   return Task.insertMany(taskToCreate);
 };
 
+// modifica tutte le copie del gruppo insieme (i campi non mandati restano uguali)
 const update = async (groupId, taskGroupData) => {
   const fieldsToUpdate = {};
   Object.entries(taskGroupData).forEach(([field, value]) => {
@@ -94,6 +74,7 @@ const update = async (groupId, taskGroupData) => {
   return getTaskGroups([new mongoose.Types.ObjectId(groupId)]);
 };
 
+// il dipendente segna fatta (o da fare) solo la sua copia; completedAt salva l'orario
 const updateStatus = async (taskId, { status }, currentUser) => {
   const task = await Task.findById(taskId);
   if (!task) {

@@ -33,12 +33,13 @@ const Sidebar = () => {
           // l'icona è un componente: il nome deve iniziare con la maiuscola
           const Icon = link.icon;
           return (
-            // NavLink mette da solo la classe "active" sulla pagina aperta
+            // NavLink mette da solo la classe "active" sulla pagina aperta.
+            // hide-mobile: sotto i 1024px va in "Altro"; hide-phone: sparisce solo su telefono
             <NavLink
               key={link.to}
               to={link.to}
               end={link.end}
-              className={`app-link ${link.hideOnMobile || link.desktopOnly ? "hide-mobile" : ""}`}
+              className={`app-link ${link.hideOnMobile ? "hide-mobile" : ""} ${link.desktopOnly ? "hide-phone" : ""}`}
             >
               {Icon && <Icon className="app-link-icon" size={20} />}
               <span className="app-link-text">{link.label}</span>

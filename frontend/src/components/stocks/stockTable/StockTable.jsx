@@ -12,8 +12,8 @@ const StockTable = ({ stocks, showStore, onEdit, onDelete }) => {
 
   return (
     // se la tabella non ci sta, scorre in orizzontale dentro il riquadro
-    <div className="stock-table-wrap">
-      <table className="stock-table">
+    <div className="app-card app-table-wrap">
+      <table className="app-table stock-table">
         <thead>
           <tr>
             <th scope="col">Prodotto</th>

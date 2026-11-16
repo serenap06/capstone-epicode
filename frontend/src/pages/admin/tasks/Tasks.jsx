@@ -3,12 +3,13 @@ import { deleteTaskGroup } from "../../../api/tasks";
 
 import { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { Plus } from "lucide-react";
 
-import { addDays, getToday, isSameDay, toQuery } from "../../../utils/dates";
+import { addDays, getToday, isSameDay } from "../../../utils/dates";
+import { toQuery } from "../../../utils/toQuery";
 import { formatDayLabel } from "../../../utils/formatDayLabel";
 import { isTaskDone } from "../../../utils/isTaskDone";
-import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { useIsPhone } from "../../../hooks/useIsPhone";
+import { toStoreOptions } from "../../../utils/toStoreOptions";
 
 import Message from "../../../components/common/message/Message";
 import PageHeader from "../../../components/common/pageHeader/PageHeader";
@@ -16,7 +17,7 @@ import TaskCard from "../../../components/tasks/taskCard/TaskCard";
 import FilterBar from "../../../components/common/filterBar/FilterBar";
 import FilterChips from "../../../components/common/filterBar/FilterChips";
 import FilterSelect from "../../../components/common/filterBar/FilterSelect";
-import Button from "../../../components/common/button/Button";
+import AddButton from "../../../components/common/addButton/AddButton";
 import FormModal from "../../../components/common/formModal/FormModal";
 import TaskForm from "../../../components/tasks/taskForm/TaskForm";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
@@ -74,7 +75,7 @@ const Tasks = () => {
 
   // su telefono (fino a 767px): "+" accanto al titolo, Stato in vista
   // e gli altri filtri nel menu "Filtri"
-  const isPhone = useMediaQuery("(max-width: 767.98px)");
+  const isPhone = useIsPhone();
 
   useEffect(() => {
     // negozi e dipendenti una volta sola (da /users tengo solo i dipendenti)
@@ -137,10 +138,7 @@ const Tasks = () => {
   ).length;
 
   // negozi nel formato { value, label } di FilterSelect
-  const storeOptions = stores.map((store) => ({
-    value: store._id,
-    label: store.name,
-  }));
+  const storeOptions = toStoreOptions(stores);
 
   // scadenza: oggi, domani o tutte
   const matchesDue = (task) => {
@@ -217,14 +215,7 @@ const Tasks = () => {
 
   // "Nuova task": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
   const addButton = (
-    <Button
-      aria-label="Nuova task"
-      className={isPhone ? "app-button-icon" : ""}
-      onClick={() => setShowForm(true)}
-    >
-      <Plus size={18} aria-hidden="true" />
-      {!isPhone && "Nuova task"}
-    </Button>
+    <AddButton label="Nuova task" iconOnly={isPhone} onClick={() => setShowForm(true)} />
   );
 
   return (

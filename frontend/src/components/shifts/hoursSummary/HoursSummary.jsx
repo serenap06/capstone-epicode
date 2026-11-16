@@ -10,7 +10,7 @@ const HoursSummary = ({ hours, shiftCount }) => {
   const shiftLabel = shiftCount === 1 ? "turno" : "turni";
 
   return (
-    <section className="hours-summary" aria-label="Ore della settimana">
+    <section className="app-card hours-summary" aria-label="Ore della settimana">
       {/* a sinistra il numero grande */}
       <div>
         <p className="hours-summary-label">Ore pianificate</p>

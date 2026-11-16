@@ -5,9 +5,6 @@
   flex-direction: column;
   gap: 0.85rem;
   padding: 1.25rem;
-  border-radius: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
 }
 
 .store-card-title {

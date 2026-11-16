@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Sale = require("../sales/schema");
+const round = require("../../utils/round");
 
 const PERIOD_FORMATS = {
   day: "%Y-%m-%d",
@@ -7,7 +8,6 @@ const PERIOD_FORMATS = {
   month: "%Y-%m",
 };
 
-const round = (value) => Math.round(value * 100) / 100;
 
 const findRevenue = async ({ from, to, groupBy = "day", store }) => {
   // 1. Filtro: vendite tra from e to, eventualmente di un solo negozio

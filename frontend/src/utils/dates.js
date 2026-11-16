@@ -1,4 +1,4 @@
-// funzioni sulle date: intervalli da chiedere al server e confronti tra giorni
+// funzioni sulle date: intervalli da chiedere al server, confronti tra giorni e valori per i campi
 
 // { from, to } nel formato ISO che il backend accetta come filtro
 const toRange = (start, end) => ({
@@ -40,15 +40,6 @@ export const getWeekDays = (date = new Date()) => {
     day.setDate(monday.getDate() + index);
     return day;
   });
-};
-
-// { from: "...", store: "" } → "from=..." per la richiesta, saltando le voci vuote
-export const toQuery = (params) => {
-  // Object.entries dà le coppie [chiave, valore]: tengo solo quelle con un valore
-  const filledEntries = Object.entries(params).filter(
-    ([, value]) => value !== "" && value !== undefined && value !== null,
-  );
-  return new URLSearchParams(filledEntries).toString();
 };
 
 // true se è lo stesso giorno, l'ora non conta (toDateString scrive solo il giorno)

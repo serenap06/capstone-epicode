@@ -6,7 +6,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
-import { getToday, getWeek, isSameDay, toQuery } from "../../utils/dates";
+import { getToday, getWeek, isSameDay } from "../../utils/dates";
+import { toQuery } from "../../utils/toQuery";
 import { getPercent } from "../../utils/getPercent";
 import { formatEuro } from "../../utils/formatEuro";
 import { formatLongDate } from "../../utils/formatLongDate";

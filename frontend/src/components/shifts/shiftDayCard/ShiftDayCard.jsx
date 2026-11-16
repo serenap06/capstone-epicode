@@ -3,6 +3,7 @@ import { Users } from "lucide-react";
 import { formatTimeRange } from "../../../utils/formatTime";
 import { formatDayName } from "../../../utils/formatDayName";
 import { formatHours } from "../../../utils/formatHours";
+import { getShiftHours } from "../../../utils/getShiftHours";
 import ColleagueBadge from "../colleagueBadge/ColleagueBadge";
 
 // un giorno della settimana: il mio turno con i colleghi, oppure riposo.
@@ -10,17 +11,15 @@ import ColleagueBadge from "../colleagueBadge/ColleagueBadge";
 const ShiftDayCard = ({ day, shift, colleagues, isToday }) => {
   // "lun", "mar"...
   const dayName = formatDayName(day);
-  // durata in ore: la differenza è in millisecondi (3.600.000 in un'ora)
-  const hours = shift
-    ? (new Date(shift.endAt) - new Date(shift.startAt)) / 3600000
-    : 0;
+  // durata del turno in ore (0 se è riposo)
+  const hours = shift ? getShiftHours(shift) : 0;
   // singolare con 1: "1 ora", "8 ore"
   const hoursLabel = hours === 1 ? "ora" : "ore";
 
   return (
     // tratteggiata se è riposo, magenta se è oggi
     <article
-      className={`shift-day ${shift ? "" : "shift-day-rest"} ${isToday ? "shift-day-today" : ""}`}
+      className={`app-card shift-day ${shift ? "" : "shift-day-rest"} ${isToday ? "shift-day-today" : ""}`}
       aria-current={isToday ? "date" : undefined}
     >
       {/* casella con nome e numero del giorno */}

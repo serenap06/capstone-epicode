@@ -16,7 +16,7 @@ const UserCard = ({ user, isSelf, onEdit, onDelete }) => {
       : `${user.store?.name ?? "Nessun negozio"}${user.weeklyHours != null ? ` · ${user.weeklyHours} h` : ""}`;
 
   return (
-    <article className="user-card">
+    <article className="app-card user-card">
       <div className="user-card-top">
         <Avatar user={user} size={44} />
         <div className="user-card-info">

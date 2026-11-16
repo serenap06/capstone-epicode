@@ -2,7 +2,9 @@ const Stock = require("./schema");
 const Product = require("../products/schema");
 const Store = require("../stores/schema");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
+const assignDefinedFields = require("../../utils/assignDefinedFields");
 
+// il dipendente vede solo il suo negozio; lowStock: solo quantità <= soglia
 const findAll = async (filters, currentUser) => {
   const { store, product, lowStock } = filters;
   const query = {};
@@ -34,6 +36,7 @@ const findOne = async (stockId, currentUser) => {
   return stock;
 };
 
+// prima controllo che prodotto e negozio esistano
 const create = async (stockData) => {
   const productExists = await Product.exists({ _id: stockData.product });
   if (!productExists) {
@@ -52,11 +55,7 @@ const update = async (stockId, stockData) => {
   if (!stock) {
     throw new NotFoundException("Stock not found");
   }
-  Object.entries(stockData).forEach(([field, value]) => {
-    if (value !== undefined) {
-      stock[field] = value;
-    }
-  });
+  assignDefinedFields(stock, stockData);
   return await stock.save();
 };
 

@@ -2,8 +2,8 @@ const Product = require("../products/schema");
 const Sale = require("./schema");
 const Stock = require("../stock/schema");
 const HttpException = require("../../exceptions/index");
+const round = require("../../utils/round");
 
-const round = (value) => Math.round(value * 100) / 100;
 
 const findAll = async (
   { store, soldBy, from, to, page = 1, limit = 20 },
@@ -23,6 +23,7 @@ const findAll = async (
     filter.createdAt = { ...filter.createdAt, $lte: toDate };
   }
 
+  // una pagina di vendite per la tabella e tutte (solo i totali) per le somme
   const [sales, allSales] = await Promise.all([
     Sale.find(filter)
       .populate("store", "name")
@@ -50,6 +51,8 @@ const findAll = async (
   };
 };
 
+// registra una vendita: controlla prodotti e giacenze, calcola totali e IVA,
+// scala le giacenze e restituisce anche i prodotti finiti sotto soglia
 const create = async ({ items, paymentMethod }, currentUser) => {
   const productIds = items.map((item) => item.product);
   const products = await Product.find({
@@ -84,6 +87,7 @@ const create = async ({ items, paymentMethod }, currentUser) => {
       unitPrice: product.price,
       vatRate: product.vatRate,
       quantity: item.quantity,
+      // il prezzo comprende l'IVA: IVA = totale - totale / (1 + aliquota)
       vatAmount: round(lineTotal - lineTotal / (1 + product.vatRate / 100)),
     };
   });

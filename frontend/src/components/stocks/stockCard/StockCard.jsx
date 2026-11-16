@@ -9,7 +9,7 @@ import StockStatusBadge from "../stockStatusBadge/StockStatusBadge";
 // sotto lo stato e, se la pagina li passa, i bottoni (stesse props di StockTable)
 const StockCard = ({ stock, showStore, onEdit, onDelete }) => {
   return (
-    <article className="stock-card">
+    <article className="app-card stock-card">
       <div className="stock-card-top">
         <ProductThumb product={stock.product} size={48} />
         <div className="stock-card-info">

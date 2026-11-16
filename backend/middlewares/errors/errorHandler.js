@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const HttpException = require("../../exceptions");
 const multer = require("multer");
 
+// ultimo middleware: riceve ogni errore passato con next(e) e risponde sempre
+// con la stessa forma { statusCode, message, error }
 const errorHandler = (err, req, res, next) => {
   if (err instanceof HttpException) {
     return res.status(err.statusCode).send({
@@ -10,6 +12,7 @@ const errorHandler = (err, req, res, next) => {
       error: err.error,
     });
   }
+  // file troppo grande o campo sbagliato nell'upload
   if (err instanceof multer.MulterError) {
     return res.status(400).send({
       statusCode: 400,
@@ -20,6 +23,7 @@ const errorHandler = (err, req, res, next) => {
           : err.message,
     });
   }
+  // Cloudinary rifiuta il formato del file
   if (err.http_code === 400) {
     return res.status(400).send({
       statusCode: 400,
@@ -41,6 +45,7 @@ const errorHandler = (err, req, res, next) => {
       error: Object.values(err.errors).map((e) => e.message),
     });
   }
+  // valore unico già usato (per esempio un'email o il nome di un negozio)
   if (err.code === 11000) {
     return res.status(409).send({
       statusCode: 409,
@@ -55,6 +60,7 @@ const errorHandler = (err, req, res, next) => {
       error: "The request body is not valid JSON",
     });
   }
+  // errore non previsto: lo scrivo nel terminale e rispondo 500
   console.error(err);
   return res.status(500).send({
     statusCode: 500,

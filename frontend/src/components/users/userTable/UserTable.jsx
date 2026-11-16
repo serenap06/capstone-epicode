@@ -10,8 +10,8 @@ import Button from "../../common/button/Button";
 // per spegnere "Elimina" sulla sua riga (il proprio account non si elimina)
 const UserTable = ({ users, currentUserId, onEdit, onDelete }) => {
   return (
-    <div className="user-table-wrap">
-      <table className="user-table">
+    <div className="app-card app-table-wrap">
+      <table className="app-table user-table">
         <thead>
           <tr>
             <th scope="col">Persona</th>

@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../../modules/users/schema");
 const InvalidTokenException = require("../../exceptions/auth/InvalidTokenException");
 
+// controlla il token "Bearer ..." e mette in req.user l'utente collegato.
+// Token mancante, scaduto o di un utente che non esiste più: 401
 const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;

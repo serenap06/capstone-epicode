@@ -2,6 +2,7 @@ import api from "./api";
 
 // richieste sulle giacenze (solo per il responsabile: il dipendente le legge e basta)
 
+// nuova riga: un prodotto in un negozio, con quantità e soglia
 export const createStock = async (stockData) => {
   const data = await api("/stocks", { method: "POST", body: stockData });
   return data.stock;
@@ -16,6 +17,7 @@ export const updateStock = async (stockId, stockData) => {
   return data.stock;
 };
 
+// toglie la riga dalle giacenze del negozio
 export const deleteStock = async (stockId) => {
   await api(`/stocks/${stockId}`, { method: "DELETE" });
 };

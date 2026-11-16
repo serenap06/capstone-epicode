@@ -33,11 +33,13 @@ export const changePassword = async (passwordData) => {
 
 // gestione degli utenti (solo per il responsabile)
 
+// nuova persona, con la password scelta dal responsabile
 export const createUser = async (userData) => {
   const data = await api("/users", { method: "POST", body: userData });
   return data.user;
 };
 
+// modifica dati, ruolo, negozio e ore (la password no)
 export const updateUser = async (userId, userData) => {
   const data = await api(`/users/${userId}`, {
     method: "PATCH",
@@ -46,6 +48,7 @@ export const updateUser = async (userId, userData) => {
   return data.user;
 };
 
+// elimina la persona con i suoi turni e le sue task
 export const deleteUser = async (userId) => {
   await api(`/users/${userId}`, { method: "DELETE" });
 };

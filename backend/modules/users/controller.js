@@ -65,6 +65,11 @@ const update = async (req, res, next) => {
   try {
     const { name, surname, email, role, store, weeklyHours } = req.body;
     const { userId } = req.params;
+    // il responsabile non può togliersi il ruolo da solo: perderebbe l'accesso alle sue pagine
+    const isSelf = userId === req.user._id.toString();
+    if (isSelf && role !== undefined && role !== req.user.role) {
+      throw new ForbiddenException("You cannot change your own role");
+    }
     const user = await userService.update(userId, {
       name,
       surname,
@@ -148,6 +153,7 @@ const removeAvatar = async (req, res, next) => {
   }
 };
 
+// il proprio account non si elimina
 const deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
@@ -163,8 +169,6 @@ const deleteUser = async (req, res, next) => {
     next(e);
   }
 };
-
-
 
 module.exports = {
   findAll,

@@ -1,7 +1,6 @@
 import "./shifts.css";
 import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
-import { Plus } from "lucide-react";
 
 import { loadData } from "../../../api/loadData";
 import { deleteShift } from "../../../api/shifts";
@@ -11,11 +10,12 @@ import {
   getWeek,
   getWeekDays,
   isSameDay,
-  toQuery,
 } from "../../../utils/dates";
+import { toQuery } from "../../../utils/toQuery";
 import { formatLongDate } from "../../../utils/formatLongDate";
 import { formatWeekRange } from "../../../utils/formatWeekRange";
-import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { useIsPhone } from "../../../hooks/useIsPhone";
+import { toStoreOptions } from "../../../utils/toStoreOptions";
 
 import PageHeader from "../../../components/common/pageHeader/PageHeader";
 import WeekNav from "../../../components/common/weekNav/WeekNav";
@@ -24,7 +24,7 @@ import FilterChips from "../../../components/common/filterBar/FilterChips";
 import ShiftWeekGrid from "../../../components/shifts/shiftWeekGrid/ShiftWeekGrid";
 import Message from "../../../components/common/message/Message";
 import Panel from "../../../components/common/panel/Panel";
-import Button from "../../../components/common/button/Button";
+import AddButton from "../../../components/common/addButton/AddButton";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
 import FormModal from "../../../components/common/formModal/FormModal";
 import ShiftForm from "../../../components/shifts/shiftForm/ShiftForm";
@@ -62,7 +62,7 @@ const Shifts = () => {
 
   // su telefono (fino a 767px) giorni a pulsanti e liste, come nel layout mobile;
   // da tablet in su la tabella della settimana
-  const isSmallScreen = useMediaQuery("(max-width: 767.98px)");
+  const isPhone = useIsPhone();
 
   // i negozi una volta sola, per i pulsanti
   useEffect(() => {
@@ -129,7 +129,7 @@ const Shifts = () => {
   // i pulsanti: "Tutti" (valore "") e poi i negozi, nel formato { value, label } di FilterChips
   const storeOptions = [
     { value: "", label: "Tutti" },
-    ...stores.map((store) => ({ value: store._id, label: store.name })),
+    ...toStoreOptions(stores),
   ];
 
   return (
@@ -154,10 +154,11 @@ const Shifts = () => {
             onToday={() => setReferenceDate(new Date())}
             isCurrentWeek={isCurrentWeek}
           />
-          <Button aria-label="Nuovo turno" onClick={() => openNewForm()}>
-            <Plus size={18} aria-hidden="true" />
-            <span className="shifts-new-label">Nuovo turno</span>
-          </Button>
+          <AddButton
+            label="Nuovo turno"
+            iconOnly={isPhone}
+            onClick={() => openNewForm()}
+          />
         </div>
       </PageHeader>
 
@@ -180,7 +181,7 @@ const Shifts = () => {
       {/* telefono: giorni a pulsanti, il personale del giorno e le ore.
           Da tablet in su: la tabella della settimana */}
       {hours.length > 0 &&
-        (isSmallScreen ? (
+        (isPhone ? (
           <>
             <WeekDayPicker
               days={weekDays}

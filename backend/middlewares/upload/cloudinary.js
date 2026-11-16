@@ -9,6 +9,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// crea un uploader che salva il file su Cloudinary nella cartella indicata:
+// solo immagini png, jpg, jpeg e webp, fino a 2 MB. Il link della foto arriva in req.file.path
 const createUploader = (folder) =>
   multer({
     storage: new CloudinaryStorage({

@@ -7,8 +7,8 @@ import {
   getWeek,
   getWeekDays,
   isSameDay,
-  toQuery,
 } from "../../../utils/dates";
+import { toQuery } from "../../../utils/toQuery";
 import { formatWeekRange } from "../../../utils/formatWeekRange";
 import { Container, Row, Col } from "react-bootstrap";
 import PageHeader from "../../../components/common/pageHeader/PageHeader";

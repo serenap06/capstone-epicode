@@ -23,12 +23,14 @@ const shiftSchema = new mongoose.Schema(
   },
   { timestamps: true, strict: true },
 );
-shiftSchema.pre("validate", function (next) {
+// la fine deve venire dopo l'inizio (con Mongoose 9 niente next: basta invalidate)
+shiftSchema.pre("validate", function () {
   if (this.startAt && this.endAt && this.endAt <= this.startAt) {
     this.invalidate("endAt", "endAt must be later than startAt");
   }
 });
 
+// indice per le ricerche più frequenti: turni di un negozio in un periodo
 shiftSchema.index({ store: 1, startAt: 1 });
 
 module.exports = mongoose.model("Shift", shiftSchema, "shifts");

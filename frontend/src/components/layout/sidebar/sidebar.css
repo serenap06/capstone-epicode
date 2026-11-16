@@ -95,7 +95,7 @@
     padding: 0.5rem;
     justify-content: center;
   }
-  /* le voci hideOnMobile vanno in "Altro", le desktopOnly spariscono */
+  /* le voci hideOnMobile vanno in "Altro" */
   .app-link.hide-mobile {
     display: none;
   }
@@ -111,5 +111,12 @@
   /* qui "Altro" si vede */
   .app-more {
     display: block;
+  }
+}
+
+/* le voci desktopOnly (la Cassa) spariscono solo su telefono: su tablet restano nella barra */
+@media (max-width: 767.98px) {
+  .app-link.hide-phone {
+    display: none;
   }
 }

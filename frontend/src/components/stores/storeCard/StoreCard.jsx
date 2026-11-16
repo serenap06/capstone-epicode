@@ -11,7 +11,7 @@ const StoreCard = ({ store, onEdit, onDelete }) => {
   const hasStaff = staffCount > 0;
 
   return (
-    <article className="store-card">
+    <article className="app-card store-card">
       <div>
         <h2 className="store-card-title">{store.name}</h2>
         <p className="store-card-address">

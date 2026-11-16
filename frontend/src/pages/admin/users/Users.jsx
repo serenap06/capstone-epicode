@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
-import { Plus } from "lucide-react";
 
 import { useAuth } from "../../../hooks/useAuth";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { useIsPhone } from "../../../hooks/useIsPhone";
 import { loadData } from "../../../api/loadData";
 import { deleteUser } from "../../../api/users";
 import { formatFullName } from "../../../utils/formatFullName";
 
-import Button from "../../../components/common/button/Button";
+import AddButton from "../../../components/common/addButton/AddButton";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
 import FormModal from "../../../components/common/formModal/FormModal";
 import Message from "../../../components/common/message/Message";
@@ -33,7 +33,7 @@ const Users = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // su telefono il "+" accanto al titolo
-  const isPhone = useMediaQuery("(max-width: 767.98px)");
+  const isPhone = useIsPhone();
   // fino a 1280px le card (una colonna su telefono, due da tablet in su):
   // la tabella con il menu a sinistra ci sta comoda solo sopra
   const showCards = useMediaQuery("(max-width: 1280px)");
@@ -86,14 +86,7 @@ const Users = () => {
 
   // "Nuovo utente": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
   const addButton = (
-    <Button
-      aria-label="Nuovo utente"
-      className={isPhone ? "app-button-icon" : ""}
-      onClick={openNewForm}
-    >
-      <Plus size={18} aria-hidden="true" />
-      {!isPhone && "Nuovo utente"}
-    </Button>
+    <AddButton label="Nuovo utente" iconOnly={isPhone} onClick={openNewForm} />
   );
 
   return (

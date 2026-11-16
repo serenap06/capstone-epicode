@@ -1,9 +1,12 @@
+const mongoose = require("mongoose");
 const Task = require("../tasks/schema");
 const SupplyRequest = require("../supply-requests/schema");
 const Stock = require("../stock/schema");
 const Shift = require("../shifts/schema");
 const Sale = require("../sales/schema");
+const round = require("../../utils/round");
 
+// i numeri delle card della Dashboard, di oggi; con store solo di quel negozio
 const getKpis = async (filters) => {
   const { store } = filters;
   const storeFilter = store ? { store } : {};
@@ -13,25 +16,34 @@ const getKpis = async (filters) => {
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
-  // le sei query partono insieme con Promise.all: aspetto solo la più lenta,
+  // le cinque query partono insieme con Promise.all: aspetto solo la più lenta,
   // non la somma di tutte (con await una dopo l'altra la Dashboard era lenta)
   const [
-    tasksTotal,
-    tasksDone,
+    taskGroups,
     pendingRequests,
     lowStockItems,
     employeesOnShift,
     todaySales,
   ] = await Promise.all([
-    Task.countDocuments({
-      dueDate: { $gte: startOfDay, $lte: endOfDay },
-      ...storeFilter,
-    }),
-    Task.countDocuments({
-      dueDate: { $gte: startOfDay, $lte: endOfDay },
-      status: "done",
-      ...storeFilter,
-    }),
+    // le task di oggi contate come nella pagina Task: una per gruppo, non una per persona.
+    // pendingCount: quante copie del gruppo sono ancora da fare.
+    // aggregate non converte da solo il testo in ObjectId: lo faccio io
+    Task.aggregate([
+      {
+        $match: {
+          dueDate: { $gte: startOfDay, $lte: endOfDay },
+          ...(store && { store: new mongoose.Types.ObjectId(store) }),
+        },
+      },
+      {
+        $group: {
+          _id: "$groupId",
+          pendingCount: {
+            $sum: { $cond: [{ $eq: ["$status", "done"] }, 0, 1] },
+          },
+        },
+      },
+    ]),
     SupplyRequest.countDocuments({
       state: "open",
       ...storeFilter,
@@ -53,15 +65,19 @@ const getKpis = async (filters) => {
   ]);
 
   const revenueToday = todaySales.reduce((sum, sale) => sum + sale.total, 0);
+  // un gruppo è fatto quando nessuna copia è più da fare
+  const tasksDone = taskGroups.filter(
+    (group) => group.pendingCount === 0,
+  ).length;
 
   return {
-    tasksToday: { total: tasksTotal, done: tasksDone },
+    tasksToday: { total: taskGroups.length, done: tasksDone },
     pendingSupplyRequests: pendingRequests,
     lowStockItems,
     employeesOnShiftToday: employeesOnShift.length,
     salesToday: {
       count: todaySales.length,
-      revenue: Math.round(revenueToday * 100) / 100,
+      revenue: round(revenueToday),
     },
   };
 };

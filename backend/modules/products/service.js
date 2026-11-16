@@ -3,12 +3,16 @@ const Stock = require("../stock/schema");
 const SupplyRequest = require("../supply-requests/schema");
 
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
+const assignDefinedFields = require("../../utils/assignDefinedFields");
+const escapeRegex = require("../../utils/escapeRegex");
 
 const findAll = async (filters, currentUser) => {
   const { search, active, brand, category } = filters;
 
   const query = {};
-  if (search) query.name = { $regex: search, $options: "i" };
+  // ricerca nel nome; "i": maiuscole e minuscole uguali
+  if (search) query.name = { $regex: escapeRegex(search), $options: "i" };
+  // il dipendente vede solo i prodotti attivi
   if (currentUser.role === "employee") {
     query.active = true;
   } else if (active !== undefined) {
@@ -38,11 +42,7 @@ const update = async (productId, productData) => {
   if (!product) {
     throw new NotFoundException("Product not found");
   }
-  Object.entries(productData).forEach(([field, value]) => {
-    if (value !== undefined) {
-      product[field] = value;
-    }
-  });
+  assignDefinedFields(product, productData);
   return await product.save();
 };
 
@@ -60,8 +60,11 @@ const deleteProduct = async (productId) => {
   if (!product) {
     throw new NotFoundException("Product not found");
   }
-  await Stock.deleteMany({ product: productId });
-  await SupplyRequest.deleteMany({ product: productId });
+  // con il prodotto spariscono anche le sue giacenze e richieste (le due insieme)
+  await Promise.all([
+    Stock.deleteMany({ product: productId }),
+    SupplyRequest.deleteMany({ product: productId }),
+  ]);
 };
 
 module.exports = {

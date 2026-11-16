@@ -12,6 +12,7 @@ const userBodyRules = [
   body("surname")
     .isString()
     .withMessage("Surname must be a string")
+    .trim()
     .notEmpty()
     .withMessage("Surname field cannot be empty")
     .isLength({ min: 1, max: 255 })

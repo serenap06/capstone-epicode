@@ -8,7 +8,7 @@ const Panel = ({ title, aside, footer, className = "", children }) => {
   const titleId = useId();
 
   return (
-    <section className={`panel ${className}`} aria-labelledby={titleId}>
+    <section className={`app-card panel ${className}`} aria-labelledby={titleId}>
       <SectionHeader title={title} id={titleId} aside={aside} />
       {children}
       {footer && <div className="panel-footer">{footer}</div>}

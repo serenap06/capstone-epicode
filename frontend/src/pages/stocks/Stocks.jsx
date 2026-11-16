@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
-import { Plus } from "lucide-react";
 
 import { useAuth } from "../../hooks/useAuth";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useIsPhone } from "../../hooks/useIsPhone";
 import { loadData } from "../../api/loadData";
 import { deleteStock } from "../../api/stocks";
 import { isLowStock } from "../../utils/isLowStock";
+import { toStoreOptions } from "../../utils/toStoreOptions";
 
-import Button from "../../components/common/button/Button";
+import AddButton from "../../components/common/addButton/AddButton";
 import ConfirmDialog from "../../components/common/confirmDialog/ConfirmDialog";
 import Message from "../../components/common/message/Message";
 import PageHeader from "../../components/common/pageHeader/PageHeader";
@@ -50,7 +50,7 @@ const Stocks = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // su telefono le card, da tablet in su la tabella
-  const isSmallScreen = useMediaQuery("(max-width: 767.98px)");
+  const isPhone = useIsPhone();
 
   // le giacenze, e di nuovo dopo ogni salvataggio (refreshCount)
   useEffect(() => {
@@ -113,24 +113,14 @@ const Stocks = () => {
       (!filters.level || isLowStock(stock)),
   );
   const lowCount = stocks.filter(isLowStock).length;
-  const storeOptions = stores.map((store) => ({
-    value: store._id,
-    label: store.name,
-  }));
+  const storeOptions = toStoreOptions(stores);
 
   // sottotitolo: il responsabile vede quante righe, il dipendente il suo negozio
   const subtitleStart = isAdmin ? `${stocks.length} righe` : user.store?.name;
 
   // "Aggiungi riga": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
   const addButton = (
-    <Button
-      aria-label="Aggiungi riga"
-      className={isSmallScreen ? "app-button-icon" : ""}
-      onClick={openNewForm}
-    >
-      <Plus size={18} aria-hidden="true" />
-      {!isSmallScreen && "Aggiungi riga"}
-    </Button>
+    <AddButton label="Aggiungi riga" iconOnly={isPhone} onClick={openNewForm} />
   );
 
   // negozio (solo per il responsabile) e stato: sul computer in riga con la ricerca,
@@ -170,10 +160,10 @@ const Stocks = () => {
     <Container fluid>
       <PageHeader
         title="Giacenze"
-        titleAside={isAdmin && isSmallScreen && addButton}
+        titleAside={isAdmin && isPhone && addButton}
         subtitle={`${subtitleStart} · ${lowCount} sotto soglia`}
         subtitleAside={
-          isSmallScreen && (
+          isPhone && (
             <FilterBar compact activeCount={menuFilterCount}>
               {storeFilter}
               {levelFilter}
@@ -182,18 +172,18 @@ const Stocks = () => {
         }
         error={error}
       >
-        {isAdmin && !isSmallScreen && addButton}
+        {isAdmin && !isPhone && addButton}
       </PageHeader>
 
       {/* su telefono in vista solo la ricerca; da tablet in su anche negozio e stato */}
       <FilterBar>
-        {!isSmallScreen && storeFilter}
+        {!isPhone && storeFilter}
         <FilterSearch
           label="Cerca..."
           value={filters.search}
           onChange={(value) => changeFilter("search", value)}
         />
-        {!isSmallScreen && levelFilter}
+        {!isPhone && levelFilter}
       </FilterBar>
 
       {visibleStocks.length === 0 && !error && (
@@ -202,7 +192,7 @@ const Stocks = () => {
 
       {/* telefono: card una sotto l'altra; da tablet in su: la tabella */}
       {visibleStocks.length > 0 &&
-        (isSmallScreen ? (
+        (isPhone ? (
           <div className="d-flex flex-column gap-3">
             {visibleStocks.map((stock) => (
               <StockCard key={stock._id} stock={stock} {...listProps} />

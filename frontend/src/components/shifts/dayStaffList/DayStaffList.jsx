@@ -1,8 +1,8 @@
 import "./dayStaffList.css";
 import { Fragment } from "react";
-import { isSameDay } from "../../../utils/dates";
 import { formatTimeRange } from "../../../utils/formatTime";
 import { groupByStore } from "../../../utils/groupByStore";
+import { getDayShifts } from "../../../utils/getDayShifts";
 
 // il personale in un giorno, per il telefono: nome e orario, oppure "Riposo".
 // Come nella tabella: un clic sul turno lo modifica, su "Riposo" ne crea uno nuovo.
@@ -20,11 +20,7 @@ const DayStaffList = ({ day, shifts, hours, onShiftClick, onEmptyClick }) => {
           )}
           {group.rows.map((row) => {
             // i turni di questa persona nel giorno scelto (di solito uno)
-            const dayShifts = shifts.filter(
-              (shift) =>
-                shift.user._id === row.employeeId &&
-                isSameDay(shift.startAt, day),
-            );
+            const dayShifts = getDayShifts(shifts, row.employeeId, day);
             return (
               <li key={row.employeeId}>
                 {dayShifts.length > 0 ? (

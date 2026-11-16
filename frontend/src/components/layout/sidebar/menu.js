@@ -1,6 +1,6 @@
 // voci del menu per ruolo: to = indirizzo, label = testo, icon = icona di lucide-react,
 // end = attiva solo sull'indirizzo esatto, hideOnMobile = su telefono va in "Altro",
-// desktopOnly = su telefono non c'è proprio, nemmeno in "Altro" (la Cassa del dipendente)
+// desktopOnly = su telefono non c'è proprio, nemmeno in "Altro" (la Cassa: da tablet in su sì)
 import {
   Home,
   Calendar,

@@ -1,8 +1,7 @@
 const SupplyRequest = require("./schema");
-const Store = require("../stores/schema");
 const Product = require("../products/schema");
-const User = require("../users/schema");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
+const assignDefinedFields = require("../../utils/assignDefinedFields");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 
 const findAll = async (filters, currentUser) => {
@@ -38,6 +37,7 @@ const findOne = async (supplyId, currentUser) => {
   return supplyRequest;
 };
 
+// la richiesta la fa il dipendente per il suo negozio, solo per prodotti attivi
 const create = async (supplyData, currentUser) => {
   const product = await Product.findById(supplyData.product);
   if (!product || !product.active) {
@@ -57,14 +57,11 @@ const update = async (supplyId, supplyData) => {
   if (!supplyRequest) {
     throw new NotFoundException("Supply request not found");
   }
-  Object.entries(supplyData).forEach(([field, value]) => {
-    if (value !== undefined) {
-      supplyRequest[field] = value;
-    }
-  });
+  assignDefinedFields(supplyRequest, supplyData);
   return await supplyRequest.save();
 };
 
+// il dipendente annulla solo le sue richieste ancora aperte
 const deleteSupplyRequest = async (supplyId, currentUser) => {
   const supplyRequest = await SupplyRequest.findById(supplyId);
   if (

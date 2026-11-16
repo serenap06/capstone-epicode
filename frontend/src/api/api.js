@@ -31,6 +31,14 @@ const api = async (path, { method = "GET", body } = {}) => {
   // se la risposta non è JSON (per esempio una pagina di errore) uso un oggetto vuoto
   const data = await res.json().catch(() => ({}));
 
+  // token scaduto mentre si usa l'app: lo cancello e torno al login.
+  // Al login no: lì 401 vuol dire solo email o password sbagliate
+  if (res.status === 401 && token && path !== "/auth/login") {
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    window.location.assign("/");
+  }
+
   // errore dal server: lo traduco e lo lancio al catch di chi ha chiamato api()
   if (!res.ok) {
     throw new Error(translateError(data.message, res.status));

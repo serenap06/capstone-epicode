@@ -32,6 +32,7 @@ const update = async (storeId, storeData) => {
   return store;
 };
 
+// un negozio con del personale non si elimina: le persone resterebbero senza negozio
 const deleteStore = async (storeId) => {
   const employeeCount = await User.countDocuments({ store: storeId });
   if (employeeCount > 0) {

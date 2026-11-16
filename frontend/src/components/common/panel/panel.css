@@ -4,9 +4,6 @@
   flex-direction: column;
   min-width: 0;
   padding: 1.25rem;
-  border-radius: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
 }
 
 /* footer sempre in fondo */

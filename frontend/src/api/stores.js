@@ -2,11 +2,13 @@ import api from "./api";
 
 // richieste sui negozi (solo per il responsabile)
 
+// nuovo negozio: nome, indirizzo e città
 export const createStore = async (storeData) => {
   const data = await api("/stores", { method: "POST", body: storeData });
   return data.store;
 };
 
+// modifica i dati del negozio
 export const updateStore = async (storeId, storeData) => {
   const data = await api(`/stores/${storeId}`, {
     method: "PATCH",

@@ -8,6 +8,7 @@ const MESSAGES = {
   "Handled requests cannot be deleted":
     "Le richieste già gestite non si possono annullare",
   "You cannot delete your own account": "Non puoi eliminare il tuo account",
+  "You cannot change your own role": "Non puoi cambiare il tuo ruolo",
   "One or more products are not available":
     "Uno o più prodotti non sono disponibili",
   "No employees in this store": "In questo negozio non ci sono dipendenti",

@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const InvalidCredentialException = require("../../exceptions/auth/InvalidCredentialException");
 
+// login: cerco l'utente, confronto la password con bcrypt e firmo il token con il suo id
 const login = async (body) => {
   const { email, password } = body;
   const user = await User.findOne({

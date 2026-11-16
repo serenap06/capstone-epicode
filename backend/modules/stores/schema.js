@@ -34,6 +34,7 @@ const storeSchema = new mongoose.Schema(
   },
 );
 
+// campo virtuale: non è salvato, con populate("users") porta le persone del negozio
 storeSchema.virtual("users", {
   ref: "User",
   localField: "_id",

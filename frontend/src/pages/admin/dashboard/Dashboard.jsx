@@ -17,7 +17,7 @@ import "./dashboard.css";
 
 // pagina iniziale del responsabile: indicatori, task e turni di oggi, prodotti sotto scorta
 const Dashboard = () => {
-  // kpis: null finché non arrivano (intanto "Caricamento...")
+  // kpis: null finché non arrivano (intanto le card mostrano "–")
   const [kpis, setKpis] = useState(null);
   const [error, setError] = useState("");
   const [tasks, setTasks] = useState([]);
@@ -49,66 +49,64 @@ const Dashboard = () => {
   return (
     <Container fluid>
       <PageHeader title="Dashboard" subtitle={today} error={error} />
-      {/* "Caricamento..." finché non ci sono gli indicatori */}
-      {!error && !kpis && <Message>Caricamento...</Message>}
-
-      {/* cinque card: 2 per riga su telefono, 3 su tablet, 5 da xl; ognuna porta alla sua pagina */}
-      {kpis && (
-        <Row
-          as="section"
-          xs={2}
-          md={3}
-          xl={5}
-          className="g-3"
-          aria-label="Indicatori"
-        >
-          <Col>
-            <KpiCard
-              to="/admin/shifts"
-              color="primary"
-              label="In turno oggi:"
-              value={kpis.employeesOnShiftToday}
-              detail="dipendenti"
-            />
-          </Col>
-          <Col>
-            <KpiCard
-              to="/admin/tasks"
-              color="secondary"
-              label="Task:"
-              value={`${kpis.tasksToday.done} su ${kpis.tasksToday.total}`}
-              detail="completate"
-            />
-          </Col>
-          <Col>
-            <KpiCard
-              to="/admin/sales"
-              color="blue"
-              label="Vendite:"
-              value={formatEuro(kpis.salesToday.revenue)}
-              detail={`${kpis.salesToday.count} vendite`}
-            />
-          </Col>
-          <Col>
-            <KpiCard
-              to="/admin/stock"
-              color="turquoise"
-              label="Sotto scorta:"
-              value={kpis.lowStockItems}
-              detail="prodotti"
-            />
-          </Col>
-          <Col>
-            <KpiCard
-              to="/admin/supply-requests"
-              color="orange"
-              label="Richieste di fornitura:"
-              value={kpis.pendingSupplyRequests}
-              detail="aperte"
-            />
-          </Col>
-        </Row>
-      )}
+      {/* cinque card: 2 per riga su telefono, 3 su tablet, 5 da xl; ognuna porta alla sua pagina.
+          Ci sono subito, con "–" finché non arrivano i numeri: così la pagina non salta */}
+      <Row
+        as="section"
+        xs={2}
+        md={3}
+        xl={5}
+        className="g-3"
+        aria-label="Indicatori"
+      >
+        <Col>
+          <KpiCard
+            to="/admin/shifts"
+            color="primary"
+            label="In turno oggi:"
+            value={kpis?.employeesOnShiftToday ?? "–"}
+            detail="dipendenti"
+          />
+        </Col>
+        <Col>
+          <KpiCard
+            to="/admin/tasks"
+            color="secondary"
+            label="Task:"
+            value={
+              kpis ? `${kpis.tasksToday.done} su ${kpis.tasksToday.total}` : "–"
+            }
+            detail="completate"
+          />
+        </Col>
+        <Col>
+          <KpiCard
+            to="/admin/sales"
+            color="blue"
+            label="Vendite:"
+            value={kpis ? formatEuro(kpis.salesToday.revenue) : "–"}
+            detail={`${kpis?.salesToday.count ?? "–"} vendite`}
+          />
+        </Col>
+        <Col>
+          <KpiCard
+            to="/admin/stock"
+            color="turquoise"
+            label="Sotto scorta:"
+            value={kpis?.lowStockItems ?? "–"}
+            detail="prodotti"
+          />
+        </Col>
+        <Col>
+          <KpiCard
+            to="/admin/supply-requests"
+            color="orange"
+            label="Richieste di fornitura:"
+            value={kpis?.pendingSupplyRequests ?? "–"}
+            detail="aperte"
+          />
+        </Col>
+      </Row>
 
       {/* sotto: task a sinistra (7 colonne), turni e sotto scorta a destra (5) */}
       <Row className="g-4 mt-2">

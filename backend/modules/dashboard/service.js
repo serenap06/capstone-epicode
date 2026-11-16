@@ -13,36 +13,44 @@ const getKpis = async (filters) => {
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
-  const tasksTotal = await Task.countDocuments({
-    dueDate: { $gte: startOfDay, $lte: endOfDay },
-    ...storeFilter,
-  });
-  const tasksDone = await Task.countDocuments({
-    dueDate: { $gte: startOfDay, $lte: endOfDay },
-    status: "done",
-    ...storeFilter,
-  });
-  const pendingRequests = await SupplyRequest.countDocuments({
-    state: "open",
-    ...storeFilter,
-  });
-
-  const lowStockItems = await Stock.countDocuments({
-    $expr: { $lte: ["$amount", "$minThreshold"] },
-    ...storeFilter,
-  });
-
-  const employeesOnShift = await Shift.distinct("user", {
-    startAt: { $gte: startOfDay, $lte: endOfDay },
-    ...storeFilter,
-  });
-
-  const todaySales = await Sale.find({
-    createdAt: { $gte: startOfDay, $lte: endOfDay },
-    ...storeFilter,
-  })
-    .select("total")
-    .lean();
+  // le sei query partono insieme con Promise.all: aspetto solo la più lenta,
+  // non la somma di tutte (con await una dopo l'altra la Dashboard era lenta)
+  const [
+    tasksTotal,
+    tasksDone,
+    pendingRequests,
+    lowStockItems,
+    employeesOnShift,
+    todaySales,
+  ] = await Promise.all([
+    Task.countDocuments({
+      dueDate: { $gte: startOfDay, $lte: endOfDay },
+      ...storeFilter,
+    }),
+    Task.countDocuments({
+      dueDate: { $gte: startOfDay, $lte: endOfDay },
+      status: "done",
+      ...storeFilter,
+    }),
+    SupplyRequest.countDocuments({
+      state: "open",
+      ...storeFilter,
+    }),
+    Stock.countDocuments({
+      $expr: { $lte: ["$amount", "$minThreshold"] },
+      ...storeFilter,
+    }),
+    Shift.distinct("user", {
+      startAt: { $gte: startOfDay, $lte: endOfDay },
+      ...storeFilter,
+    }),
+    Sale.find({
+      createdAt: { $gte: startOfDay, $lte: endOfDay },
+      ...storeFilter,
+    })
+      .select("total")
+      .lean(),
+  ]);
 
   const revenueToday = todaySales.reduce((sum, sale) => sum + sale.total, 0);
 

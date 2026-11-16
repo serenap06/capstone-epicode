@@ -29,3 +29,9 @@
   background: #fff;
   color: var(--primary-dark);
 }
+
+/* grigio: per le informazioni neutre, per esempio il ruolo "Dipendente" */
+.app-badge-neutral {
+  background: var(--bg);
+  color: var(--text-muted);
+}

@@ -25,3 +25,27 @@ export const removeAvatar = async () => {
   const data = await api("/users/me/avatar", { method: "DELETE" });
   return data.user;
 };
+
+// cambia la propria password: il server controlla prima quella attuale
+export const changePassword = async (passwordData) => {
+  await api("/users/me/password", { method: "PATCH", body: passwordData });
+};
+
+// gestione degli utenti (solo per il responsabile)
+
+export const createUser = async (userData) => {
+  const data = await api("/users", { method: "POST", body: userData });
+  return data.user;
+};
+
+export const updateUser = async (userId, userData) => {
+  const data = await api(`/users/${userId}`, {
+    method: "PATCH",
+    body: userData,
+  });
+  return data.user;
+};
+
+export const deleteUser = async (userId) => {
+  await api(`/users/${userId}`, { method: "DELETE" });
+};

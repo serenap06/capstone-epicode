@@ -1,0 +1,67 @@
+/* card bianca: in alto la persona, in basso ruolo, negozio e bottoni;
+   height 100%: nella griglia del tablet le card della stessa riga sono alte uguali */
+.user-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.user-card p {
+  margin: 0;
+}
+
+.user-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* nome ed email prendono lo spazio che resta; un'email lunga va a capo */
+.user-card-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.user-card-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.user-card-email {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* negozio e ore a sinistra, bottoni a destra */
+.user-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* ruolo sopra, negozio e ore sotto */
+.user-card-role {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.user-card-detail {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.user-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}

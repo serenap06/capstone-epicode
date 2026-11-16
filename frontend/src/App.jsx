@@ -9,6 +9,7 @@ import MyTasks from "./pages/employee/tasks/MyTasks.jsx";
 import MyShifts from "./pages/employee/shifts/MyShifts.jsx";
 import Tasks from "./pages/admin/tasks/Tasks.jsx";
 import Profile from "./pages/profile/Profile.jsx";
+import Users from "./pages/admin/users/Users.jsx";
 import Stores from "./pages/admin/stores/Stores.jsx";
 import Shifts from "./pages/admin/shifts/Shifts.jsx";
 import Stocks from "./pages/stocks/Stocks.jsx";
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="stock" element={<Stocks />} />
           <Route path="profile" element={<Profile />} />
           <Route path="stores" element={<Stores />} />
+          <Route path="users" element={<Users />} />
         </Route>
       </Route>
 

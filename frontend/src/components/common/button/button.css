@@ -45,6 +45,13 @@
   background: var(--warning-soft);
 }
 
+/* solo icona: quadrato 44x44 (l'aria-label dice allo screen reader cosa fa) */
+.app-button-icon {
+  flex: 0 0 44px;
+  width: 44px;
+  padding: 0;
+}
+
 /* disattivato, per esempio mentre aspetto il server */
 .app-button:disabled {
   opacity: 0.6;

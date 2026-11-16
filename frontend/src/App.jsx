@@ -11,6 +11,7 @@ import Tasks from "./pages/admin/tasks/Tasks.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import Stores from "./pages/admin/stores/Stores.jsx";
 import Shifts from "./pages/admin/shifts/Shifts.jsx";
+import Stocks from "./pages/stocks/Stocks.jsx";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route index element={<Dashboard />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="shifts" element={<Shifts/>} />
+          <Route path="stock" element={<Stocks />} />
           <Route path="profile" element={<Profile />} />
           <Route path="stores" element={<Stores />} />
         </Route>
@@ -36,6 +38,7 @@ const App = () => {
           <Route index element={<Home />} />
           <Route path="tasks" element={<MyTasks />} />
           <Route path="shifts" element={<MyShifts />} />
+          <Route path="stock" element={<Stocks />} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Route>

@@ -1,0 +1,70 @@
+/* riquadro bianco della tabella; scorre in orizzontale se non ci sta */
+.stock-table-wrap {
+  overflow-x: auto;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.stock-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+
+/* intestazione piccola e grigia */
+.stock-table th {
+  padding: 0.9rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* righe con una linea sopra */
+.stock-table td {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+/* foto e nome del prodotto affiancati */
+.stock-product {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stock-product-name {
+  display: block;
+  font-weight: 700;
+}
+
+/* la categoria arriva in minuscolo dal database: capitalize mette la maiuscola */
+.stock-product-category {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.stock-amount {
+  font-weight: 800;
+}
+
+/* quantità sotto la soglia: arancio scuro, come gli avvisi */
+.stock-amount-low {
+  color: var(--warning-text);
+}
+
+.stock-threshold {
+  color: var(--text-muted);
+}
+
+/* bottoni a destra */
+.stock-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

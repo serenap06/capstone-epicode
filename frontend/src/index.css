@@ -65,6 +65,21 @@ a:hover {
   color: var(--text-muted);
 }
 
+/* riga del titolo: titolo a sinistra e, se c'è, qualcosa a destra (per esempio il "+") */
+.page-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+/* se a destra del titolo c'è qualcosa (il "+"), più spazio prima del sottotitolo,
+   così il "+" non si attacca a quello che sta a destra del sottotitolo ("Filtri").
+   :has(> :nth-child(2)) vuol dire "la riga del titolo ha almeno due elementi" */
+.page-title-row:has(> :nth-child(2)) + .page-subtitle-row {
+  margin-top: 0.5rem;
+}
+
 /* riga del sottotitolo: testo a sinistra, qualcosa a destra (per esempio "Filtri") */
 .page-subtitle-row {
   display: flex;

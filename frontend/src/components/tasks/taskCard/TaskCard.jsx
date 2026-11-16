@@ -65,7 +65,8 @@ const TaskCard = ({ task, onDelete }) => {
             onClick={() => onDelete(task)}
           >
             <Trash2 size={16} aria-hidden="true" />
-            Elimina
+            {/* su telefono il testo si nasconde e resta solo il cestino (vedi taskCard.css) */}
+            <span className="task-card-delete-label">Elimina</span>
           </Button>
         </div>
       )}

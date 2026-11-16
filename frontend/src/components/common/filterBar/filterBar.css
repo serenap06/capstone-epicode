@@ -61,15 +61,52 @@
   cursor: pointer;
 }
 
+/* ricerca: pillola bianca con la lente a sinistra; cresce fino a 340px */
+.filter-search {
+  position: relative;
+  flex: 1 1 240px;
+  max-width: 340px;
+}
+
+/* la lente sta sopra il campo (position absolute), centrata in verticale */
+.filter-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* padding a sinistra: lo spazio per la lente; appearance: none toglie lo stile di Safari */
+.filter-search-input {
+  appearance: none;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 1rem 0 2.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
 /* bordo magenta quando ci si arriva con la tastiera */
 .filter-select:focus-visible,
-.filter-chip:focus-visible {
+.filter-chip:focus-visible,
+.filter-search-input:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
-/* su telefono i pulsanti dello stato prendono tutta la riga e si dividono lo spazio */
+/* su telefono i pulsanti dello stato prendono tutta la riga e si dividono lo spazio;
+   anche la ricerca è larga tutta la riga */
 @media (max-width: 575.98px) {
+  .filter-search {
+    flex-basis: 100%;
+    max-width: none;
+  }
+
   .filter-chips {
     flex: 1 1 100%;
   }

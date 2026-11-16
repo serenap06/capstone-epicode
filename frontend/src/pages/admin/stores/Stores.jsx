@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 
 import { loadData } from "../../../api/loadData";
 import { deleteStore } from "../../../api/stores";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
 
 import Button from "../../../components/common/button/Button";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
@@ -23,6 +24,8 @@ const Stores = () => {
   // conferma dell'eliminazione: il negozio da eliminare, oppure null
   const [storeToDelete, setStoreToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  // su telefono "Nuovo negozio" è solo il "+" accanto al titolo
+  const isPhone = useMediaQuery("(max-width: 767.98px)");
   // aumentarlo ricarica la lista
   const [refreshCount, setRefreshCount] = useState(0);
 
@@ -65,16 +68,27 @@ const Stores = () => {
   // "1 punto vendita", "2 punti vendita"
   const storeCountLabel = stores.length === 1 ? "punto vendita" : "punti vendita";
 
+  // "Nuovo negozio": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
+  const addButton = (
+    <Button
+      aria-label="Nuovo negozio"
+      className={isPhone ? "app-button-icon" : ""}
+      onClick={openNewForm}
+    >
+      <Plus size={18} aria-hidden="true" />
+      {!isPhone && "Nuovo negozio"}
+    </Button>
+  );
+
   return (
     <Container fluid>
       <PageHeader
         title="Negozi"
+        titleAside={isPhone && addButton}
         subtitle={`${stores.length} ${storeCountLabel}`}
         error={error}
       >
-        <Button onClick={openNewForm}>
-          <Plus size={18} aria-hidden="true" /> Nuovo negozio
-        </Button>
+        {!isPhone && addButton}
       </PageHeader>
 
       {stores.length === 0 && !error && <Message>Nessun negozio</Message>}

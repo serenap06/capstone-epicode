@@ -72,8 +72,9 @@ const Tasks = () => {
   // isDeleting: true mentre aspetto il server
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // fino a 425px i filtri vanno nel menu "Filtri"
-  const isSmallScreen = useMediaQuery("(max-width: 425px)");
+  // su telefono (fino a 767px): "+" accanto al titolo, Stato in vista
+  // e gli altri filtri nel menu "Filtri"
+  const isPhone = useMediaQuery("(max-width: 767.98px)");
 
   useEffect(() => {
     // negozi e dipendenti una volta sola (da /users tengo solo i dipendenti)
@@ -130,6 +131,10 @@ const Tasks = () => {
   const activeFilterCount = Object.values(filters).filter(
     (value) => value !== "",
   ).length;
+  // su telefono il pallino di "Filtri" conta solo quelli dentro il menu (non lo Stato)
+  const menuFilterCount = [filters.due, filters.store, filters.type].filter(
+    (value) => value !== "",
+  ).length;
 
   // negozi nel formato { value, label } di FilterSelect
   const storeOptions = stores.map((store) => ({
@@ -170,60 +175,90 @@ const Tasks = () => {
     tasks: visibleTasks.filter((task) => isSameDay(task.dueDate, dayKey)),
   }));
 
-  // i quattro filtri, scritti una volta: nella barra o nel menu "Filtri"
-  const filterControls = (
-    <>
-      <FilterChips
-        label="Scadenza"
-        options={DUE_OPTIONS}
-        value={filters.due}
-        onChange={(value) => changeFilter("due", value)}
-      />
-      <FilterChips
-        label="Stato"
-        options={STATUS_OPTIONS}
-        value={filters.status}
-        onChange={(value) => changeFilter("status", value)}
-      />
-      <FilterSelect
-        label="Negozio"
-        allLabel="Tutti i negozi"
-        options={storeOptions}
-        value={filters.store}
-        onChange={(value) => changeFilter("store", value)}
-      />
-      <FilterSelect
-        label="Tipo"
-        allLabel="Ogni tipo"
-        options={TYPE_OPTIONS}
-        value={filters.type}
-        onChange={(value) => changeFilter("type", value)}
-      />
-    </>
+  // i quattro filtri scritti una volta: sul computer stanno tutti in riga,
+  // su telefono lo Stato resta in vista e gli altri tre vanno nel menu "Filtri"
+  const dueFilter = (
+    <FilterChips
+      label="Scadenza"
+      options={DUE_OPTIONS}
+      value={filters.due}
+      onChange={(value) => changeFilter("due", value)}
+    />
+  );
+
+  const statusFilter = (
+    <FilterChips
+      label="Stato"
+      options={STATUS_OPTIONS}
+      value={filters.status}
+      onChange={(value) => changeFilter("status", value)}
+    />
+  );
+
+  const storeFilter = (
+    <FilterSelect
+      label="Negozio"
+      allLabel="Tutti i negozi"
+      options={storeOptions}
+      value={filters.store}
+      onChange={(value) => changeFilter("store", value)}
+    />
+  );
+
+  const typeFilter = (
+    <FilterSelect
+      label="Tipo"
+      allLabel="Ogni tipo"
+      options={TYPE_OPTIONS}
+      value={filters.type}
+      onChange={(value) => changeFilter("type", value)}
+    />
+  );
+
+  // "Nuova task": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
+  const addButton = (
+    <Button
+      aria-label="Nuova task"
+      className={isPhone ? "app-button-icon" : ""}
+      onClick={() => setShowForm(true)}
+    >
+      <Plus size={18} aria-hidden="true" />
+      {!isPhone && "Nuova task"}
+    </Button>
   );
 
   return (
     <Container fluid>
-      {/* su telefono "Filtri" sta a destra di "in corso" */}
+      {/* su telefono il menu "Filtri" (Scadenza, Negozio, Tipo) sta a destra di "in corso" */}
       <PageHeader
         title="Task"
+        titleAside={isPhone && addButton}
         subtitle={`${openTaskCount} in corso`}
         subtitleAside={
-          isSmallScreen && (
-            <FilterBar compact activeCount={activeFilterCount}>
-              {filterControls}
+          isPhone && (
+            <FilterBar compact activeCount={menuFilterCount}>
+              {dueFilter}
+              {storeFilter}
+              {typeFilter}
             </FilterBar>
           )
         }
         error={error}
       >
-        {/* il bottone va a destra dell'intestazione */}
-        <Button onClick={() => setShowForm(true)}>
-          <Plus size={18} aria-hidden="true" /> Nuova task
-        </Button>
+        {/* da tablet in su il bottone va a destra dell'intestazione */}
+        {!isPhone && addButton}
       </PageHeader>
-      {/* su schermi più grandi i filtri in riga sotto l'intestazione */}
-      {!isSmallScreen && <FilterBar>{filterControls}</FilterBar>}
+      {/* su telefono in vista solo lo Stato; da tablet in su tutti i filtri in riga */}
+      {isPhone ? (
+        <FilterBar>{statusFilter}</FilterBar>
+      ) : (
+        <FilterBar>
+          {dueFilter}
+          {statusFilter}
+          {storeFilter}
+          {typeFilter}
+        </FilterBar>
+      )}
       {visibleTasks.length === 0 && !error && (
         <Message>
           {activeFilterCount > 0

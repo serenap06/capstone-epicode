@@ -1,0 +1,17 @@
+/* quadrato con angoli tondi; object-fit: cover ritaglia la foto senza deformarla */
+.product-thumb {
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+}
+
+/* senza foto: l'iniziale al centro, su grigio chiaro */
+.product-thumb-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--text-muted);
+  font-weight: 800;
+}

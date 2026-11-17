@@ -4,6 +4,7 @@ const MESSAGES = {
   "Validation failed": "Controlla i dati inseriti",
   Forbidden: "Non hai i permessi per questa operazione",
   "Product not found": "Prodotto non trovato",
+  "Image file is required": "Scegli una foto",
   "Task not found": "Task non trovata",
   "Handled requests cannot be deleted":
     "Le richieste già gestite non si possono annullare",

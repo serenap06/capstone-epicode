@@ -1,0 +1,85 @@
+/* la foto in cima al modulo: riquadro, nota sotto */
+.product-form-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+/* riquadro 4:3 come nella card, viola chiaro con la lettera viola;
+   position relative fa da riferimento alla fotocamera */
+.product-form-frame {
+  position: relative;
+  width: 160px;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  background: var(--secondary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--secondary);
+}
+
+/* la foto intera, senza tagliarla, come nella card */
+.product-form-frame img {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  object-fit: contain;
+  background: var(--surface);
+  /* il bordo sottile solo intorno alla foto vera, come nella card */
+  border: 1px solid var(--border);
+}
+
+/* bottone tondo magenta in alto a destra, come quello del Profilo; un po' fuori dal riquadro */
+.product-form-camera {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+}
+
+.product-form-camera:hover {
+  background: var(--primary-dark);
+}
+
+/* bordo magenta quando ci si arriva con la tastiera */
+.product-form-camera:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* "Rimuovi foto": un link magenta, come nel Profilo. Alto 44px per toccarlo comodo;
+   i margini negativi non allontanano le righe vicine */
+.product-form-remove {
+  min-height: 44px;
+  margin: -0.5rem 0;
+  padding: 0 0.75rem;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.product-form-remove:hover {
+  color: var(--primary-dark);
+}
+
+.product-form-remove:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}

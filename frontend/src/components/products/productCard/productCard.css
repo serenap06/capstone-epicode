@@ -1,0 +1,124 @@
+/* card in colonna: foto in alto, testi sotto; height 100%: card della stessa riga alte uguali */
+.product-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+/* prodotto non attivo: card grigia */
+.product-card-off {
+  background: #eef0f5;
+}
+
+/* cornice 4:3 della foto; senza foto: fondo viola chiaro con la lettera viola */
+.product-card-photo {
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  background: var(--secondary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--secondary);
+}
+
+/* la foto intera, senza tagliarla, su fondo chiaro */
+.product-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--surface);
+  /* il bordo sottile resta solo intorno alle foto vere */
+  border: 1px solid var(--border);
+  border-radius: inherit;
+}
+
+.product-card-off .product-card-photo {
+  background: var(--border);
+  color: var(--text-muted);
+}
+
+/* i testi; flex: 1 spinge i bottoni in fondo alla card */
+.product-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0 0.35rem 0.35rem;
+}
+
+.product-card-body p {
+  margin: 0;
+}
+
+.product-card-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.product-card-price {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+/* la categoria arriva in minuscolo dal database: capitalize mette la maiuscola */
+.product-card-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+/* i pezzi per negozio, una riga ciascuno */
+.product-card-stock {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* nome del negozio a sinistra, badge a destra */
+.product-card-stock li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* il nome del negozio: su telefono, se non ci sta, va a capo (il badge resta intero) */
+.product-card-stock-store {
+  min-width: 0;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  color: var(--text-muted);
+}
+
+/* bottoni in fondo: Modifica prende lo spazio, il cestino resta quadrato */
+.product-card-actions {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.product-card-actions .app-button-secondary {
+  flex: 1;
+}
+
+/* su telefono (due card per riga) solo la matita */
+@media (max-width: 767.98px) {
+  .product-card-edit-label {
+    display: none;
+  }
+
+  /* badge dei pezzi più stretto, così lascia più spazio al nome */
+  .product-card-stock .app-badge {
+    padding: 0.2rem 0.5rem;
+  }
+}

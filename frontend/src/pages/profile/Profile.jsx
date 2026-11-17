@@ -1,7 +1,7 @@
 import "./profile.css";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Col, Container, Row, Spinner } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { Camera } from "lucide-react";
 
 import { useAuth } from "../../hooks/useAuth";
@@ -25,8 +25,11 @@ const Profile = () => {
   const [error, setError] = useState("");
   // true dopo un salvataggio riuscito, per il messaggio "Dati salvati"
   const [isSaved, setIsSaved] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isRemoving, setIsRemoving] = useState(false);
+  // la foto scelta e il suo indirizzo temporaneo per l'anteprima (null = nessuna scelta)
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  // true dopo "Rimuovi foto": la foto salvata si toglie solo quando si preme Salva
+  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
   // aggancio all'input del file, che è nascosto: lo apre il bottone "Cambia foto"
   const fileInputRef = useRef(null);
 
@@ -40,27 +43,50 @@ const Profile = () => {
     defaultValues: { name: user.name, surname: user.surname, email: user.email },
   });
 
-  // salvo i dati, rimetto l'utente nel contesto (la barra in alto si aggiorna)
+  // nel cerchio: la foto appena scelta, altrimenti quella salvata (se non l'ho rimossa)
+  const shownAvatar = previewUrl ?? (isAvatarRemoved ? null : user.avatar);
+  // true se la foto è cambiata e non è ancora salvata: anche questo accende "Salva"
+  const isPhotoChanged =
+    Boolean(avatarFile) || (isAvatarRemoved && Boolean(user.avatar));
+
+  // con Salva mando solo quello che è cambiato: prima i dati, poi la foto.
+  // Alla fine rimetto l'utente nel contesto (la barra in alto si aggiorna)
   // e con reset i valori salvati diventano quelli di partenza
   const onSubmit = async (formData) => {
     setError("");
     setIsSaved(false);
     try {
-      const updatedUser = await updateProfile(formData);
+      let updatedUser = user;
+      if (isDirty) {
+        updatedUser = await updateProfile(formData);
+      }
+      // la foto nuova sostituisce la vecchia; se l'ho solo rimossa la tolgo
+      if (avatarFile) {
+        updatedUser = await uploadAvatar(avatarFile);
+      } else if (isPhotoChanged) {
+        updatedUser = await removeAvatar();
+      }
       setUser(updatedUser);
       reset({
         name: updatedUser.name,
         surname: updatedUser.surname,
         email: updatedUser.email,
       });
+      // la foto è salvata: tolgo l'anteprima e torno a mostrare quella dell'utente
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setAvatarFile(null);
+      setPreviewUrl(null);
+      setIsAvatarRemoved(false);
       setIsSaved(true);
     } catch (e) {
       setError(e.message);
     }
   };
 
-  // scelta la foto: controllo il peso prima di mandarla, poi la carico
-  const changeAvatar = async (event) => {
+  // scelta la foto: controllo il peso e preparo l'anteprima (si carica solo con Salva).
+  // URL.createObjectURL crea un indirizzo temporaneo per vedere il file prima di caricarlo;
+  // revokeObjectURL libera quello vecchio
+  const chooseAvatar = (event) => {
     const file = event.target.files[0];
     // svuoto l'input, così si può scegliere di nuovo lo stesso file
     event.target.value = "";
@@ -70,32 +96,21 @@ const Profile = () => {
       return;
     }
     setError("");
-    setIsUploading(true);
-    try {
-      const updatedUser = await uploadAvatar(file);
-      setUser(updatedUser);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setIsUploading(false);
-    }
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setAvatarFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
   };
 
   // apre la finestra per scegliere il file (l'input vero è nascosto)
   const openFilePicker = () => fileInputRef.current.click();
 
-  // tolgo la foto e rimetto l'utente nel contesto: anche in alto tornano le iniziali
-  const removePhoto = async () => {
-    setError("");
-    setIsRemoving(true);
-    try {
-      const updatedUser = await removeAvatar();
-      setUser(updatedUser);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setIsRemoving(false);
-    }
+  // "Rimuovi foto": tolgo l'anteprima e segno da togliere la foto salvata.
+  // Sul server non cambia niente finché non si preme Salva
+  const removePhoto = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setAvatarFile(null);
+    setPreviewUrl(null);
+    setIsAvatarRemoved(true);
   };
 
   return (
@@ -112,21 +127,18 @@ const Profile = () => {
             <div className="profile-photo">
               {/* il cerchio fa da riferimento per il bottone della fotocamera (position absolute) */}
               <div className="profile-avatar">
-                <Avatar user={user} size={120} />
-                {/* bottone tondo con la fotocamera in alto a destra del cerchio;
-                    mentre carico al posto dell'icona gira lo spinner */}
+                {/* copio l'utente con la foto da mostrare (anteprima o nessuna) */}
+                <Avatar user={{ ...user, avatar: shownAvatar }} size={120} />
+                {/* bottone tondo con la fotocamera in alto a destra del cerchio,
+                    spento mentre salvo */}
                 <button
                   type="button"
                   className="profile-avatar-camera"
-                  aria-label={isUploading ? "Caricamento della foto" : "Cambia foto"}
+                  aria-label="Cambia foto"
                   onClick={openFilePicker}
-                  disabled={isUploading || isRemoving}
+                  disabled={isSubmitting}
                 >
-                  {isUploading ? (
-                    <Spinner animation="border" size="sm" aria-hidden="true" />
-                  ) : (
-                    <Camera size={18} aria-hidden="true" />
-                  )}
+                  <Camera size={18} aria-hidden="true" />
                 </button>
               </div>
               {/* input nascosto: accept mostra solo i formati che il backend accetta */}
@@ -135,20 +147,24 @@ const Profile = () => {
                 type="file"
                 accept="image/png, image/jpeg, image/webp"
                 className="d-none"
-                onChange={changeAvatar}
+                onChange={chooseAvatar}
               />
-              {/* "Rimuovi foto" solo se c'è una foto: un link discreto sotto il cerchio */}
-              {user.avatar && (
+              {/* "Rimuovi foto" solo se nel cerchio c'è una foto: un link discreto sotto */}
+              {shownAvatar && (
                 <button
                   type="button"
                   className="profile-remove-photo"
                   onClick={removePhoto}
-                  disabled={isUploading || isRemoving}
+                  disabled={isSubmitting}
                 >
-                  {isRemoving ? "Rimozione..." : "Rimuovi foto"}
+                  Rimuovi foto
                 </button>
               )}
-              <p className="form-hint m-0">png, jpg o webp · massimo 2 MB</p>
+              <p className="form-hint m-0">
+                {avatarFile
+                  ? `Foto scelta: ${avatarFile.name}`
+                  : "png, jpg o webp · massimo 2 MB"}
+              </p>
             </div>
           </Panel>
         </Col>
@@ -210,15 +226,18 @@ const Profile = () => {
                 />
               </FormField>
 
-              {/* "Dati salvati" sparisce appena si modifica di nuovo un campo.
-                  Salva è spento finché non cambia qualcosa */}
+              {/* "Dati salvati" sparisce appena si modifica di nuovo un campo o la foto.
+                  Salva è spento finché non cambia qualcosa (dati o foto) */}
               <div className="form-actions align-items-center">
-                {isSaved && !isDirty && (
+                {isSaved && !isDirty && !isPhotoChanged && (
                   <span className="profile-saved" role="status">
                     Dati salvati
                   </span>
                 )}
-                <Button type="submit" disabled={isSubmitting || !isDirty}>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || (!isDirty && !isPhotoChanged)}
+                >
                   {isSubmitting ? "Salvataggio..." : "Salva"}
                 </Button>
               </div>

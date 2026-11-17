@@ -55,6 +55,16 @@ const updateImage = async (productId, imageUrl) => {
   return await product.save();
 };
 
+// undefined toglie il campo image dal documento
+const removeImage = async (productId) => {
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new NotFoundException("Product not found");
+  }
+  product.image = undefined;
+  return await product.save();
+};
+
 const deleteProduct = async (productId) => {
   const product = await Product.findByIdAndDelete(productId);
   if (!product) {
@@ -73,5 +83,6 @@ module.exports = {
   create,
   update,
   updateImage,
+  removeImage,
   deleteProduct,
 };

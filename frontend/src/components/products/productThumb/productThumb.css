@@ -6,12 +6,14 @@
   object-fit: cover;
 }
 
-/* senza foto: l'iniziale al centro, su grigio chiaro */
+/* senza foto: l'iniziale al centro, viola su viola chiaro come il segnaposto della card
+   del Catalogo; il bordo serve solo alle foto vere */
 .product-thumb-letter {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg);
-  color: var(--text-muted);
+  border: none;
+  background: var(--secondary-soft);
+  color: var(--secondary);
   font-weight: 800;
 }

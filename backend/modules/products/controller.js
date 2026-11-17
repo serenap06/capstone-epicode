@@ -99,6 +99,21 @@ const updateImage = async (req, res, next) => {
   }
 };
 
+// toglie la foto del prodotto, come removeAvatar per la foto profilo
+const removeImage = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const product = await productService.removeImage(productId);
+    res.status(200).send({
+      statusCode: 200,
+      message: "Product image removed successfully",
+      product,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const deleteProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -118,5 +133,6 @@ module.exports = {
   create,
   update,
   updateImage,
+  removeImage,
   deleteProduct,
 };

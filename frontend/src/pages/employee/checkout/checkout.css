@@ -1,0 +1,140 @@
+/* stili solo della Cassa */
+
+/* il carrello resta in vista mentre si scorrono i prodotti:
+   sticky lo tiene fermo sotto la barra in alto (alta 68px) quando la pagina scorre */
+.checkout-cart {
+  position: sticky;
+  top: calc(68px + 1rem);
+}
+
+/* le righe del carrello, una sotto l'altra, separate da una linea sottile */
+.checkout-cart-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* nome e quantità a sinistra, prezzo a destra */
+.checkout-cart-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.checkout-cart-name {
+  margin: 0;
+  font-weight: 700;
+}
+
+/* "2 × 12,00 €": più piccolo e grigio sotto il nome */
+.checkout-cart-detail {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* il prezzo della riga non va mai a capo */
+.checkout-cart-price {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* la riga del carrello su due piani: sopra nome e prezzo, sotto − / + e cestino */
+.checkout-cart-line {
+  flex-wrap: wrap;
+}
+
+.checkout-cart-controls {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* il numero tra − e +, largo fisso così i bottoni non si spostano */
+.checkout-cart-quantity {
+  min-width: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* il cestino in fondo a destra */
+.checkout-cart-controls .app-button-danger {
+  margin-left: auto;
+}
+
+/* il totale: una linea scura sopra, il numero grande */
+.checkout-cart-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--text);
+}
+
+.checkout-cart-total strong {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* pagamento e bottoni uno sotto l'altro, larghi quanto il carrello */
+.checkout-cart-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* i due pulsanti Contanti / Carta divisi a metà */
+.checkout-cart-actions .filter-chips {
+  width: 100%;
+}
+
+.checkout-cart-actions .filter-chip {
+  flex: 1;
+}
+
+/* "Vendita registrata": riquadro magenta chiaro con la spunta in un cerchio magenta */
+.checkout-cart-success {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.checkout-cart-success-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+}
+
+/* "Da riordinare": titoletto grigio e sotto le righe come quelle del carrello */
+.checkout-cart-low-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* l'elenco "Da riordinare" un po' staccato dal carrello vuoto sotto */
+.checkout-cart-low {
+  margin-bottom: 0.5rem;
+}

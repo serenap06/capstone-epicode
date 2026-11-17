@@ -1,4 +1,4 @@
-# Capstone Epicode
+# StoreSquad
 
 [English](README.md) | Italiano
 

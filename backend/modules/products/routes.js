@@ -48,6 +48,15 @@ productsRouter.patch(
   productController.updateImage,
 );
 
+// toglie la foto: il prodotto torna senza immagine (nell'app compare il segnaposto)
+productsRouter.delete(
+  "/:productId/image",
+  authorizeRole("admin"),
+  param("productId").isMongoId().withMessage("Invalid product id"),
+  validate,
+  productController.removeImage,
+);
+
 
 productsRouter.delete(
   "/:productId",

@@ -13,6 +13,8 @@ import Users from "./pages/admin/users/Users.jsx";
 import Stores from "./pages/admin/stores/Stores.jsx";
 import Shifts from "./pages/admin/shifts/Shifts.jsx";
 import Stocks from "./pages/stocks/Stocks.jsx";
+import Catalog from "./pages/products/Catalog.jsx";
+import Checkout from "./pages/employee/checkout/Checkout.jsx";
 
 const App = () => {
   return (
@@ -26,8 +28,9 @@ const App = () => {
           {/* index = la pagina che si apre su /admin */}
           <Route index element={<Dashboard />} />
           <Route path="tasks" element={<Tasks />} />
-          <Route path="shifts" element={<Shifts/>} />
+          <Route path="shifts" element={<Shifts />} />
           <Route path="stock" element={<Stocks />} />
+          <Route path="products" element={<Catalog />} />
           <Route path="profile" element={<Profile />} />
           <Route path="stores" element={<Stores />} />
           <Route path="users" element={<Users />} />
@@ -40,7 +43,9 @@ const App = () => {
           <Route index element={<Home />} />
           <Route path="tasks" element={<MyTasks />} />
           <Route path="shifts" element={<MyShifts />} />
+          <Route path="checkout" element={<Checkout />} />
           <Route path="stock" element={<Stocks />} />
+          <Route path="products" element={<Catalog />} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Route>

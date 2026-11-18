@@ -1,22 +1,115 @@
 const mongoose = require("mongoose");
 const Task = require("./schema");
+const Store = require("../stores/schema");
+const User = require("../users/schema");
 const getStoreEmployeeIds = require("../../utils/tasks/getStoreEmployeeIds");
 const checkUserBelongsToStore = require("../../utils/checkUserBelongsToStore");
 const getTaskGroups = require("../../utils/tasks/getTaskGroups");
 const buildTaskFilter = require("../../utils/tasks/buildTaskFilter");
+const buildPagination = require("../../utils/buildPagination");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const HttpException = require("../../exceptions");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 
 // task del responsabile: cerco i gruppi che rispettano i filtri e li restituisco
-// raggruppati (una task con dentro tutte le persone assegnate)
-const findAll = async ({ store, assignedTo, ...filters }) => {
-  const taskFilter = buildTaskFilter(filters);
-  if (store) taskFilter.store = store;
-  if (assignedTo) taskFilter.assignedTo = assignedTo;
+// raggruppati (una task con dentro tutte le persone assegnate).
+// Senza page tutte; con page una pagina sola in ordine di scadenza, più quante sono in corso.
+// Con page lo stato vale per il gruppo: "done" = l'hanno finita tutti, "pending" = qualcuno no
+const findAll = async ({
+  store,
+  assignedTo,
+  status,
+  page,
+  limit = 10,
+  ...filters
+}) => {
+  // senza page: come prima (lo stato filtra le singole copie)
+  if (!page) {
+    const taskFilter = buildTaskFilter({ ...filters, status });
+    if (store) taskFilter.store = store;
+    if (assignedTo) taskFilter.assignedTo = assignedTo;
+    const groupIds = await Task.distinct("groupId", taskFilter);
+    const tasks = await getTaskGroups(groupIds);
+    return { tasks };
+  }
 
-  const groupIds = await Task.distinct("groupId", taskFilter);
-  return getTaskGroups(groupIds);
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
+  // il filtro delle copie, senza lo stato; ObjectId perché aggregate non converte gli id
+  const taskFilter = buildTaskFilter(filters);
+  if (store) taskFilter.store = new mongoose.Types.ObjectId(String(store));
+  if (assignedTo) {
+    taskFilter.assignedTo = new mongoose.Types.ObjectId(String(assignedTo));
+  }
+
+  // lo stato del gruppo, calcolato dopo $group (isDone: true se tutte le copie sono fatte)
+  const statusMatch = [];
+  if (status === "done") statusMatch.push({ $match: { isDone: true } });
+  if (status === "pending") statusMatch.push({ $match: { isDone: false } });
+
+  const [result] = await Task.aggregate([
+    { $match: taskFilter },
+    // una riga per gruppo: i campi comuni una volta, le persone in assignees
+    {
+      $group: {
+        _id: "$groupId",
+        title: { $first: "$title" },
+        description: { $first: "$description" },
+        dueDate: { $first: "$dueDate" },
+        priority: { $first: "$priority" },
+        category: { $first: "$category" },
+        type: { $first: "$type" },
+        isGlobal: { $first: "$isGlobal" },
+        store: { $first: "$store" },
+        assignees: {
+          $push: {
+            taskId: "$_id",
+            user: "$assignedTo",
+            status: "$status",
+            completedAt: "$completedAt",
+          },
+        },
+      },
+    },
+    // isDone: true se nessuna copia è ancora da fare
+    {
+      $addFields: {
+        isDone: { $not: [{ $in: ["pending", "$assignees.status"] }] },
+      },
+    },
+    // $facet: la pagina, quante passano il filtro dello stato (per le pagine)
+    // e quante sono in corso (per il sottotitolo, senza il filtro dello stato)
+    {
+      $facet: {
+        tasks: [
+          ...statusMatch,
+          { $sort: { dueDate: 1, _id: 1 } },
+          { $skip: (pageNumber - 1) * limitNumber },
+          { $limit: limitNumber },
+        ],
+        total: [...statusMatch, { $count: "count" }],
+        open: [{ $match: { isDone: false } }, { $count: "count" }],
+      },
+    },
+  ]);
+
+  // aggregate restituisce solo gli id: aggiungo il nome del negozio e delle persone
+  await Store.populate(result.tasks, { path: "store", select: "name" });
+  await User.populate(result.tasks, {
+    path: "assignees.user",
+    select: "name surname",
+  });
+
+  // total e open sono vuoti quando nessuna task li rispetta
+  return {
+    tasks: result.tasks,
+    totals: { openCount: result.open[0]?.count ?? 0 },
+    pagination: buildPagination(
+      pageNumber,
+      limitNumber,
+      result.total[0]?.count ?? 0,
+    ),
+  };
 };
 
 // task del dipendente: solo le sue copie, una per task

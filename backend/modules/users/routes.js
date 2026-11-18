@@ -12,6 +12,7 @@ const userUpdateRules = require("../../middlewares/users/userUpdateRules");
 const profileUpdateRules = require("../../middlewares/users/profileUpdateRules");
 const passwordUpdateRules = require("../../middlewares/users/passwordUpdateRules");
 const { uploadAvatar } = require("../../middlewares/upload/cloudinary");
+const paginationRules = require("../../middlewares/globals/paginationRules");
 
 usersRouter.use(authenticate);
 
@@ -36,7 +37,7 @@ usersRouter.delete("/me/avatar", userController.removeAvatar);
 
 usersRouter.use(authorizeRoles("admin"));
 
-usersRouter.get("/", userController.findAll);
+usersRouter.get("/", paginationRules, validate, userController.findAll);
 usersRouter.get(
   "/:userId",
   param("userId").isMongoId().withMessage("Invalid user id"),

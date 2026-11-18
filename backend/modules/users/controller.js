@@ -4,10 +4,13 @@ const userService = require("./service");
 
 const findAll = async (req, res, next) => {
   try {
-    const users = await userService.findAll();
+    const { page, limit } = req.query;
+    const result = await userService.findAll({ page, limit });
     res.status(200).send({
       statusCode: 200,
-      users,
+      users: result.users,
+      totals: result.totals,
+      pagination: result.pagination,
     });
   } catch (e) {
     next(e);

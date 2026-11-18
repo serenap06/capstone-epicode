@@ -1,4 +1,5 @@
 const { query } = require("express-validator");
+const paginationRules = require("../globals/paginationRules");
 
 const taskQueryRules = [
   query("store").optional().isMongoId().withMessage("Invalid store id"),
@@ -25,6 +26,7 @@ const taskQueryRules = [
     .isISO8601()
     .withMessage("from must be a valid ISO date"),
   query("to").optional().isISO8601().withMessage("to must be a valid ISO date"),
+  ...paginationRules,
 ];
 
 module.exports = taskQueryRules;

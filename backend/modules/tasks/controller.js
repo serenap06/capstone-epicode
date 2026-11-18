@@ -2,9 +2,7 @@ const taskService = require("./service");
 
 const findAll = async (req, res, next) => {
   try {
-    const { store, assignedTo, status, category, type, isGlobal, from, to } =
-      req.query;
-    const tasks = await taskService.findAll({
+    const {
       store,
       assignedTo,
       status,
@@ -13,10 +11,26 @@ const findAll = async (req, res, next) => {
       isGlobal,
       from,
       to,
+      page,
+      limit,
+    } = req.query;
+    const result = await taskService.findAll({
+      store,
+      assignedTo,
+      status,
+      category,
+      type,
+      isGlobal,
+      from,
+      to,
+      page,
+      limit,
     });
     res.status(200).send({
       statusCode: 200,
-      tasks,
+      tasks: result.tasks,
+      totals: result.totals,
+      pagination: result.pagination,
     });
   } catch (e) {
     next(e);

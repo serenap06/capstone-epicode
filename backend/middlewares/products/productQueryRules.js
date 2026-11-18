@@ -1,4 +1,5 @@
 const { query } = require("express-validator");
+const paginationRules = require("../globals/paginationRules");
 
 const productQueryRules = [
   query("search")
@@ -23,6 +24,15 @@ const productQueryRules = [
     .trim()
     .notEmpty()
     .withMessage("Category cannot be empty"),
+  query("sortBy")
+    .optional()
+    .isIn(["name", "category", "price", "vatRate", "state"])
+    .withMessage("sortBy must be name, category, price, vatRate or state"),
+  query("order")
+    .optional()
+    .isIn(["asc", "desc"])
+    .withMessage("order must be asc or desc"),
+  ...paginationRules,
 ];
 
 module.exports = productQueryRules;

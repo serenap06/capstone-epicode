@@ -2,14 +2,17 @@ const stockService = require("./service");
 
 const findAll = async (req, res, next) => {
   try {
-    const { store, product, lowStock } = req.query;
-    const stocks = await stockService.findAll(
-      { store, product, lowStock },
+    const { store, product, lowStock, search, sortBy, order, page, limit } =
+      req.query;
+    const result = await stockService.findAll(
+      { store, product, lowStock, search, sortBy, order, page, limit },
       req.user,
     );
     res.status(200).send({
       statusCode: 200,
-      stocks,
+      stocks: result.stocks,
+      totals: result.totals,
+      pagination: result.pagination,
     });
   } catch (e) {
     next(e);

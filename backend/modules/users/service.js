@@ -5,6 +5,7 @@ const Shift = require("../shifts/schema");
 const Task = require("../tasks/schema");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const assignDefinedFields = require("../../utils/assignDefinedFields");
+const buildPagination = require("../../utils/buildPagination");
 
 // l'utente con nome e città del negozio (per il profilo), oppure 404
 const findUserWithStore = async (userId) => {
@@ -15,8 +16,33 @@ const findUserWithStore = async (userId) => {
   return user;
 };
 
-const findAll = async () => {
-  return User.find().populate("store", "name").sort({ surname: 1, name: 1 });
+// senza page restituisce tutte le persone (le usano i moduli di task e turni);
+// con page una pagina sola, in ordine di cognome, e quante sono in tutto
+const findAll = async ({ page, limit = 10 }) => {
+  if (!page) {
+    const users = await User.find()
+      .populate("store", "name")
+      .sort({ surname: 1, name: 1 });
+    return { users };
+  }
+
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
+  const [users, count] = await Promise.all([
+    User.find()
+      .populate("store", "name")
+      .sort({ surname: 1, name: 1, _id: 1 })
+      .collation({ locale: "it" })
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber),
+    User.countDocuments(),
+  ]);
+
+  return {
+    users,
+    totals: { count },
+    pagination: buildPagination(pageNumber, limitNumber, count),
+  };
 };
 
 const findOne = async (userId) => {

@@ -3,19 +3,27 @@ const productService = require("./service");
 
 const findAll = async (req, res, next) => {
   try {
-    const { search, active, brand, category } = req.query;
-    const products = await productService.findAll(
+    const { search, active, brand, category, sortBy, order, page, limit } =
+      req.query;
+    const result = await productService.findAll(
       {
         search,
         active,
         brand,
         category,
+        sortBy,
+        order,
+        page,
+        limit,
       },
       req.user,
     );
     res.status(200).send({
       statusCode: 200,
-      products,
+      products: result.products,
+      totals: result.totals,
+      categories: result.categories,
+      pagination: result.pagination,
     });
   } catch (e) {
     next(e);

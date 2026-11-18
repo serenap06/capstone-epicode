@@ -9,11 +9,14 @@ const PERIOD_FORMATS = {
 };
 
 const findRevenue = async ({ from, to, groupBy = "day", store }) => {
-  // 1. Filtro: vendite tra from e to, eventualmente di un solo negozio
+  // 1. Filtro: vendite tra from e to, non annullate, eventualmente di un solo negozio
   const toDate = new Date(to);
   toDate.setHours(23, 59, 59, 999);
 
-  const match = { createdAt: { $gte: new Date(from), $lte: toDate } };
+  const match = {
+    createdAt: { $gte: new Date(from), $lte: toDate },
+    cancelled: { $ne: true },
+  };
   if (store) match.store = new mongoose.Types.ObjectId(store);
 
   // 2. Incassi per periodo (giorno, settimana o mese)

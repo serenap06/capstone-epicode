@@ -8,6 +8,7 @@ const authenticate = require("../../middlewares/auth/auth");
 
 const saleBodyRules = require("../../middlewares/sales/saleBodyRules");
 const saleQueryRules = require("../../middlewares/sales/saleQueryRules");
+const saleCancelRules = require("../../middlewares/sales/saleCancelRules");
 
 salesRouter.use(authenticate);
 
@@ -25,6 +26,14 @@ salesRouter.post(
   saleBodyRules,
   validate,
   saleController.create,
+);
+
+salesRouter.patch(
+  "/:saleId/cancel",
+  authorizeRoles("employee"),
+  saleCancelRules,
+  validate,
+  saleController.cancel,
 );
 
 module.exports = salesRouter;

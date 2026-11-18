@@ -33,6 +33,11 @@ const saleSchema = new mongoose.Schema(
     netTotal: { type: Number, required: true, min: 0 },
     vatTotal: { type: Number, required: true, min: 0 },
     paymentMethod: { type: String, enum: ["cash", "card"], required: true },
+    // annullamento: di base false; gli altri tre si riempiono solo quando si annulla
+    cancelled: { type: Boolean, default: false },
+    cancelReason: { type: String, trim: true },
+    cancelledBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    cancelledAt: { type: Date },
   },
   { timestamps: true },
 );

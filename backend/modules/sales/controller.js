@@ -43,4 +43,19 @@ const create = async (req, res, next) => {
   }
 };
 
-module.exports = { findAll, create };
+const cancel = async (req, res, next) => {
+  try {
+    const { saleId } = req.params;
+    const { reason } = req.body;
+    const sale = await saleService.cancel(saleId, reason, req.user);
+    res.status(200).send({
+      statusCode: 200,
+      message: "Sale cancelled successfully",
+      sale,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports = { findAll, create, cancel };

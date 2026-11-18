@@ -58,6 +58,8 @@ const getKpis = async (filters) => {
     }),
     Sale.find({
       createdAt: { $gte: startOfDay, $lte: endOfDay },
+      // le vendite annullate non contano nell'incasso
+      cancelled: { $ne: true },
       ...storeFilter,
     })
       .select("total")

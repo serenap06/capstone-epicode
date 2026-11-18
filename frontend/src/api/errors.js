@@ -21,6 +21,10 @@ const MESSAGES = {
   "Current password is wrong": "La password attuale non è corretta",
   "New password must be different":
     "La nuova password deve essere diversa da quella attuale",
+  "Sale not found": "Vendita non trovata",
+  "You can only cancel your own sales": "Puoi annullare solo le tue vendite",
+  "Sale already cancelled": "Questa vendita è già stata annullata",
+  "Only today's sales can be cancelled": "Si possono annullare solo le vendite di oggi",
   "Store has employees":
     "Il negozio ha ancora del personale: spostalo prima in un altro negozio",
 };

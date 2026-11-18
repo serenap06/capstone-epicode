@@ -32,6 +32,10 @@
   /* avvisi: "da fare", scorta bassa */
   --warning-soft: #ffebd6;
   --warning-text: #8a3f05;
+
+  /* tutto bene: pezzi sopra la soglia (verde, così non si confonde con il magenta) */
+  --success-soft: #e2f4e8;
+  --success-text: #1d6b3a;
 }
 
 /* sfondo, testo e font di tutta la pagina */
@@ -115,7 +119,8 @@ a:hover {
   border: 1px solid var(--border);
 }
 
-/* tabelle (Utenti e Giacenze): il riquadro scorre in orizzontale se la tabella non ci sta */
+/* tabelle (Utenti, Giacenze, Vendite, Forniture): il riquadro scorre in orizzontale
+   se la tabella non ci sta */
 .app-table-wrap {
   overflow-x: auto;
 }
@@ -127,7 +132,7 @@ a:hover {
 
 /* intestazione piccola e grigia */
 .app-table th {
-  padding: 0.9rem 1rem;
+  padding: 0.9rem 0.75rem;
   font-size: 0.8rem;
   font-weight: 700;
   color: var(--text-muted);
@@ -135,11 +140,19 @@ a:hover {
   white-space: nowrap;
 }
 
-/* righe con una linea sopra */
+/* righe con una linea sopra; testi su una riga sola (nowrap): le tabelle compaiono solo
+   quando c'è spazio (da 1366px, vedi useShowCards), così le righe restano tutte alte uguali */
 .app-table td {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   border-top: 1px solid var(--border);
   vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* le righe dei dettagli (motivo di una vendita annullata o di una richiesta respinta)
+   occupano tutte le colonne (colspan) e vanno a capo se il testo è lungo */
+.app-table td[colspan] {
+  white-space: normal;
 }
 
 /* menu a tendina di Bootstrap (utente e "Altro"): angoli tondi, bordo leggero e ombra */

@@ -1,0 +1,47 @@
+/* larghezza minima: sotto, la tabella scorre dentro il riquadro (vedi .app-table in index.css) */
+.product-table {
+  min-width: 720px;
+}
+
+/* foto e nome affiancati, come nelle giacenze */
+.product-table-name {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* la categoria arriva in minuscolo dal database: capitalize mette la maiuscola */
+.product-table-category {
+  text-transform: capitalize;
+}
+
+/* i pezzi: una riga per negozio, negozio a sinistra e badge accanto */
+.product-table-stock {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.product-table-stock li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* prodotto non attivo: testo grigio */
+.product-row-off td {
+  color: var(--text-muted);
+}
+
+/* bottoni a destra */
+.product-table-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

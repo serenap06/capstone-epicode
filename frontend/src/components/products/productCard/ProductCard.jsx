@@ -36,7 +36,7 @@ const ProductCard = ({ product, stocks, showStore, onEdit, onDelete }) => {
           </div>
         )}
         {/* i pezzi: una riga per negozio, con il numero in un badge
-            (magenta se va bene, arancio se è sotto la soglia, come nelle Giacenze).
+            (verde se va bene, arancio se è sotto la soglia, come nelle Giacenze).
             Il dipendente ha una riga sola: "Disponibili" e il badge */}
         {stocks && (
           <ul className="product-card-stock">
@@ -50,7 +50,7 @@ const ProductCard = ({ product, stocks, showStore, onEdit, onDelete }) => {
                 <span className="product-card-stock-store">
                   {showStore ? stock.store.name : "Disponibili"}
                 </span>
-                <Badge color={isLowStock(stock) ? "warning" : "primary"}>
+                <Badge color={isLowStock(stock) ? "warning" : "success"}>
                   {stock.amount} pz
                 </Badge>
               </li>

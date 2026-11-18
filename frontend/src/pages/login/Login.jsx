@@ -76,7 +76,8 @@ const Login = () => {
       <p className="app-logo login-logo">
         Store<span>Squad</span>
       </p>
-      <p className="login-tagline">Il gestionale dei punti vendita</p>
+      {/* lo slogan continua il nome: "StoreSquad... è un gioco di squadra" */}
+      <p className="login-tagline">è un gioco di squadra</p>
       <h1 className="login-title">Accedi</h1>
 
       {/* errore del server, come nelle altre pagine */}

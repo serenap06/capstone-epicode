@@ -2,13 +2,17 @@ const saleService = require("./service");
 
 const findAll = async (req, res, next) => {
   try {
-    const { store, soldBy, from, to, page, limit } = req.query;
+    const { store, soldBy, from, to, status, sortBy, order, page, limit } =
+      req.query;
     const result = await saleService.findAll(
       {
         store,
         soldBy,
         from,
         to,
+        status,
+        sortBy,
+        order,
         page,
         limit,
       },

@@ -2,12 +2,17 @@ import "./stockTable.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { isLowStock } from "../../../utils/isLowStock";
 import Button from "../../common/button/Button";
+import SortableHeader from "../../common/sortableHeader/SortableHeader";
 import ProductThumb from "../../products/productThumb/ProductThumb";
 import StockStatusBadge from "../stockStatusBadge/StockStatusBadge";
 
 // tabella delle giacenze, da tablet in su. showStore: la colonna Negozio (per il responsabile).
-// onEdit e onDelete: i bottoni compaiono solo se la pagina li passa (solo il responsabile modifica)
-const StockTable = ({ stocks, showStore, onEdit, onDelete }) => {
+// onEdit e onDelete: i bottoni compaiono solo se la pagina li passa (solo il responsabile modifica).
+// sort e onSort: l'ordine scelto e cosa fare al clic su un'intestazione (lo decide la pagina)
+const StockTable = ({ stocks, showStore, sort, onSort, onEdit, onDelete }) => {
+  // props uguali per tutte le intestazioni che ordinano
+  const sortProps = { sort, onSort };
+
   const hasActions = Boolean(onEdit);
 
   return (
@@ -16,11 +21,17 @@ const StockTable = ({ stocks, showStore, onEdit, onDelete }) => {
       <table className="app-table stock-table">
         <thead>
           <tr>
-            <th scope="col">Prodotto</th>
-            {showStore && <th scope="col">Negozio</th>}
-            <th scope="col">Quantità</th>
-            <th scope="col">Soglia</th>
-            <th scope="col">Stato</th>
+            <SortableHeader label="Prodotto" field="product" {...sortProps} />
+            {showStore && (
+              <SortableHeader label="Negozio" field="store" {...sortProps} />
+            )}
+            <SortableHeader label="Quantità" field="amount" {...sortProps} />
+            <SortableHeader
+              label="Soglia"
+              field="minThreshold"
+              {...sortProps}
+            />
+            <SortableHeader label="Stato" field="status" {...sortProps} />
             {hasActions && (
               <th scope="col">
                 <span className="visually-hidden">Azioni</span>

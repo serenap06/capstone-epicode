@@ -11,10 +11,19 @@ import Button from "../../common/button/Button";
 import CancelledNote from "../cancelledNote/CancelledNote";
 import CancelledToggle from "../cancelledToggle/CancelledToggle";
 import PaymentMethod from "../paymentMethod/PaymentMethod";
+import SortableHeader from "../../common/sortableHeader/SortableHeader";
 
 // tabella delle vendite, sopra i 1200px. showStore e showSeller: le colonne Negozio e
-// Venduto da (per il responsabile). onCancel: il bottone "Annulla vendita" (solo il dipendente)
-const SaleTable = ({ sales, showStore, showSeller, onCancel }) => {
+// Venduto da (per il responsabile). onCancel: il bottone "Annulla vendita" (solo il dipendente).
+// sort e onSort: l'ordine scelto e cosa fare al clic su un'intestazione (ordina il server)
+const SaleTable = ({
+  sales,
+  showStore,
+  showSeller,
+  sort,
+  onSort,
+  onCancel,
+}) => {
   // l'id della vendita annullata con i dettagli aperti (uno alla volta), oppure null
   const [openSaleId, setOpenSaleId] = useState(null);
 
@@ -26,20 +35,34 @@ const SaleTable = ({ sales, showStore, showSeller, onCancel }) => {
   const toggleDetails = (saleId) =>
     setOpenSaleId((prevId) => (prevId === saleId ? null : saleId));
 
+  // props uguali per tutte le intestazioni che ordinano
+  const sortProps = { sort, onSort };
+
   return (
     // se la tabella non ci sta, scorre in orizzontale dentro il riquadro
     <div className="app-card app-table-wrap">
       <table className="app-table sale-table">
         <thead>
           <tr>
-            <th scope="col">Ora</th>
-            {showStore && <th scope="col">Negozio</th>}
-            {showSeller && <th scope="col">Venduto da</th>}
-            <th scope="col">Articoli</th>
-            <th scope="col">Pagamento</th>
-            <th scope="col" className="text-end">
-              Totale
-            </th>
+            <SortableHeader label="Ora" field="date" {...sortProps} />
+            {showStore && (
+              <SortableHeader label="Negozio" field="store" {...sortProps} />
+            )}
+            {showSeller && (
+              <SortableHeader
+                label="Venduto da"
+                field="seller"
+                {...sortProps}
+              />
+            )}
+            <SortableHeader label="Articoli" field="items" {...sortProps} />
+            <SortableHeader label="Pagamento" field="payment" {...sortProps} />
+            <SortableHeader
+              label="Totale"
+              field="total"
+              className="text-end"
+              {...sortProps}
+            />
             {onCancel && (
               <th scope="col">
                 <span className="visually-hidden">Azioni</span>

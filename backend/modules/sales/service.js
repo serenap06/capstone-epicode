@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Product = require("../products/schema");
 const Sale = require("./schema");
 const Stock = require("../stock/schema");
@@ -6,46 +7,126 @@ const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const round = require("../../utils/round");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 
+// le colonne che si possono ordinare: il nome che arriva nella query → il campo da ordinare
+// (storeName, sellerName e itemCount li aggiungo io nella pipeline)
+const SORT_FIELDS = {
+  date: "createdAt",
+  store: "storeName",
+  seller: "sellerName",
+  items: "itemCount",
+  payment: "paymentMethod",
+  total: "total",
+};
+
+// aggregate non converte gli id come fa find: li trasformo io in ObjectId
+const toObjectId = (id) => new mongoose.Types.ObjectId(String(id));
+
+// $lookup: prende dalla collection "from" il documento collegato, solo i campi di "fields"
+// (mai la password degli utenti). $unwind trasforma l'array del risultato in un oggetto
+const lookupOne = (from, localField, fields) => [
+  {
+    $lookup: {
+      from,
+      localField,
+      foreignField: "_id",
+      as: localField,
+      pipeline: [{ $project: fields }],
+    },
+  },
+  // preserveNullAndEmptyArrays: tiene la vendita anche se manca (cancelledBy c'è solo sulle annullate)
+  { $unwind: { path: `$${localField}`, preserveNullAndEmptyArrays: true } },
+];
+
 const findAll = async (
-  { store, soldBy, from, to, page = 1, limit = 20 },
+  {
+    store,
+    soldBy,
+    from,
+    to,
+    status,
+    sortBy = "date",
+    order = "desc",
+    page = 1,
+    limit = 20,
+  },
   currentUser,
 ) => {
   const pageNumber = Number(page);
   const limitNumber = Number(limit);
 
+  // filtro di base: negozio, venditore e periodo. Vale per la lista e per i totali
   const storeId = currentUser.role === "employee" ? currentUser.store : store;
-  const filter = {};
-  if (storeId) filter.store = storeId;
-  if (soldBy) filter.soldBy = soldBy;
-  if (from) filter.createdAt = { $gte: new Date(from) };
+  const baseFilter = {};
+  if (storeId) baseFilter.store = toObjectId(storeId);
+  if (soldBy) baseFilter.soldBy = toObjectId(soldBy);
+  if (from) baseFilter.createdAt = { $gte: new Date(from) };
   if (to) {
     const toDate = new Date(to);
     toDate.setHours(23, 59, 59, 999);
-    filter.createdAt = { ...filter.createdAt, $lte: toDate };
+    baseFilter.createdAt = { ...baseFilter.createdAt, $lte: toDate };
   }
 
-  // tre richieste insieme:
-  // 1. una pagina di vendite per la tabella, annullate comprese (il responsabile vede il motivo)
-  // 2. quante sono in tutto, per contare le pagine
-  // 3. solo le non annullate ($ne: true prende anche le vecchie senza il campo), per i totali
-  const [sales, salesCount, validSales] = await Promise.all([
-    Sale.find(filter)
-      .populate("store", "name")
-      .populate("soldBy", "name surname")
-      .populate("cancelledBy", "name surname")
-      .sort({ createdAt: -1, _id: -1 })
-      .skip((pageNumber - 1) * limitNumber)
-      .limit(limitNumber),
-    Sale.countDocuments(filter),
-    Sale.find({ ...filter, cancelled: { $ne: true } })
-      .select("total netTotal vatTotal")
+  // filtro della lista: in più lo stato ("valid" o "cancelled"; vuoto = tutte).
+  // $ne: true prende anche le vecchie vendite senza il campo
+  const listFilter = { ...baseFilter };
+  if (status === "valid") listFilter.cancelled = { $ne: true };
+  if (status === "cancelled") listFilter.cancelled = true;
+
+  // ordine: 1 crescente, -1 decrescente. A parità, prima le più recenti
+  const direction = order === "asc" ? 1 : -1;
+  const sortField = SORT_FIELDS[sortBy];
+  const sortStage = { [sortField]: direction };
+  if (sortField !== "createdAt") sortStage.createdAt = -1;
+  sortStage._id = -1;
+
+  // quattro richieste insieme:
+  // 1. una pagina di vendite, già ordinata, con i nomi di negozio e persone
+  // 2. quante sono in tutto con questi filtri, per contare le pagine
+  // 3. solo le non annullate, per i totali (non cambiano con il filtro dello stato)
+  // 4. quante sono le annullate nel periodo, per il filtro "Annullate"
+  const [sales, salesCount, validSales, cancelledCount] = await Promise.all([
+    Sale.aggregate([
+      { $match: listFilter },
+      ...lookupOne("stores", "store", { name: 1 }),
+      ...lookupOne("users", "soldBy", { name: 1, surname: 1 }),
+      ...lookupOne("users", "cancelledBy", { name: 1, surname: 1 }),
+      // i campi su cui ordinare: nome del negozio, cognome e nome del venditore, pezzi venduti
+      {
+        $addFields: {
+          storeName: "$store.name",
+          sellerName: { $concat: ["$soldBy.surname", " ", "$soldBy.name"] },
+          itemCount: { $sum: "$items.quantity" },
+        },
+      },
+      { $sort: sortStage },
+      { $skip: (pageNumber - 1) * limitNumber },
+      { $limit: limitNumber },
+    ])
+      // collation italiana: ordina i nomi senza badare a maiuscole e accenti
+      .collation({ locale: "it" }),
+    Sale.countDocuments(listFilter),
+    Sale.find({ ...baseFilter, cancelled: { $ne: true } })
+      .select("total netTotal vatTotal paymentMethod")
       .lean(),
+    Sale.countDocuments({ ...baseFilter, cancelled: true }),
   ]);
+
+  // somma il totale delle vendite che passano il controllo (per contanti e carta)
+  const sumTotal = (salesList) =>
+    round(salesList.reduce((sum, sale) => sum + sale.total, 0));
+
   const totals = {
     count: validSales.length,
-    revenue: round(validSales.reduce((sum, sale) => sum + sale.total, 0)),
+    revenue: sumTotal(validSales),
     netRevenue: round(validSales.reduce((sum, sale) => sum + sale.netTotal, 0)),
     vat: round(validSales.reduce((sum, sale) => sum + sale.vatTotal, 0)),
+    cashRevenue: sumTotal(
+      validSales.filter((sale) => sale.paymentMethod === "cash"),
+    ),
+    cardRevenue: sumTotal(
+      validSales.filter((sale) => sale.paymentMethod === "card"),
+    ),
+    cancelledCount,
   };
 
   return {

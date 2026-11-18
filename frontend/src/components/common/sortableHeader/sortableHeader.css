@@ -1,0 +1,30 @@
+/* il bottone sembra il testo dell'intestazione: stesso colore e stessa grandezza */
+.sortable-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.sortable-header:hover {
+  color: var(--text);
+}
+
+/* la freccia grigia chiara finché la colonna non è scelta */
+.sortable-header svg {
+  opacity: 0.45;
+}
+
+/* la colonna scelta: testo e freccia del colore principale */
+.sortable-header-active {
+  color: var(--primary-dark);
+}
+
+.sortable-header-active svg {
+  opacity: 1;
+}

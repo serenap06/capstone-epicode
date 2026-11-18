@@ -213,3 +213,8 @@
     text-overflow: ellipsis;
   }
 }
+
+/* menu "Ordina": non più largo di 16rem, anche quando è l'unico nella riga (dipendente) */
+.filter-bar > .sort-select {
+  max-width: 16rem;
+}

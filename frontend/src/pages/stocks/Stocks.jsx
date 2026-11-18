@@ -6,7 +6,9 @@ import { useIsPhone } from "../../hooks/useIsPhone";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { loadData } from "../../api/loadData";
 import { deleteStock } from "../../api/stocks";
+import { getNextSort } from "../../utils/getNextSort";
 import { isLowStock } from "../../utils/isLowStock";
+import { sortList } from "../../utils/sortList";
 import { toStoreOptions } from "../../utils/toStoreOptions";
 
 import AddButton from "../../components/common/addButton/AddButton";
@@ -15,6 +17,7 @@ import FilterBar from "../../components/common/filterBar/FilterBar";
 import FilterChips from "../../components/common/filterBar/FilterChips";
 import FilterSearch from "../../components/common/filterBar/FilterSearch";
 import FilterSelect from "../../components/common/filterBar/FilterSelect";
+import SortSelect from "../../components/common/filterBar/SortSelect";
 import FormModal from "../../components/common/formModal/FormModal";
 import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
@@ -27,6 +30,30 @@ import StockTable from "../../components/stocks/stockTable/StockTable";
 const LEVEL_OPTIONS = [
   { value: "", label: "Tutte" },
   { value: "low", label: "Sotto soglia" },
+];
+
+// su cosa ordinare per ogni colonna. Stato: 0 = OK, 1 = sotto soglia,
+// così crescente mette prima gli OK e decrescente prima i sotto soglia
+const SORT_VALUES = {
+  product: (stock) => stock.product.name,
+  store: (stock) => stock.store.name,
+  amount: (stock) => stock.amount,
+  minThreshold: (stock) => stock.minThreshold,
+  status: (stock) => (isLowStock(stock) ? 1 : 0),
+};
+
+// le voci del menu "Ordina" (vista a card): le stesse scelte delle intestazioni della tabella
+const SORT_OPTIONS = [
+  { field: "product", direction: "asc", label: "Prodotto A→Z" },
+  { field: "product", direction: "desc", label: "Prodotto Z→A" },
+  { field: "store", direction: "asc", label: "Negozio A→Z" },
+  { field: "store", direction: "desc", label: "Negozio Z→A" },
+  { field: "amount", direction: "asc", label: "Quantità crescente" },
+  { field: "amount", direction: "desc", label: "Quantità decrescente" },
+  { field: "minThreshold", direction: "asc", label: "Soglia crescente" },
+  { field: "minThreshold", direction: "desc", label: "Soglia decrescente" },
+  { field: "status", direction: "asc", label: "Prima gli OK" },
+  { field: "status", direction: "desc", label: "Prima i sotto soglia" },
 ];
 
 // pagina Giacenze per i due ruoli: il responsabile vede tutti i negozi e modifica,
@@ -44,6 +71,8 @@ const Stocks = () => {
   const [isLoading, setIsLoading] = useState(true);
   // filtri fatti nel browser: "" = nessun filtro
   const [filters, setFilters] = useState({ search: "", store: "", level: "" });
+  // ordine scelto: si parte dal prodotto, dalla A alla Z
+  const [sort, setSort] = useState({ field: "product", direction: "asc" });
   // aumentarlo ricarica le giacenze (dopo un salvataggio)
   const [refreshCount, setRefreshCount] = useState(0);
   // modale del modulo: stockToEdit è la riga da modificare (null = nuova)
@@ -112,11 +141,21 @@ const Stocks = () => {
     }
   };
 
-  // in ordine di prodotto e poi di negozio; [...stocks] è una copia, sort non tocca lo stato
-  const sortedStocks = [...stocks].sort(
-    (first, second) =>
-      first.product.name.localeCompare(second.product.name) ||
-      first.store.name.localeCompare(second.store.name),
+  // clic su un'intestazione della tabella: stessa colonna inverte, colonna nuova A→Z
+  const sortByColumn = (field) =>
+    setSort((prevSort) => getNextSort(prevSort, field));
+
+  // prima in ordine di prodotto e negozio, poi per la colonna scelta:
+  // a parità di valore (stessa quantità) resta l'ordine per prodotto
+  const defaultOrder = sortList(
+    sortList(stocks, SORT_VALUES.store, "asc"),
+    SORT_VALUES.product,
+    "asc",
+  );
+  const sortedStocks = sortList(
+    defaultOrder,
+    SORT_VALUES[sort.field],
+    sort.direction,
   );
 
   // le righe che passano tutti i filtri; la ricerca ignora maiuscole e minuscole
@@ -169,6 +208,18 @@ const Stocks = () => {
     />
   );
 
+  // menu "Ordina", solo con le card (la tabella si ordina dalle intestazioni).
+  // Il dipendente non ha la colonna Negozio, quindi niente voci sul negozio
+  const sortSelect = showCards && (
+    <SortSelect
+      options={SORT_OPTIONS.filter(
+        (option) => isAdmin || option.field !== "store",
+      )}
+      sort={sort}
+      onChange={setSort}
+    />
+  );
+
   // quanti filtri del menu sono attivi, per il pallino su "Filtri"
   const menuFilterCount = [filters.store, filters.level].filter(
     (value) => value !== "",
@@ -192,6 +243,7 @@ const Stocks = () => {
             <FilterBar compact activeCount={menuFilterCount}>
               {storeFilter}
               {levelFilter}
+              {sortSelect}
             </FilterBar>
           )
         }
@@ -210,6 +262,7 @@ const Stocks = () => {
         />
         {!isPhone && storeFilter}
         {!isPhone && levelFilter}
+        {!isPhone && sortSelect}
       </FilterBar>
 
       {/* il messaggio solo quando nessuna riga passa i filtri */}
@@ -233,7 +286,12 @@ const Stocks = () => {
             ))}
           </Row>
         ) : (
-          <StockTable stocks={visibleStocks} {...listProps} />
+          <StockTable
+            stocks={visibleStocks}
+            sort={sort}
+            onSort={sortByColumn}
+            {...listProps}
+          />
         ))}
 
       {/* modale e conferma servono solo al responsabile */}

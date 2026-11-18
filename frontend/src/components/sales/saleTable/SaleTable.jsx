@@ -13,7 +13,7 @@ import CancelledToggle from "../cancelledToggle/CancelledToggle";
 import PaymentMethod from "../paymentMethod/PaymentMethod";
 import SortableHeader from "../../common/sortableHeader/SortableHeader";
 
-// tabella delle vendite, sopra i 1200px. showStore e showSeller: le colonne Negozio e
+// tabella delle vendite, da 1366px in su. showStore e showSeller: le colonne Negozio e
 // Venduto da (per il responsabile). onCancel: il bottone "Annulla vendita" (solo il dipendente).
 // sort e onSort: l'ordine scelto e cosa fare al clic su un'intestazione (ordina il server)
 const SaleTable = ({

@@ -15,6 +15,15 @@ export const getToday = () => {
   return toRange(start, end);
 };
 
+// domani, dalle 00:00 alle 23:59
+export const getTomorrow = () => {
+  const start = addDays(new Date(), 1);
+  start.setHours(0, 0, 0, 0);
+  const end = addDays(new Date(), 1);
+  end.setHours(23, 59, 59, 999);
+  return toRange(start, end);
+};
+
 // da lunedì a domenica della settimana che contiene "date" (se manca, oggi)
 export const getWeek = (date = new Date()) => {
   const start = new Date(date);

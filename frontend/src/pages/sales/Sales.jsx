@@ -1,18 +1,17 @@
-import "./sales.css";
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useIsPhone } from "../../hooks/useIsPhone";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useShowCards } from "../../hooks/useShowCards";
 import { loadData } from "../../api/loadData";
 import { getMonth, getToday, getWeek } from "../../utils/dates";
 import { formatEuro } from "../../utils/formatEuro";
 import { getNextSort } from "../../utils/getNextSort";
+import { PAGE_SIZE } from "../../utils/pageSize";
 import { toQuery } from "../../utils/toQuery";
 import { toStoreOptions } from "../../utils/toStoreOptions";
 
-import Button from "../../components/common/button/Button";
 import FilterBar from "../../components/common/filterBar/FilterBar";
 import FilterChips from "../../components/common/filterBar/FilterChips";
 import FilterSelect from "../../components/common/filterBar/FilterSelect";
@@ -22,6 +21,7 @@ import KpiCard from "../../components/common/kpiCard/KpiCard";
 import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
 import PageHeader from "../../components/common/pageHeader/PageHeader";
+import Pagination from "../../components/common/pagination/Pagination";
 import CancelSaleForm from "../../components/sales/cancelSaleForm/CancelSaleForm";
 import SaleCard from "../../components/sales/saleCard/SaleCard";
 import SaleTable from "../../components/sales/saleTable/SaleTable";
@@ -33,6 +33,9 @@ const PERIOD_OPTIONS = [
   { value: "month", label: "Mese" },
 ];
 const PERIOD_RANGES = { today: getToday, week: getWeek, month: getMonth };
+
+// l'ordine con cui parte la pagina: dalle più recenti
+const DEFAULT_SORT = { field: "date", direction: "desc" };
 
 // le voci del menu "Ordina" (vista a card): le stesse scelte delle intestazioni della tabella.
 // adminOnly: negozio e venditore servono solo al responsabile
@@ -66,10 +69,11 @@ const SORT_OPTIONS = [
 const Sales = () => {
   const { user } = useAuth();
   const isAdmin = user.role === "admin";
-  // su telefono negozio, stato e "Ordina" vanno nel menu "Filtri"
+  // su telefono il bottone "Filtri" sta accanto allo stato, da tablet in fondo alla riga
   const isPhone = useIsPhone();
-  // fino a 1200px le card, sopra la tabella: sotto, la tabella si stringe e nasconde il totale
-  const showCards = useMediaQuery("(max-width: 1199.98px)");
+  // fino a 1366px le card, sopra la tabella, come in tutte le pagine con una tabella.
+  // Con le card negozio e "Ordina" vanno nel bottone "Filtri"
+  const showCards = useShowCards();
 
   // una pagina di vendite, i totali (solo vendite non annullate) e quante pagine ci sono
   const [sales, setSales] = useState([]);
@@ -84,7 +88,7 @@ const Sales = () => {
     status: "",
   });
   // ordine scelto: si parte dalle più recenti. Lo applica il server, come i filtri
-  const [sort, setSort] = useState({ field: "date", direction: "desc" });
+  const [sort, setSort] = useState(DEFAULT_SORT);
   // i negozi, per il menu del filtro (solo il responsabile)
   const [stores, setStores] = useState([]);
   const [error, setError] = useState("");
@@ -95,7 +99,7 @@ const Sales = () => {
   // la vendita da annullare (modale aperto), oppure null
   const [saleToCancel, setSaleToCancel] = useState(null);
 
-  // le vendite: i filtri li applica il server (sono divise in pagine da 20).
+  // le vendite: i filtri li applica il server (sono divise in pagine da PAGE_SIZE).
   // Il dipendente vede sempre oggi e solo le sue (soldBy); toQuery salta i valori vuoti
   useEffect(() => {
     const query = toQuery({
@@ -106,6 +110,7 @@ const Sales = () => {
       sortBy: sort.field,
       order: sort.direction,
       page,
+      limit: PAGE_SIZE,
     });
     loadData(
       `/sales?${query}`,
@@ -162,10 +167,8 @@ const Sales = () => {
   const subtitle = isAdmin
     ? `${periodLabel} · ${storeName}`
     : `Le tue vendite di oggi · ${user.store?.name}`;
-  // quanti filtri del menu sono attivi, per il pallino su "Filtri" (su telefono negozio e stato)
-  const menuFilterCount = [filters.store, filters.status].filter(
-    (value) => value !== "",
-  ).length;
+  // quanti filtri del menu sono attivi, per il pallino su "Filtri" (nel menu c'è solo il negozio)
+  const menuFilterCount = filters.store ? 1 : 0;
 
   // stato delle vendite: "Annullate" con il numero, così si vede subito se ce ne sono
   const statusOptions = [
@@ -196,6 +199,7 @@ const Sales = () => {
     <SortSelect
       options={SORT_OPTIONS.filter((option) => isAdmin || !option.adminOnly)}
       sort={sort}
+      defaultSort={DEFAULT_SORT}
       onChange={changeSort}
     />
   );
@@ -209,8 +213,7 @@ const Sales = () => {
       onChange={(value) => changeFilter("period", value)}
     />
   );
-  // stato a pulsanti, per tutti e due i ruoli: su telefono va nel menu "Filtri",
-  // come lo stato delle giacenze
+  // stato a pulsanti, per tutti e due i ruoli: sempre in vista, come nelle altre pagine
   const statusFilter = (
     <FilterChips
       label="Stato"
@@ -219,7 +222,7 @@ const Sales = () => {
       onChange={(value) => changeFilter("status", value)}
     />
   );
-  // negozio a menu a tendina: su telefono va nel menu "Filtri"
+  // negozio a menu a tendina: con le card va nel bottone "Filtri", con la tabella in riga
   const storeFilter = isAdmin && (
     <FilterSelect
       label="Negozio"
@@ -230,34 +233,34 @@ const Sales = () => {
     />
   );
 
+  // il bottone "Filtri" con negozio (solo il responsabile) e "Ordina" (con le card, fino a 1366px)
+  const filtersMenu = (
+    <FilterBar compact activeCount={menuFilterCount}>
+      {storeFilter}
+      {sortSelect}
+    </FilterBar>
+  );
+
   return (
     <Container fluid>
-      {/* su telefono il menu "Filtri" (negozio, stato e "Ordina") sta a destra del sottotitolo */}
-      <PageHeader
-        title="Vendite"
-        subtitle={subtitle}
-        subtitleAside={
-          isPhone && (
-            <FilterBar compact activeCount={menuFilterCount}>
-              {storeFilter}
-              {statusFilter}
-              {sortSelect}
-            </FilterBar>
-          )
-        }
-        error={error}
-      />
+      <PageHeader title="Vendite" subtitle={subtitle} error={error} />
 
-      {/* il responsabile: il periodo sempre, negozio e stato da tablet in su.
-          Il dipendente: lo stato (e "Ordina" con le card) da tablet in su */}
-      {(isAdmin || !isPhone) && (
-        <FilterBar>
-          {periodFilter}
-          {!isPhone && storeFilter}
-          {!isPhone && statusFilter}
-          {!isPhone && sortSelect}
-        </FilterBar>
-      )}
+      {/* periodo (responsabile) e stato sempre in vista; con le card negozio e "Ordina" nel
+          bottone "Filtri" (su telefono accanto allo stato, da tablet in fondo alla riga),
+          con la tabella il negozio in riga */}
+      <FilterBar>
+        {periodFilter}
+        {!showCards && storeFilter}
+        {showCards && isPhone ? (
+          <div className="filter-row">
+            {statusFilter}
+            {filtersMenu}
+          </div>
+        ) : (
+          statusFilter
+        )}
+        {showCards && !isPhone && filtersMenu}
+      </FilterBar>
 
       {/* le card dei totali, uguali per i due ruoli: due per riga, quattro da xl.
           Contano solo le vendite non annullate (lo fa il server); finché non arrivano, 0.
@@ -304,7 +307,7 @@ const Sales = () => {
         <Message>{emptyMessage}</Message>
       )}
 
-      {/* fino a 1200px le card (una colonna su telefono, due su tablet); sopra la tabella */}
+      {/* fino a 1366px le card (una colonna su telefono, due su tablet); sopra la tabella */}
       {sales.length > 0 &&
         (showCards ? (
           // align-items-start: una card con i dettagli aperti non allunga quella accanto
@@ -324,28 +327,13 @@ const Sales = () => {
           />
         ))}
 
-      {/* le pagine solo se sono più di una: Precedente e Successiva si spengono agli estremi */}
-      {totalPages > 1 && (
-        <nav className="sales-pagination" aria-label="Pagine delle vendite">
-          <Button
-            variant="secondary"
-            disabled={page === 1}
-            onClick={() => setPage((prevPage) => prevPage - 1)}
-          >
-            Precedente
-          </Button>
-          <span className="sales-pagination-label">
-            Pagina {page} di {totalPages}
-          </span>
-          <Button
-            variant="secondary"
-            disabled={page === totalPages}
-            onClick={() => setPage((prevPage) => prevPage + 1)}
-          >
-            Successiva
-          </Button>
-        </nav>
-      )}
+      {/* le pagine, solo se sono più di una */}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        label="Pagine delle vendite"
+        onChange={setPage}
+      />
 
       {/* il modale per annullare: solo il dipendente; !! trasforma la vendita in true/false */}
       {!isAdmin && (

@@ -12,7 +12,7 @@ import CancelledNote from "../cancelledNote/CancelledNote";
 import CancelledToggle from "../cancelledToggle/CancelledToggle";
 import PaymentMethod from "../paymentMethod/PaymentMethod";
 
-// card di una vendita, fino a 1200px (stesse props di SaleTable):
+// card di una vendita, fino a 1366px (stesse props di SaleTable):
 // in alto ora (e negozio) e totale, sotto chi ha venduto, i pezzi e il pagamento.
 // Una vendita annullata ha il pulsante per aprire i dettagli: chiusa è alta come le altre
 const SaleCard = ({ sale, showStore, showSeller, onCancel }) => {

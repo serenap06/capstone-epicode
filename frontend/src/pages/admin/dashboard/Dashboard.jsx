@@ -62,64 +62,65 @@ const Dashboard = () => {
   return (
     <Container fluid>
       <PageHeader title="Dashboard" subtitle={today} error={error} />
-      {/* cinque card: 2 per riga su telefono, 3 su tablet, 5 da xl; ognuna porta alla sua pagina.
-          Ci sono subito, con "–" finché non arrivano i numeri: così la pagina non salta */}
-      <Row
-        as="section"
-        xs={2}
-        md={3}
-        xl={5}
-        className="g-3"
-        aria-label="Indicatori"
-      >
-        <Col>
-          <KpiCard
-            to="/admin/shifts"
-            color="primary"
-            label="In turno oggi"
-            value={kpis?.employeesOnShiftToday ?? "–"}
-            detail="dipendenti"
-          />
-        </Col>
-        <Col>
-          <KpiCard
-            to="/admin/tasks"
-            color="secondary"
-            label="Task di oggi"
-            value={
-              kpis ? `${kpis.tasksToday.done} su ${kpis.tasksToday.total}` : "–"
-            }
-            detail="completate"
-          />
-        </Col>
-        <Col>
-          <KpiCard
-            to="/admin/sales"
-            color="orange"
-            label="Vendite di oggi"
-            value={kpis ? formatEuro(kpis.salesToday.revenue) : "–"}
-            detail={`${kpis?.salesToday.count ?? "–"} vendite`}
-          />
-        </Col>
-        <Col>
-          <KpiCard
-            to="/admin/stock"
-            color="turquoise"
-            label="Sotto scorta"
-            value={kpis?.lowStockItems ?? "–"}
-            detail="prodotti"
-          />
-        </Col>
-        <Col>
-          <KpiCard
-            to="/admin/supply-requests"
-            color="blue"
-            label="Richieste di fornitura"
-            value={kpis?.pendingSupplyRequests ?? "–"}
-            detail="aperte"
-          />
-        </Col>
-      </Row>
+      {/* le card dei numeri; ognuna porta alla sua pagina. Ci sono subito, con "–" finché
+          non arrivano i numeri: così la pagina non salta.
+          Le vendite per prime e su tutta la riga: l'incasso può essere un numero lungo */}
+      <section aria-label="Indicatori">
+        <Row className="g-3 mb-3">
+          <Col xs={12}>
+            <KpiCard
+              to="/admin/sales"
+              color="orange"
+              label="Vendite di oggi"
+              value={kpis ? formatEuro(kpis.salesToday.revenue) : "–"}
+              detail={`${kpis?.salesToday.count ?? "–"} vendite`}
+            />
+          </Col>
+        </Row>
+        {/* le altre quattro: 2 per riga su telefono e tablet, 4 da lg */}
+        <Row xs={2} lg={4} className="g-3">
+          <Col>
+            <KpiCard
+              to="/admin/shifts"
+              color="primary"
+              label="In turno oggi"
+              value={kpis?.employeesOnShiftToday ?? "–"}
+              detail="dipendenti"
+            />
+          </Col>
+          <Col>
+            <KpiCard
+              to="/admin/tasks"
+              color="secondary"
+              label="Task di oggi"
+              value={
+                kpis
+                  ? `${kpis.tasksToday.done} su ${kpis.tasksToday.total}`
+                  : "–"
+              }
+              detail="completate"
+            />
+          </Col>
+          <Col>
+            <KpiCard
+              to="/admin/stock"
+              color="turquoise"
+              label="Sotto scorta"
+              value={kpis?.lowStockItems ?? "–"}
+              detail="prodotti"
+            />
+          </Col>
+          <Col>
+            <KpiCard
+              to="/admin/supply-requests"
+              color="blue"
+              label="Richieste di fornitura"
+              value={kpis?.pendingSupplyRequests ?? "–"}
+              detail="aperte"
+            />
+          </Col>
+        </Row>
+      </section>
 
       {/* sotto: task a sinistra (7 colonne), turni e sotto scorta a destra (5) */}
       <Row className="g-4 mt-2">

@@ -3,10 +3,12 @@ import { Col, Container, Row } from "react-bootstrap";
 
 import { useAuth } from "../../../hooks/useAuth";
 import { useIsPhone } from "../../../hooks/useIsPhone";
-import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { useShowCards } from "../../../hooks/useShowCards";
 import { loadData } from "../../../api/loadData";
 import { deleteUser } from "../../../api/users";
 import { formatFullName } from "../../../utils/formatFullName";
+import { PAGE_SIZE } from "../../../utils/pageSize";
+import { toQuery } from "../../../utils/toQuery";
 
 import AddButton from "../../../components/common/addButton/AddButton";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
@@ -14,15 +16,21 @@ import FormModal from "../../../components/common/formModal/FormModal";
 import Loader from "../../../components/common/loader/Loader";
 import Message from "../../../components/common/message/Message";
 import PageHeader from "../../../components/common/pageHeader/PageHeader";
+import Pagination from "../../../components/common/pagination/Pagination";
 import UserCard from "../../../components/users/userCard/UserCard";
 import UserForm from "../../../components/users/userForm/UserForm";
 import UserTable from "../../../components/users/userTable/UserTable";
 
-// pagina Utenti del responsabile: tutte le persone, in ordine di cognome (lo fa il server)
+// pagina Utenti del responsabile: le persone in ordine di cognome, 10 alla volta
+// (ordine e pagine li fa il server)
 const Users = () => {
   // currentUser: chi è collegato; setUser per aggiornare la barra in alto se modifico me stessa
   const { user: currentUser, setUser } = useAuth();
+  // una pagina di persone, quante sono in tutto e quante pagine ci sono
   const [users, setUsers] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
   // i negozi, per il menu del modulo
   const [stores, setStores] = useState([]);
   const [error, setError] = useState("");
@@ -39,16 +47,29 @@ const Users = () => {
 
   // su telefono il "+" accanto al titolo
   const isPhone = useIsPhone();
-  // fino a 1280px le card (una colonna su telefono, due da tablet in su):
-  // la tabella con il menu a sinistra ci sta comoda solo sopra
-  const showCards = useMediaQuery("(max-width: 1280px)");
+  // fino a 1366px le card (una colonna su telefono, due da tablet in su), sopra la tabella,
+  // come in tutte le pagine con una tabella
+  const showCards = useShowCards();
 
-  // le persone, e di nuovo quando cambia refreshCount
+  // una pagina di persone: a ogni cambio di pagina e dopo ogni salvataggio
   useEffect(() => {
-    loadData("/users", (data) => setUsers(data.users), setError).finally(() =>
-      setIsLoading(false),
-    );
-  }, [refreshCount]);
+    loadData(
+      `/users?${toQuery({ page, limit: PAGE_SIZE })}`,
+      (data) => {
+        setUsers(data.users);
+        setTotalCount(data.totals.count);
+        setTotalPages(data.pagination.totalPages);
+        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima che c'è
+        if (
+          page > data.pagination.totalPages &&
+          data.pagination.totalPages > 0
+        ) {
+          setPage(data.pagination.totalPages);
+        }
+      },
+      setError,
+    ).finally(() => setIsLoading(false));
+  }, [page, refreshCount]);
 
   // i negozi una volta sola
   useEffect(() => {
@@ -77,15 +98,14 @@ const Users = () => {
     }
   };
 
-  // elimino sul server e tolgo la persona dalla lista; finally chiude sempre la conferma
+  // elimino sul server e ricarico (la pagina si riempie con la persona successiva);
+  // finally chiude sempre la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
     setError("");
     try {
       await deleteUser(userToDelete._id);
-      setUsers((prevUsers) =>
-        prevUsers.filter((user) => user._id !== userToDelete._id),
-      );
+      setRefreshCount((prevCount) => prevCount + 1);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -95,7 +115,7 @@ const Users = () => {
   };
 
   // "1 persona", "5 persone"
-  const peopleLabel = users.length === 1 ? "persona" : "persone";
+  const peopleLabel = totalCount === 1 ? "persona" : "persone";
 
   // "Nuovo utente": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
   const addButton = (
@@ -107,7 +127,7 @@ const Users = () => {
       <PageHeader
         title="Utenti"
         titleAside={isPhone && addButton}
-        subtitle={`${users.length} ${peopleLabel} · in ordine di cognome`}
+        subtitle={`${totalCount} ${peopleLabel} · in ordine di cognome`}
         error={error}
       >
         {/* da tablet in su il bottone va a destra dell'intestazione */}
@@ -141,6 +161,14 @@ const Users = () => {
             onDelete={setUserToDelete}
           />
         ))}
+
+      {/* le pagine, solo se sono più di una */}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        label="Pagine degli utenti"
+        onChange={setPage}
+      />
 
       <FormModal
         show={showForm}

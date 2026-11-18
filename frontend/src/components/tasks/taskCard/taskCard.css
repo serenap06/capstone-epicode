@@ -1,5 +1,7 @@
-/* card di una task del responsabile */
+/* card di una task del responsabile.
+   height 100%: nella pagina Task, due per riga, le card della stessa riga sono alte uguali */
 .task-card {
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -35,9 +37,11 @@
   gap: 0.5rem;
 }
 /* "Elimina" in fondo a destra */
+/* il cestino in fondo alla card (margin-top: auto), anche quella accanto è più alta */
 .task-card-actions {
   display: flex;
   justify-content: flex-end;
+  margin-top: auto;
 }
 
 /* su telefono meno spazio tra gli elementi */

@@ -3,12 +3,12 @@ import { Col, Container, Row } from "react-bootstrap";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useIsPhone } from "../../hooks/useIsPhone";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useShowCards } from "../../hooks/useShowCards";
 import { loadData } from "../../api/loadData";
 import { deleteStock } from "../../api/stocks";
 import { getNextSort } from "../../utils/getNextSort";
-import { isLowStock } from "../../utils/isLowStock";
-import { sortList } from "../../utils/sortList";
+import { PAGE_SIZE } from "../../utils/pageSize";
+import { toQuery } from "../../utils/toQuery";
 import { toStoreOptions } from "../../utils/toStoreOptions";
 
 import AddButton from "../../components/common/addButton/AddButton";
@@ -22,6 +22,7 @@ import FormModal from "../../components/common/formModal/FormModal";
 import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
 import PageHeader from "../../components/common/pageHeader/PageHeader";
+import Pagination from "../../components/common/pagination/Pagination";
 import StockCard from "../../components/stocks/stockCard/StockCard";
 import StockForm from "../../components/stocks/stockForm/StockForm";
 import StockTable from "../../components/stocks/stockTable/StockTable";
@@ -32,15 +33,8 @@ const LEVEL_OPTIONS = [
   { value: "low", label: "Sotto soglia" },
 ];
 
-// su cosa ordinare per ogni colonna. Stato: 0 = OK, 1 = sotto soglia,
-// così crescente mette prima gli OK e decrescente prima i sotto soglia
-const SORT_VALUES = {
-  product: (stock) => stock.product.name,
-  store: (stock) => stock.store.name,
-  amount: (stock) => stock.amount,
-  minThreshold: (stock) => stock.minThreshold,
-  status: (stock) => (isLowStock(stock) ? 1 : 0),
-};
+// l'ordine con cui parte la pagina: prodotto dalla A alla Z
+const DEFAULT_SORT = { field: "product", direction: "asc" };
 
 // le voci del menu "Ordina" (vista a card): le stesse scelte delle intestazioni della tabella
 const SORT_OPTIONS = [
@@ -57,22 +51,29 @@ const SORT_OPTIONS = [
 ];
 
 // pagina Giacenze per i due ruoli: il responsabile vede tutti i negozi e modifica,
-// il dipendente vede solo il suo negozio (il server gli manda solo quello)
+// il dipendente vede solo il suo negozio (il server gli manda solo quello).
+// Ricerca, filtri, ordine e pagine li fa il server: arrivano 10 righe alla volta
 const Stocks = () => {
   const { user } = useAuth();
   const isAdmin = user.role === "admin";
 
+  // una pagina di giacenze, i totali per il sottotitolo e quante pagine ci sono
   const [stocks, setStocks] = useState([]);
-  // negozi e prodotti servono solo al responsabile, per i filtri e il modulo
+  const [totals, setTotals] = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  // tutte le giacenze, solo per il modulo del responsabile (non propone un prodotto
+  // che il negozio ha già); negozi e prodotti per i filtri e il modulo
+  const [allStocks, setAllStocks] = useState([]);
   const [stores, setStores] = useState([]);
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
   // true finché i dati non arrivano la prima volta: intanto gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // filtri fatti nel browser: "" = nessun filtro
+  // filtri: "" = nessun filtro
   const [filters, setFilters] = useState({ search: "", store: "", level: "" });
   // ordine scelto: si parte dal prodotto, dalla A alla Z
-  const [sort, setSort] = useState({ field: "product", direction: "asc" });
+  const [sort, setSort] = useState(DEFAULT_SORT);
   // aumentarlo ricarica le giacenze (dopo un salvataggio)
   const [refreshCount, setRefreshCount] = useState(0);
   // modale del modulo: stockToEdit è la riga da modificare (null = nuova)
@@ -84,16 +85,45 @@ const Stocks = () => {
 
   // su telefono "+" accanto al titolo e filtri nel menu "Filtri"
   const isPhone = useIsPhone();
-  // fino a 1024px le card (una colonna su telefono, due su tablet), come in Utenti:
-  // la tabella con il menu a sinistra ci sta comoda solo sopra
-  const showCards = useMediaQuery("(max-width: 1023.98px)");
+  // fino a 1366px le card (una colonna su telefono, due su tablet), sopra la tabella,
+  // come in tutte le pagine con una tabella. Con le card negozio e "Ordina" vanno nel bottone "Filtri"
+  const showCards = useShowCards();
 
-  // le giacenze, e di nuovo dopo ogni salvataggio (refreshCount)
+  // una pagina di giacenze: a ogni cambio di filtri, ordine o pagina, e dopo un salvataggio.
+  // toQuery salta i valori vuoti
   useEffect(() => {
-    loadData("/stocks", (data) => setStocks(data.stocks), setError).finally(
-      () => setIsLoading(false),
-    );
-  }, [refreshCount]);
+    const query = toQuery({
+      search: filters.search,
+      store: filters.store,
+      lowStock: filters.level ? "true" : "",
+      sortBy: sort.field,
+      order: sort.direction,
+      page,
+      limit: PAGE_SIZE,
+    });
+    loadData(
+      `/stocks?${query}`,
+      (data) => {
+        setStocks(data.stocks);
+        setTotals(data.totals);
+        setTotalPages(data.pagination.totalPages);
+        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima che c'è
+        if (
+          page > data.pagination.totalPages &&
+          data.pagination.totalPages > 0
+        ) {
+          setPage(data.pagination.totalPages);
+        }
+      },
+      setError,
+    ).finally(() => setIsLoading(false));
+  }, [filters, sort, page, refreshCount]);
+
+  // solo per il responsabile: tutte le giacenze per il modulo, anche dopo ogni salvataggio
+  useEffect(() => {
+    if (!isAdmin) return;
+    loadData("/stocks", (data) => setAllStocks(data.stocks), setError);
+  }, [isAdmin, refreshCount]);
 
   // negozi e prodotti una volta sola, solo per il responsabile
   useEffect(() => {
@@ -102,9 +132,18 @@ const Stocks = () => {
     loadData("/products", (data) => setProducts(data.products), setError);
   }, [isAdmin]);
 
-  // cambia un filtro: copio gli altri e sovrascrivo quello ([name] usa il valore come chiave)
-  const changeFilter = (name, value) =>
+  // cambia un filtro: copio gli altri e sovrascrivo quello ([name] usa il valore come chiave).
+  // Con un filtro nuovo si riparte dalla prima pagina
+  const changeFilter = (name, value) => {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+    setPage(1);
+  };
+
+  // nuovo ordine (dal menu "Ordina" delle card): anche qui si riparte dalla prima pagina
+  const changeSort = (newSort) => {
+    setSort(newSort);
+    setPage(1);
+  };
 
   // "Nuova giacenza": modale con il modulo vuoto
   const openNewForm = () => {
@@ -124,15 +163,14 @@ const Stocks = () => {
     setRefreshCount((prevCount) => prevCount + 1);
   };
 
-  // elimino sul server e tolgo la riga dalla lista; finally chiude sempre la conferma
+  // elimino sul server e ricarico la pagina (così si riempie con la riga successiva);
+  // finally chiude sempre la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
     setError("");
     try {
       await deleteStock(stockToDelete._id);
-      setStocks((prevStocks) =>
-        prevStocks.filter((stock) => stock._id !== stockToDelete._id),
-      );
+      setRefreshCount((prevCount) => prevCount + 1);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -142,31 +180,12 @@ const Stocks = () => {
   };
 
   // clic su un'intestazione della tabella: stessa colonna inverte, colonna nuova A→Z
-  const sortByColumn = (field) =>
-    setSort((prevSort) => getNextSort(prevSort, field));
+  const sortByColumn = (field) => changeSort(getNextSort(sort, field));
 
-  // prima in ordine di prodotto e negozio, poi per la colonna scelta:
-  // a parità di valore (stessa quantità) resta l'ordine per prodotto
-  const defaultOrder = sortList(
-    sortList(stocks, SORT_VALUES.store, "asc"),
-    SORT_VALUES.product,
-    "asc",
-  );
-  const sortedStocks = sortList(
-    defaultOrder,
-    SORT_VALUES[sort.field],
-    sort.direction,
-  );
-
-  // le righe che passano tutti i filtri; la ricerca ignora maiuscole e minuscole
-  const visibleStocks = sortedStocks.filter(
-    (stock) =>
-      stock.product.name.toLowerCase().includes(filters.search.toLowerCase()) &&
-      (!filters.store || stock.store._id === filters.store) &&
-      (!filters.level || isLowStock(stock)),
-  );
-  // quante righe sono sotto la soglia, per il sottotitolo
-  const lowCount = stocks.filter(isLowStock).length;
+  // quante righe in tutto e quante sotto la soglia, per il sottotitolo (le conta il server;
+  // finché non arrivano, 0)
+  const totalCount = totals?.count ?? 0;
+  const lowCount = totals?.lowCount ?? 0;
   // negozi nel formato { value, label } di FilterSelect
   const storeOptions = toStoreOptions(stores);
 
@@ -176,7 +195,7 @@ const Stocks = () => {
   ).length;
 
   // sottotitolo: il responsabile vede quante righe, il dipendente il suo negozio
-  const subtitleStart = isAdmin ? `${stocks.length} righe` : user.store?.name;
+  const subtitleStart = isAdmin ? `${totalCount} righe` : user.store?.name;
 
   // "Nuova giacenza": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
   const addButton = (
@@ -187,8 +206,16 @@ const Stocks = () => {
     />
   );
 
-  // negozio (solo per il responsabile) e stato: sul computer in riga con la ricerca,
-  // su telefono nel menu "Filtri" a destra del sottotitolo (in vista resta solo la ricerca)
+  // ricerca e stato sempre in vista; negozio (solo il responsabile) e "Ordina" (solo con
+  // le card): con le card nel bottone "Filtri", con la tabella il negozio in riga
+  const searchFilter = (
+    <FilterSearch
+      label="Cerca un prodotto"
+      value={filters.search}
+      onChange={(value) => changeFilter("search", value)}
+    />
+  );
+
   const storeFilter = isAdmin && (
     <FilterSelect
       label="Negozio"
@@ -216,14 +243,21 @@ const Stocks = () => {
         (option) => isAdmin || option.field !== "store",
       )}
       sort={sort}
-      onChange={setSort}
+      defaultSort={DEFAULT_SORT}
+      onChange={changeSort}
     />
   );
 
-  // quanti filtri del menu sono attivi, per il pallino su "Filtri"
-  const menuFilterCount = [filters.store, filters.level].filter(
-    (value) => value !== "",
-  ).length;
+  // quanti filtri del menu sono attivi, per il pallino su "Filtri" (nel menu c'è solo il negozio)
+  const menuFilterCount = filters.store ? 1 : 0;
+
+  // il bottone "Filtri" con negozio e "Ordina" (con le card, fino a 1366px)
+  const filtersMenu = (
+    <FilterBar compact activeCount={menuFilterCount}>
+      {storeFilter}
+      {sortSelect}
+    </FilterBar>
+  );
 
   // props uguali per tabella e card: i bottoni solo per il responsabile
   const listProps = {
@@ -238,36 +272,31 @@ const Stocks = () => {
         title="Giacenze"
         titleAside={isAdmin && isPhone && addButton}
         subtitle={`${subtitleStart} · ${lowCount} sotto soglia`}
-        subtitleAside={
-          isPhone && (
-            <FilterBar compact activeCount={menuFilterCount}>
-              {storeFilter}
-              {levelFilter}
-              {sortSelect}
-            </FilterBar>
-          )
-        }
         error={error}
       >
         {/* da tablet in su il bottone va a destra dell'intestazione */}
         {isAdmin && !isPhone && addButton}
       </PageHeader>
 
-      {/* su telefono in vista solo la ricerca; da tablet in su anche negozio e stato */}
+      {/* sempre in vista ricerca e stato; con le card negozio e "Ordina" nel bottone "Filtri"
+          (su telefono accanto alla ricerca, da tablet dopo lo stato), con la tabella il negozio in riga */}
       <FilterBar>
-        <FilterSearch
-          label="Cerca un prodotto"
-          value={filters.search}
-          onChange={(value) => changeFilter("search", value)}
-        />
-        {!isPhone && storeFilter}
-        {!isPhone && levelFilter}
-        {!isPhone && sortSelect}
+        {showCards && isPhone ? (
+          <div className="filter-row">
+            {searchFilter}
+            {filtersMenu}
+          </div>
+        ) : (
+          searchFilter
+        )}
+        {!showCards && storeFilter}
+        {levelFilter}
+        {showCards && !isPhone && filtersMenu}
       </FilterBar>
 
       {/* il messaggio solo quando nessuna riga passa i filtri */}
       {isLoading && <Loader />}
-      {!isLoading && visibleStocks.length === 0 && !error && (
+      {!isLoading && stocks.length === 0 && !error && (
         <Message>
           {activeFilterCount > 0
             ? "Nessuna giacenza con questi filtri"
@@ -275,11 +304,11 @@ const Stocks = () => {
         </Message>
       )}
 
-      {/* fino a 1024px le card; sopra la tabella */}
-      {visibleStocks.length > 0 &&
+      {/* fino a 1366px le card; sopra la tabella */}
+      {stocks.length > 0 &&
         (showCards ? (
           <Row xs={1} md={2} className="g-3">
-            {visibleStocks.map((stock) => (
+            {stocks.map((stock) => (
               <Col key={stock._id}>
                 <StockCard stock={stock} {...listProps} />
               </Col>
@@ -287,12 +316,20 @@ const Stocks = () => {
           </Row>
         ) : (
           <StockTable
-            stocks={visibleStocks}
+            stocks={stocks}
             sort={sort}
             onSort={sortByColumn}
             {...listProps}
           />
         ))}
+
+      {/* le pagine, solo se sono più di una */}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        label="Pagine delle giacenze"
+        onChange={setPage}
+      />
 
       {/* modale e conferma servono solo al responsabile */}
       {isAdmin && (
@@ -306,7 +343,7 @@ const Stocks = () => {
               stock={stockToEdit}
               stores={stores}
               products={products}
-              stocks={stocks}
+              stocks={allStocks}
               onSaved={handleSaved}
               onCancel={() => setShowForm(false)}
             />

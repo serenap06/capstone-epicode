@@ -2,14 +2,17 @@ const supplyRequestService = require("./service");
 
 const findAll = async (req, res, next) => {
   try {
-    const { store, product, state } = req.query;
-    const supplyRequests = await supplyRequestService.findAll(
-      { store, product, state },
+    const { store, product, state, search, sortBy, order, page, limit } =
+      req.query;
+    const result = await supplyRequestService.findAll(
+      { store, product, state, search, sortBy, order, page, limit },
       req.user,
     );
     res.status(200).send({
       statusCode: 200,
-      supplyRequests,
+      supplyRequests: result.supplyRequests,
+      totals: result.totals,
+      pagination: result.pagination,
     });
   } catch (e) {
     next(e);
@@ -49,10 +52,12 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { supplyId } = req.params;
-    const { state } = req.body;
-    const supplyRequest = await supplyRequestService.update(supplyId, {
-      state,
-    });
+    const { state, reason } = req.body;
+    const supplyRequest = await supplyRequestService.update(
+      supplyId,
+      { state, reason },
+      req.user,
+    );
     res.status(200).send({
       statusCode: 200,
       message: "Supply request updated successfully",

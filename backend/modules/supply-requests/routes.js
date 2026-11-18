@@ -42,8 +42,10 @@ supplyRequestsRouter.patch(
   supplyRequestController.update,
 );
 
+// eliminare (annullare) una richiesta: solo il dipendente, le sue in attesa
 supplyRequestsRouter.delete(
   "/:supplyId",
+  authorizeRoles("employee"),
   param("supplyId").isMongoId().withMessage("Invalid supplyRequest Id"),
   validate,
   supplyRequestController.deleteSupplyRequest,

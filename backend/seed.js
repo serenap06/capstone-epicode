@@ -376,8 +376,8 @@ const seed = async () => {
 
     await Task.create(tasks);
 
-    // 8. Richieste di fornitura: aperte e gestite, in tutti e due i negozi,
-    // così sia Marta sia Luca ne vedono qualcuna
+    // 8. Richieste di fornitura: in attesa, accolte e respinte (con il motivo),
+    // in tutti e due i negozi, così sia Marta sia Luca ne vedono di ogni tipo
     await SupplyRequest.create([
       {
         product: productByName["Poster"]._id,
@@ -399,7 +399,21 @@ const seed = async () => {
         store: storeA._id,
         requestedAmount: 50,
         state: "handled",
+        handledBy: manager._id,
+        handledAt: at(-5, 15),
         createdAt: at(-5, 11),
+      },
+      {
+        product: productByName["Tazza"]._id,
+        requestedBy: giulia._id,
+        store: storeA._id,
+        requestedAmount: 12,
+        state: "rejected",
+        handledBy: manager._id,
+        handledAt: at(-2, 12),
+        rejectReason:
+          "Il fornitore ha aumentato il costo: per ora non la riordiniamo",
+        createdAt: at(-3, 10),
       },
       {
         product: productByName["Magnete"]._id,
@@ -421,11 +435,25 @@ const seed = async () => {
         store: storeB._id,
         requestedAmount: 15,
         state: "handled",
+        handledBy: manager._id,
+        handledAt: at(-4, 17),
         createdAt: at(-4, 10),
+      },
+      {
+        product: productByName["Matita con logo"]._id,
+        requestedBy: paolo._id,
+        store: storeB._id,
+        requestedAmount: 40,
+        state: "rejected",
+        handledBy: manager._id,
+        handledAt: at(-1, 11),
+        rejectReason:
+          "Non verrà più prodotta: la sostituiamo con un nuovo modello a gennaio",
+        createdAt: at(-1, 9),
       },
     ]);
 
-    // 9. Vendite: tante, per provare la divisione in pagine (20 per pagina).
+    // 9. Vendite: tante, per provare la divisione in pagine (10 per pagina).
     // - oggi: Marta 24 (così anche la sua pagina ha due pagine), Giulia 10, Luca 12, Paolo 8
     // - i 60 giorni prima: 8 vendite al giorno nel Bookshop e 6 nello Shop Castello
     // Circa una su quindici è annullata, con il motivo. Le vendite del seed non scalano le giacenze.

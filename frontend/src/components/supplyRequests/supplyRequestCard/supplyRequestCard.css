@@ -1,0 +1,91 @@
+/* card bianca: in alto prodotto e pezzi, in basso stato, data e bottoni
+   (niente altezza uguale: il motivo aperto allungherebbe anche la card accanto) */
+.supply-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+/* richiesta respinta: sfondo grigio chiaro, come le vendite annullate */
+.supply-card-off {
+  background: #eef0f5;
+}
+
+.supply-card p {
+  margin: 0;
+}
+
+.supply-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* nome e dettaglio prendono lo spazio che resta; min-width: 0 li lascia stringere */
+.supply-card-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.supply-card-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.supply-card-detail {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* negozio e nome: ognuno su una riga sola (nowrap); se è più largo della colonna,
+   come su un telefono da 320px, finisce con "…" invece di uscire sopra i pezzi */
+.supply-card-part {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+/* i pezzi grandi a destra, "pz" piccolo accanto */
+.supply-card-amount {
+  font-size: 1.4rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.supply-card-amount span {
+  margin-left: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* stato e data a sinistra, bottoni a destra (a capo se proprio non ci stanno) */
+.supply-card-bottom {
+  min-height: 44px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.supply-card-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.supply-card-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.supply-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}

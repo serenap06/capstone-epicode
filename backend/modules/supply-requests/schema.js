@@ -26,11 +26,21 @@ const supplyRequestSchema = new mongoose.Schema(
         message: "amount must be an integer",
       },
     },
+    // open = in attesa, handled = accolta, rejected = respinta (con il motivo)
     state: {
       type: String,
-      enum: ["open", "handled"],
+      enum: ["open", "handled", "rejected"],
       default: "open",
     },
+    // chi ha deciso (il responsabile) e quando: si riempiono quando la richiesta viene
+    // accolta o respinta
+    handledBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    handledAt: { type: Date },
+    // il motivo, solo per le respinte: il dipendente lo legge nell'elenco
+    rejectReason: { type: String, trim: true },
   },
   { timestamps: true, strict: true },
 );

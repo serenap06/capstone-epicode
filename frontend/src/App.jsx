@@ -16,6 +16,7 @@ import Stocks from "./pages/stocks/Stocks.jsx";
 import Catalog from "./pages/products/Catalog.jsx";
 import Checkout from "./pages/employee/checkout/Checkout.jsx";
 import Sales from "./pages/sales/Sales.jsx";
+import SupplyRequests from "./pages/supplyRequests/SupplyRequests.jsx";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="shifts" element={<Shifts />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="sales" element={<Sales />} />
+          <Route path="supply-requests" element={<SupplyRequests />} />
           <Route path="stock" element={<Stocks />} />
           <Route path="products" element={<Catalog />} />
           <Route path="users" element={<Users />} />
@@ -48,6 +50,7 @@ const App = () => {
           <Route path="shifts" element={<MyShifts />} />
           <Route path="sales" element={<Sales />} />
           <Route path="stock" element={<Stocks />} />
+          <Route path="supply-requests" element={<SupplyRequests />} />
           <Route path="products" element={<Catalog />} />
           <Route path="profile" element={<Profile />} />
         </Route>

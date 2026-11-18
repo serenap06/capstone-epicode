@@ -7,7 +7,13 @@ const MESSAGES = {
   "Image file is required": "Scegli una foto",
   "Task not found": "Task non trovata",
   "Handled requests cannot be deleted":
-    "Le richieste già gestite non si possono annullare",
+    "Le richieste già accolte non si possono annullare",
+  "An open request for this product already exists":
+    "C'è già una richiesta in attesa per questo prodotto",
+  "Supply request not found": "Richiesta non trovata",
+  "Supply request already handled":
+    "Questa richiesta è già stata accolta o respinta",
+  "Supply Request not found": "Richiesta non trovata",
   "You cannot delete your own account": "Non puoi eliminare il tuo account",
   "You cannot change your own role": "Non puoi cambiare il tuo ruolo",
   "One or more products are not available":
@@ -24,7 +30,8 @@ const MESSAGES = {
   "Sale not found": "Vendita non trovata",
   "You can only cancel your own sales": "Puoi annullare solo le tue vendite",
   "Sale already cancelled": "Questa vendita è già stata annullata",
-  "Only today's sales can be cancelled": "Si possono annullare solo le vendite di oggi",
+  "Only today's sales can be cancelled":
+    "Si possono annullare solo le vendite di oggi",
   "Store has employees":
     "Il negozio ha ancora del personale: spostalo prima in un altro negozio",
 };

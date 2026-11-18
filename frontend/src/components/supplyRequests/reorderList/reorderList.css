@@ -1,0 +1,38 @@
+.reorder-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--warning-text);
+}
+
+/* elenco senza pallini, righe separate da una linea */
+.reorder-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reorder-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--border);
+}
+
+/* nome e pezzi uno sotto l'altro; min-width: 0 lascia stringere il nome */
+.reorder-info {
+  min-width: 0;
+}
+
+.reorder-name {
+  display: block;
+  font-weight: 700;
+}
+
+/* pezzi e soglia in arancio scuro, come le quantità sotto soglia */
+.reorder-detail {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--warning-text);
+}

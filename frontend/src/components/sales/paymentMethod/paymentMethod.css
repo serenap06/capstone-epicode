@@ -1,0 +1,12 @@
+/* icona viola e testo grigio, sulla stessa riga */
+.payment-method {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.payment-method svg {
+  color: var(--secondary);
+}

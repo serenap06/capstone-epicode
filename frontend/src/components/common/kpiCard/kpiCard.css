@@ -36,7 +36,10 @@
   font-weight: 400;
 }
 
-/* colori: kpi-card-primary, kpi-card-blue... (dalla prop color) */
+/* colori: kpi-card-primary, kpi-card-blue... (dalla prop color).
+   Un colore per argomento, uguale in tutte le pagine: magenta = turni, viola = task,
+   arancio = vendite, blu = ore e forniture, turchese = sotto scorta
+   (nella pagina Vendite i colori sono scelti per la pagina) */
 .kpi-card-primary {
   background: var(--primary);
 }

@@ -95,7 +95,7 @@ const Dashboard = () => {
         <Col>
           <KpiCard
             to="/admin/sales"
-            color="blue"
+            color="orange"
             label="Vendite di oggi"
             value={kpis ? formatEuro(kpis.salesToday.revenue) : "–"}
             detail={`${kpis?.salesToday.count ?? "–"} vendite`}
@@ -113,7 +113,7 @@ const Dashboard = () => {
         <Col>
           <KpiCard
             to="/admin/supply-requests"
-            color="orange"
+            color="blue"
             label="Richieste di fornitura"
             value={kpis?.pendingSupplyRequests ?? "–"}
             detail="aperte"

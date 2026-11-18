@@ -1,0 +1,18 @@
+/* riquadro grigio chiaro con i dettagli; il motivo va a capo se è lungo */
+.cancelled-note {
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: normal;
+}
+
+.cancelled-note p {
+  margin: 0;
+}
+
+.cancelled-note strong {
+  color: var(--text);
+}

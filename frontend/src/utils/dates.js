@@ -31,6 +31,17 @@ export const getWeek = (date = new Date()) => {
   return toRange(start, end);
 };
 
+// dal primo all'ultimo giorno del mese di oggi.
+// Il giorno 0 del mese dopo è l'ultimo giorno di questo mese
+export const getMonth = () => {
+  const start = new Date();
+  start.setDate(1);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start.getFullYear(), start.getMonth() + 1, 0);
+  end.setHours(23, 59, 59, 999);
+  return toRange(start, end);
+};
+
 // i 7 giorni (da lunedì) della settimana di "date"
 export const getWeekDays = (date = new Date()) => {
   const monday = new Date(getWeek(date).from);

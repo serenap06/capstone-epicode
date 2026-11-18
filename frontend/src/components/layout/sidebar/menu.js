@@ -51,6 +51,7 @@ export const MENU = {
     },
     { to: "/employee/tasks", label: "Task", icon: CheckSquare },
     { to: "/employee/shifts", label: "Turni", icon: Calendar },
+    { to: "/employee/sales", label: "Vendite", icon: Euro },
     {
       to: "/employee/stock",
       label: "Giacenze",

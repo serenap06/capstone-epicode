@@ -135,7 +135,7 @@ const Home = () => {
         <Col>
           <KpiCard
             to="/employee/shifts"
-            color="secondary"
+            color="blue"
             label="Le tue ore"
             value={
               hours
@@ -148,7 +148,7 @@ const Home = () => {
         <Col>
           <KpiCard
             to="/employee/tasks"
-            color="turquoise"
+            color="secondary"
             label="Task di oggi"
             value={`${doneCount} su ${tasks.length}`}
             detail="completate"
@@ -156,6 +156,7 @@ const Home = () => {
         </Col>
         <Col xs={12} sm={4}>
           <KpiCard
+            to="/employee/sales"
             color="orange"
             label="Le tue vendite"
             value={formatEuro(sales?.revenue ?? 0)}

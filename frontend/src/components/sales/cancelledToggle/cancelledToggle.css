@@ -1,0 +1,40 @@
+/* forma a pillola grigia come il badge "Dipendente", ma è un bottone */
+.cancelled-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cancelled-toggle:hover {
+  color: var(--text);
+}
+
+/* al posto di "Annulla vendita": alto 44px come gli altri bottoni */
+.cancelled-toggle-large {
+  min-height: 44px;
+  padding: 0 1rem;
+  border-radius: 15px;
+  font-size: 0.95rem;
+}
+
+/* la freccia girata quando i dettagli sono aperti */
+.cancelled-toggle svg {
+  transition: transform 0.2s ease;
+}
+
+.cancelled-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.cancelled-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

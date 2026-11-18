@@ -6,7 +6,7 @@ const login = async (req, res, next) => {
     const { token, user } = await authService.login({ email, password });
     res.header("authorization", token).status(200).send({
       statusCode: 200,
-      message: "Login successfully",
+      message: "Logged in successfully",
       token,
       user,
     });

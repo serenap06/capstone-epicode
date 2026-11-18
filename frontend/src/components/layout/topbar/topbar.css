@@ -11,24 +11,6 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* logo sfumato dal viola al magenta: il gradiente si vede solo dentro le lettere */
-.app-logo,
-.app-logo:hover {
-  font-weight: 800;
-  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
-  letter-spacing: -0.03em;
-  text-decoration: none;
-  color: var(--secondary);
-  background: linear-gradient(90deg, var(--secondary) 35%, var(--primary) 55%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.app-logo span {
-  color: inherit;
-}
-
 /* bottone del menu utente senza lo stile di Bootstrap */
 .btn.app-user {
   display: flex;

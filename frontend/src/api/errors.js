@@ -16,7 +16,8 @@ const MESSAGES = {
   "Upload error": "Foto non valida: usa png, jpg o webp fino a 2 MB",
   "User already has a shift in this time range":
     "Questa persona ha già un turno in questo orario",
-  "User doesn't belong to this store": "Questa persona non lavora in questo negozio",
+  "User doesn't belong to this store":
+    "Questa persona non lavora in questo negozio",
   "Current password is wrong": "La password attuale non è corretta",
   "New password must be different":
     "La nuova password deve essere diversa da quella attuale",

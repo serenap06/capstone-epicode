@@ -111,12 +111,7 @@
   flex: 1;
 }
 
-/* su telefono (due card per riga) solo la matita */
 @media (max-width: 767.98px) {
-  .product-card-edit-label {
-    display: none;
-  }
-
   /* badge dei pezzi più stretto, così lascia più spazio al nome */
   .product-card-stock .app-badge {
     padding: 0.2rem 0.5rem;

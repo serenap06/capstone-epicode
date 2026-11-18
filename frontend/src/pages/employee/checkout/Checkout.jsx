@@ -9,16 +9,19 @@ import { loadData } from "../../../api/loadData";
 import { createSale } from "../../../api/sales";
 import { formatEuro } from "../../../utils/formatEuro";
 import { formatFullName } from "../../../utils/formatFullName";
+import { getCategories } from "../../../utils/getCategories";
+import { toCategoryOptions } from "../../../utils/toCategoryOptions";
 
 import Badge from "../../../components/common/badge/Badge";
 import Button from "../../../components/common/button/Button";
-import Message from "../../../components/common/message/Message";
-import PageHeader from "../../../components/common/pageHeader/PageHeader";
 import FilterBar from "../../../components/common/filterBar/FilterBar";
 import FilterChips from "../../../components/common/filterBar/FilterChips";
 import FilterSearch from "../../../components/common/filterBar/FilterSearch";
+import Loader from "../../../components/common/loader/Loader";
+import Message from "../../../components/common/message/Message";
+import PageHeader from "../../../components/common/pageHeader/PageHeader";
 import Panel from "../../../components/common/panel/Panel";
-import ProductCard from "../../../components/products/productCard/ProductCard";
+import CheckoutProductCard from "../../../components/products/checkoutProductCard/CheckoutProductCard";
 
 // i due modi di pagare: value è quello che il backend si aspetta
 const PAYMENT_OPTIONS = [
@@ -38,6 +41,8 @@ const Checkout = () => {
   const [products, setProducts] = useState([]);
   const [stocks, setStocks] = useState([]);
   const [error, setError] = useState("");
+  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  const [isLoading, setIsLoading] = useState(true);
   // filtri fatti nel browser: "" = nessun filtro
   const [filters, setFilters] = useState({
     search: "",
@@ -57,9 +62,12 @@ const Checkout = () => {
   const [lowStockItems, setLowStockItems] = useState([]);
 
   // prodotti e giacenze all'apertura della pagina, e di nuovo quando cambia refreshCount
+  // Promise.all aspetta tutte e due le richieste, poi finally spegne la rotellina
   useEffect(() => {
-    loadData("/products", (data) => setProducts(data.products), setError);
-    loadData("/stocks", (data) => setStocks(data.stocks), setError);
+    Promise.all([
+      loadData("/products", (data) => setProducts(data.products), setError),
+      loadData("/stocks", (data) => setStocks(data.stocks), setError),
+    ]).finally(() => setIsLoading(false));
   }, [refreshCount]);
 
   // su telefono esco subito con il messaggio. Il return sta dopo gli hook:
@@ -169,8 +177,8 @@ const Checkout = () => {
 
   // valori calcolati
 
-  // le categorie senza doppioni (new Set), prese dai prodotti
-  const categories = [...new Set(products.map((product) => product.category))];
+  // le categorie senza doppioni, prese dai prodotti
+  const categories = getCategories(products);
 
   // i prodotti che passano la ricerca e la categoria; la ricerca ignora maiuscole e minuscole
   const visibleProducts = products.filter(
@@ -183,11 +191,13 @@ const Checkout = () => {
   // poi una per categoria con la maiuscola ("libri" → "Libri")
   const categoryOptions = [
     { value: "", label: "Tutti" },
-    ...categories.map((category) => ({
-      value: category,
-      label: category[0].toUpperCase() + category.slice(1),
-    })),
+    ...toCategoryOptions(categories),
   ];
+
+  // quanti filtri sono attivi, per il messaggio "con questi filtri"
+  const activeFilterCount = Object.values(filters).filter(
+    (value) => value !== "",
+  ).length;
 
   // quanti pezzi ci sono nel carrello in tutto (non quante righe): 2 guide + 1 magnete = 3.
   // reduce parte da 0 e a ogni riga aggiunge la sua quantità
@@ -227,19 +237,25 @@ const Checkout = () => {
       {/* due colonne: i prodotti a sinistra, il carrello a destra */}
       <Row className="g-4">
         <Col md={7} xl={8}>
-          {/* il messaggio solo quando nessun prodotto passa i filtri */}
-          {visibleProducts.length === 0 && !error && (
-            <Message>Nessun prodotto</Message>
+          {/* la rotellina mentre arrivano i dati; poi il messaggio solo quando
+              nessun prodotto passa i filtri */}
+          {isLoading && <Loader />}
+          {!isLoading && visibleProducts.length === 0 && !error && (
+            <Message>
+              {activeFilterCount > 0
+                ? "Nessun prodotto con questi filtri"
+                : "Nessun prodotto"}
+            </Message>
           )}
 
-          {/* due card per riga su tablet, tre da xl. A ogni card solo le giacenze
-              del suo prodotto: per il dipendente una sola, quella del suo negozio */}
+          {/* card compatte: due per riga su tablet, tre da xl. A ogni card la giacenza
+              del suo prodotto (il dipendente riceve solo quelle del suo negozio) */}
           <Row xs={2} xl={3} className="g-3">
             {visibleProducts.map((product) => (
               <Col key={product._id}>
-                <ProductCard
+                <CheckoutProductCard
                   product={product}
-                  stocks={stocks.filter(
+                  stock={stocks.find(
                     (stock) => stock.product._id === product._id,
                   )}
                   onAdd={addToCart}

@@ -40,20 +40,10 @@
   justify-content: flex-end;
 }
 
-/* su telefono meno spazio tra gli elementi; "Elimina" è un quadrato con il solo cestino
-   (l'aria-label del bottone dice comunque cosa fa) */
+/* su telefono meno spazio tra gli elementi */
 @media (max-width: 767.98px) {
   .task-card {
     gap: 0.5rem;
     margin-right: 0.15rem;
-  }
-
-  .task-card-actions .app-button {
-    width: 44px;
-    padding: 0;
-  }
-
-  .task-card-delete-label {
-    display: none;
   }
 }

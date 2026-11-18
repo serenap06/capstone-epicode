@@ -4,4 +4,4 @@ const dashboardQueryRules = [
   query("store").optional().isMongoId().withMessage("Invalid store id"),
 ];
 
-module.exports = dashboardQueryRules
+module.exports = dashboardQueryRules;

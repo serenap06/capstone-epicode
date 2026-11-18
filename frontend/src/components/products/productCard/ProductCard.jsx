@@ -1,5 +1,5 @@
 import "./productCard.css";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { formatEuro } from "../../../utils/formatEuro";
 import { isLowStock } from "../../../utils/isLowStock";
 import Badge from "../../common/badge/Badge";
@@ -9,16 +9,7 @@ import Button from "../../common/button/Button";
 // stocks: le giacenze di questo prodotto (una per negozio; il dipendente riceve solo la sua).
 // showStore: scrive il negozio accanto ai pezzi (per il responsabile, che vede tutti i negozi).
 // onEdit e onDelete: i bottoni compaiono solo se la pagina li passa (solo il responsabile).
-// onAdd: il bottone "Aggiungi" della Cassa; addDisabled lo spegne (pezzi finiti)
-const ProductCard = ({
-  product,
-  stocks,
-  showStore,
-  onEdit,
-  onDelete,
-  onAdd,
-  addDisabled,
-}) => {
+const ProductCard = ({ product, stocks, showStore, onEdit, onDelete }) => {
   return (
     // grigia se il prodotto non è attivo (lo vede solo il responsabile)
     <article
@@ -67,31 +58,16 @@ const ProductCard = ({
           </ul>
         )}
 
-        {/* in Cassa: aggiunge un pezzo al carrello, spento se non ce ne sono più */}
-        {onAdd && (
-          <div className="product-card-actions">
-            <Button
-              className="w-100"
-              aria-label={`Aggiungi ${product.name} al carrello`}
-              onClick={() => onAdd(product)}
-              disabled={addDisabled}
-            >
-              <Plus size={16} aria-hidden="true" />
-              Aggiungi
-            </Button>
-          </div>
-        )}
-
         {onEdit && (
           <div className="product-card-actions">
-            {/* su telefono il testo si nasconde e resta la matita (vedi productCard.css) */}
+            {/* su telefono il testo si nasconde e resta la matita (app-button-label) */}
             <Button
               variant="secondary"
               aria-label={`Modifica ${product.name}`}
               onClick={() => onEdit(product)}
             >
               <Pencil size={16} aria-hidden="true" />
-              <span className="product-card-edit-label">Modifica</span>
+              <span className="app-button-label">Modifica</span>
             </Button>
             <Button
               variant="danger"

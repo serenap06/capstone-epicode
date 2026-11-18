@@ -32,7 +32,8 @@ const StoreCard = ({ store, onEdit, onDelete }) => {
         <p className="form-hint m-0">Nessun dipendente</p>
       )}
 
-      {/* aria-label con il nome: in pagina ci sono più bottoni uguali */}
+      {/* aria-label con il nome: in pagina ci sono più bottoni uguali.
+          Come nelle altre card: "Modifica" (su telefono solo la matita) e il cestino */}
       <div className="store-card-actions">
         <Button
           variant="secondary"
@@ -40,16 +41,16 @@ const StoreCard = ({ store, onEdit, onDelete }) => {
           onClick={() => onEdit(store)}
         >
           <Pencil size={16} aria-hidden="true" />
-          Modifica
+          <span className="app-button-label">Modifica</span>
         </Button>
         <Button
           variant="danger"
+          className="app-button-icon"
           aria-label={`Elimina ${store.name}`}
           onClick={() => onDelete(store)}
           disabled={hasStaff}
         >
           <Trash2 size={16} aria-hidden="true" />
-          Elimina
         </Button>
       </div>
       {hasStaff && (

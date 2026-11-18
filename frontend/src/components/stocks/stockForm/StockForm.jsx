@@ -10,7 +10,8 @@ const numberRules = (requiredMessage) => ({
   valueAsNumber: true,
   required: requiredMessage,
   validate: (value) =>
-    (Number.isInteger(value) && value >= 0) || "Scrivi un numero intero da 0 in su",
+    (Number.isInteger(value) && value >= 0) ||
+    "Scrivi un numero intero da 0 in su",
 });
 
 // modulo di una giacenza, nel modale. stock: quella da modificare, oppure null per una nuova.
@@ -113,7 +114,9 @@ const StockForm = ({ stock, stores, products, stocks, onSaved, onCancel }) => {
               {...register("product", { required: "Scegli il prodotto" })}
             >
               <option value="">
-                {selectedStore ? "Scegli un prodotto" : "Scegli prima il negozio"}
+                {selectedStore
+                  ? "Scegli un prodotto"
+                  : "Scegli prima il negozio"}
               </option>
               {availableProducts.map((product) => (
                 <option key={product._id} value={product._id}>
@@ -171,7 +174,11 @@ const StockForm = ({ stock, stores, products, stocks, onSaved, onCancel }) => {
           Annulla
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Salvataggio..." : isEditing ? "Salva" : "Aggiungi"}
+          {isSubmitting
+            ? "Salvataggio..."
+            : isEditing
+              ? "Salva"
+              : "Crea giacenza"}
         </Button>
       </div>
     </form>

@@ -35,13 +35,14 @@ const UserCard = ({ user, isSelf, onEdit, onDelete }) => {
           <p className="user-card-detail">{detail}</p>
         </div>
         <div className="user-card-actions">
+          {/* come nelle altre card: "Modifica" (su telefono solo la matita) e il cestino */}
           <Button
             variant="secondary"
-            className="app-button-icon"
             aria-label={`Modifica ${formatFullName(user)}`}
             onClick={() => onEdit(user)}
           >
             <Pencil size={16} aria-hidden="true" />
+            <span className="app-button-label">Modifica</span>
           </Button>
           {/* il proprio account non si elimina: al posto del cestino una nota */}
           {!isSelf && (

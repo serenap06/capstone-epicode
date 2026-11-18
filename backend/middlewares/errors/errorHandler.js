@@ -42,7 +42,7 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).send({
       statusCode: 400,
       message: "Mongoose Error: one or more props failed the validation",
-      error: Object.values(err.errors).map((e) => e.message),
+      error: Object.values(err.errors).map((error) => error.message),
     });
   }
   // valore unico già usato (per esempio un'email o il nome di un negozio)

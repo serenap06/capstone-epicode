@@ -59,14 +59,14 @@ const TaskCard = ({ task, onDelete }) => {
       {/* solo se la pagina passa onDelete (la Dashboard no); aria-label con il titolo */}
       {onDelete && (
         <div className="task-card-actions">
+          {/* solo il cestino, come nelle altre card: l'aria-label dice cosa fa */}
           <Button
             variant="danger"
+            className="app-button-icon"
             aria-label={`Elimina per tutti: ${task.title}`}
             onClick={() => onDelete(task)}
           >
             <Trash2 size={16} aria-hidden="true" />
-            {/* su telefono il testo si nasconde e resta solo il cestino (vedi taskCard.css) */}
-            <span className="task-card-delete-label">Elimina</span>
           </Button>
         </div>
       )}

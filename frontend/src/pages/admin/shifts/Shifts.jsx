@@ -2,34 +2,29 @@ import "./shifts.css";
 import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 
+import { useIsPhone } from "../../../hooks/useIsPhone";
 import { loadData } from "../../../api/loadData";
 import { deleteShift } from "../../../api/shifts";
-
-import {
-  addDays,
-  getWeek,
-  getWeekDays,
-  isSameDay,
-} from "../../../utils/dates";
-import { toQuery } from "../../../utils/toQuery";
+import { addDays, getWeek, getWeekDays, isSameDay } from "../../../utils/dates";
 import { formatLongDate } from "../../../utils/formatLongDate";
 import { formatWeekRange } from "../../../utils/formatWeekRange";
-import { useIsPhone } from "../../../hooks/useIsPhone";
+import { toQuery } from "../../../utils/toQuery";
 import { toStoreOptions } from "../../../utils/toStoreOptions";
 
-import PageHeader from "../../../components/common/pageHeader/PageHeader";
-import WeekNav from "../../../components/common/weekNav/WeekNav";
-import FilterBar from "../../../components/common/filterBar/FilterBar";
-import FilterChips from "../../../components/common/filterBar/FilterChips";
-import ShiftWeekGrid from "../../../components/shifts/shiftWeekGrid/ShiftWeekGrid";
-import Message from "../../../components/common/message/Message";
-import Panel from "../../../components/common/panel/Panel";
 import AddButton from "../../../components/common/addButton/AddButton";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
+import FilterBar from "../../../components/common/filterBar/FilterBar";
+import FilterChips from "../../../components/common/filterBar/FilterChips";
 import FormModal from "../../../components/common/formModal/FormModal";
-import ShiftForm from "../../../components/shifts/shiftForm/ShiftForm";
-import WeekDayPicker from "../../../components/shifts/weekDayPicker/WeekDayPicker";
+import Loader from "../../../components/common/loader/Loader";
+import Message from "../../../components/common/message/Message";
+import PageHeader from "../../../components/common/pageHeader/PageHeader";
+import Panel from "../../../components/common/panel/Panel";
+import WeekNav from "../../../components/common/weekNav/WeekNav";
 import DayStaffList from "../../../components/shifts/dayStaffList/DayStaffList";
+import ShiftForm from "../../../components/shifts/shiftForm/ShiftForm";
+import ShiftWeekGrid from "../../../components/shifts/shiftWeekGrid/ShiftWeekGrid";
+import WeekDayPicker from "../../../components/shifts/weekDayPicker/WeekDayPicker";
 import WeekHoursList from "../../../components/shifts/weekHoursList/WeekHoursList";
 
 // pagina Turni del responsabile: la settimana di un negozio e le ore di ogni dipendente
@@ -44,6 +39,8 @@ const Shifts = () => {
   // hours: una riga per dipendente, con contratto e ore pianificate
   const [hours, setHours] = useState([]);
   const [error, setError] = useState("");
+  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  const [isLoading, setIsLoading] = useState(true);
   // aumentarlo ricarica turni e ore (dopo un salvataggio o un'eliminazione)
   const [refreshCount, setRefreshCount] = useState(0);
   // modale del modulo: shiftToEdit è il turno da modificare (null = nuovo);
@@ -73,12 +70,15 @@ const Shifts = () => {
   // il server restituisce tutti i negozi
   useEffect(() => {
     const query = toQuery({ store: selectedStore, ...getWeek(referenceDate) });
-    loadData(`/shifts?${query}`, (data) => setShifts(data.shifts), setError);
-    loadData(
-      `/shifts/hours?${query}`,
-      (data) => setHours(data.hours),
-      setError,
-    );
+    // Promise.all aspetta tutte e due le richieste, poi finally spegne la rotellina
+    Promise.all([
+      loadData(`/shifts?${query}`, (data) => setShifts(data.shifts), setError),
+      loadData(
+        `/shifts/hours?${query}`,
+        (data) => setHours(data.hours),
+        setError,
+      ),
+    ]).finally(() => setIsLoading(false));
   }, [selectedStore, referenceDate, refreshCount]);
 
   // nuovo turno: dal bottone (senza persona e giorno) o dal clic su "Riposo" (con tutti e due)
@@ -88,6 +88,7 @@ const Shifts = () => {
     setShowForm(true);
   };
 
+  // clic su un turno: modale con i dati di quel turno
   const openEditForm = (shift) => {
     setShiftToEdit(shift);
     setShowForm(true);
@@ -105,8 +106,11 @@ const Shifts = () => {
     setShiftToDelete(shift);
   };
 
+  // elimino sul server e ricarico turni e ore (cambiano le ore della persona);
+  // finally chiude sempre la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
+    setError("");
     try {
       await deleteShift(shiftToDelete._id);
       setRefreshCount((prevCount) => prevCount + 1);
@@ -174,7 +178,8 @@ const Shifts = () => {
         </FilterBar>
       </div>
 
-      {hours.length === 0 && !error && (
+      {isLoading && <Loader />}
+      {!isLoading && hours.length === 0 && !error && (
         <Message>Nessun dipendente</Message>
       )}
 
@@ -189,7 +194,10 @@ const Shifts = () => {
               onSelect={setSelectedDayIndex}
             />
             <div className="d-flex flex-column gap-4">
-              <Panel title={formatLongDate(selectedDay)} className="shifts-day-panel">
+              <Panel
+                title={formatLongDate(selectedDay)}
+                className="shifts-day-panel"
+              >
                 <DayStaffList
                   day={selectedDay}
                   shifts={shifts}

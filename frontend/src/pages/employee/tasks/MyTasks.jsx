@@ -1,14 +1,15 @@
 import "./myTasks.css";
-import { loadData } from "../../../api/loadData";
-import { replaceTask, toggleTaskStatus } from "../../../api/tasks";
-import { useAuth } from "../../../hooks/useAuth";
-
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
+import { useAuth } from "../../../hooks/useAuth";
+import { loadData } from "../../../api/loadData";
+import { replaceTask, toggleTaskStatus } from "../../../api/tasks";
 import { getToday, isSameDay } from "../../../utils/dates";
-import { toQuery } from "../../../utils/toQuery";
 import { getPercent } from "../../../utils/getPercent";
+import { toQuery } from "../../../utils/toQuery";
+
+import Loader from "../../../components/common/loader/Loader";
 import Message from "../../../components/common/message/Message";
 import PageHeader from "../../../components/common/pageHeader/PageHeader";
 import ProgressBar from "../../../components/common/progressBar/ProgressBar";
@@ -20,6 +21,8 @@ const MyTasks = () => {
   // myTasks: le mie task da oggi in poi; il resto si calcola da qui
   const [myTasks, setMyTasks] = useState([]);
   const [error, setError] = useState("");
+  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  const [isLoading, setIsLoading] = useState(true);
 
   // nome del negozio (?? "": testo vuoto se manca)
   const storeName = user.store?.name ?? "";
@@ -30,7 +33,7 @@ const MyTasks = () => {
       `/tasks/mine?${toQuery({ from: getToday().from })}`,
       (data) => setMyTasks(data.tasks),
       setError,
-    );
+    ).finally(() => setIsLoading(false));
   }, []);
 
   // "Segna come fatto" e "Annulla": aggiorno la task nella lista, il resto si ricalcola
@@ -81,7 +84,8 @@ const MyTasks = () => {
         {/* la barra a destra del titolo */}
         <ProgressBar percent={percent} className="my-tasks-progress" />
       </PageHeader>
-      {myTasks.length === 0 && !error && (
+      {isLoading && <Loader />}
+      {!isLoading && myTasks.length === 0 && !error && (
         <Message>Nessuna task in programma</Message>
       )}
       {/* niente sezioni vuote */}

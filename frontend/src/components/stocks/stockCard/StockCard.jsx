@@ -5,7 +5,7 @@ import Button from "../../common/button/Button";
 import ProductThumb from "../../products/productThumb/ProductThumb";
 import StockStatusBadge from "../stockStatusBadge/StockStatusBadge";
 
-// card di una giacenza, per il telefono: foto, nome e negozio (o categoria), quantità a destra;
+// card di una giacenza, per telefono e tablet: foto, nome e negozio (o categoria), quantità a destra;
 // sotto lo stato e, se la pagina li passa, i bottoni (stesse props di StockTable)
 const StockCard = ({ stock, showStore, onEdit, onDelete }) => {
   return (
@@ -32,14 +32,14 @@ const StockCard = ({ stock, showStore, onEdit, onDelete }) => {
         <StockStatusBadge stock={stock} />
         {onEdit && (
           <div className="stock-card-actions">
-            {/* su telefono solo le icone: l'aria-label dice cosa fanno */}
+            {/* come nelle altre card: "Modifica" (su telefono solo la matita) e il cestino */}
             <Button
               variant="secondary"
-              className="app-button-icon"
               aria-label={`Modifica ${stock.product.name}, ${stock.store.name}`}
               onClick={() => onEdit(stock)}
             >
               <Pencil size={16} aria-hidden="true" />
+              <span className="app-button-label">Modifica</span>
             </Button>
             <Button
               variant="danger"

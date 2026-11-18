@@ -1,7 +1,7 @@
 import "./profile.css";
 import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
 import { Col, Container, Row } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 import { Camera } from "lucide-react";
 
 import { useAuth } from "../../hooks/useAuth";
@@ -40,7 +40,11 @@ const Profile = () => {
     reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm({
-    defaultValues: { name: user.name, surname: user.surname, email: user.email },
+    defaultValues: {
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
+    },
   });
 
   // nel cerchio: la foto appena scelta, altrimenti quella salvata (se non l'ho rimossa)
@@ -273,12 +277,18 @@ const Profile = () => {
               )}
             </dl>
             {user.role === "employee" && (
-              <p className="form-hint m-0">Solo il Responsabile può modificare questi dati.</p>
+              <p className="form-hint m-0">
+                Solo il Responsabile può modificare questi dati.
+              </p>
             )}
           </Panel>
 
           {/* su telefono "Esci" anche qui in fondo, come nel layout */}
-          <Button variant="secondary" className="w-100 d-md-none" onClick={logout}>
+          <Button
+            variant="secondary"
+            className="w-100 d-md-none"
+            onClick={logout}
+          >
             Esci
           </Button>
         </Col>

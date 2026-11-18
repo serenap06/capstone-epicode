@@ -1,26 +1,27 @@
 import "./home.css";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Col, Container, Row } from "react-bootstrap";
+
+import { useAuth } from "../../hooks/useAuth";
 import { loadData } from "../../api/loadData";
 import { replaceTask, toggleTaskStatus } from "../../api/tasks";
-import { useAuth } from "../../hooks/useAuth";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap";
-
 import { getToday, getWeek, isSameDay } from "../../utils/dates";
-import { toQuery } from "../../utils/toQuery";
-import { getPercent } from "../../utils/getPercent";
 import { formatEuro } from "../../utils/formatEuro";
-import { formatLongDate } from "../../utils/formatLongDate";
 import { formatHours } from "../../utils/formatHours";
+import { formatLongDate } from "../../utils/formatLongDate";
+import { getPercent } from "../../utils/getPercent";
+import { toQuery } from "../../utils/toQuery";
 
 import KpiCard from "../../components/common/kpiCard/KpiCard";
+import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
 import PageHeader from "../../components/common/pageHeader/PageHeader";
 import Panel from "../../components/common/panel/Panel";
 import ProgressBar from "../../components/common/progressBar/ProgressBar";
 import MyShiftCard from "../../components/shifts/myShiftCard/MyShiftCard";
-import MyTaskList from "../../components/tasks/myTaskList/MyTaskList";
 import WeekShifts from "../../components/shifts/weekShifts/WeekShifts";
+import MyTaskList from "../../components/tasks/myTaskList/MyTaskList";
 
 // pagina iniziale del dipendente: turno di oggi, indicatori, task di oggi e settimana
 const Home = () => {
@@ -34,6 +35,8 @@ const Home = () => {
   // sales: incasso e vendite di oggi
   const [sales, setSales] = useState(null);
   const [error, setError] = useState("");
+  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  const [isLoading, setIsLoading] = useState(true);
 
   // data di oggi e nome del negozio
   const today = formatLongDate();
@@ -44,26 +47,29 @@ const Home = () => {
     const todayQuery = toQuery(getToday());
     const weekQuery = toQuery(getWeek());
 
-    loadData(
-      `/shifts?${weekQuery}`,
-      (data) => setShifts(data.shifts),
-      setError,
-    );
-    loadData(
-      `/shifts/hours?${weekQuery}`,
-      (data) => setHours(data.hours[0]),
-      setError,
-    );
-    loadData(
-      `/tasks/mine?${todayQuery}`,
-      (data) => setTasks(data.tasks),
-      setError,
-    );
-    loadData(
-      `/sales?soldBy=${user._id}&${todayQuery}`,
-      (data) => setSales(data.totals),
-      setError,
-    );
+    // Promise.all aspetta tutte le richieste, poi finally spegne la rotellina
+    Promise.all([
+      loadData(
+        `/shifts?${weekQuery}`,
+        (data) => setShifts(data.shifts),
+        setError,
+      ),
+      loadData(
+        `/shifts/hours?${weekQuery}`,
+        (data) => setHours(data.hours[0]),
+        setError,
+      ),
+      loadData(
+        `/tasks/mine?${todayQuery}`,
+        (data) => setTasks(data.tasks),
+        setError,
+      ),
+      loadData(
+        `/sales?soldBy=${user._id}&${todayQuery}`,
+        (data) => setSales(data.totals),
+        setError,
+      ),
+    ]).finally(() => setIsLoading(false));
   }, [user._id]);
 
   // spunta o toglie la spunta, poi aggiorna la task nella lista
@@ -109,8 +115,12 @@ const Home = () => {
       />
       <Row>
         <Col>
-          {/* turno di oggi */}
-          <MyShiftCard shift={myShift} colleagues={colleagueShifts} />
+          {/* turno di oggi; finché non arriva la rotellina (altrimenti sembrerebbe riposo) */}
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <MyShiftCard shift={myShift} colleagues={colleagueShifts} />
+          )}
         </Col>
       </Row>
 
@@ -173,7 +183,10 @@ const Home = () => {
           >
             {/* barra e lista con le caselle */}
             <ProgressBar percent={percent} className="home-progress" />
-            {tasks.length === 0 && <Message>Nessuna task per oggi</Message>}
+            {isLoading && <Loader />}
+            {!isLoading && tasks.length === 0 && !error && (
+              <Message>Nessuna task per oggi</Message>
+            )}
             <MyTaskList tasks={tasks} onToggle={toggleTask} />
           </Panel>
         </Col>

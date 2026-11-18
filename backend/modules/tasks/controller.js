@@ -80,17 +80,14 @@ const update = async (req, res, next) => {
   try {
     const { groupId } = req.params;
     const { title, description, dueDate, priority, category, type } = req.body;
-    const tasks = await taskService.update(
-      groupId,
-      {
-        title,
-        description,
-        dueDate,
-        priority,
-        category,
-        type,
-      }
-    );
+    const tasks = await taskService.update(groupId, {
+      title,
+      description,
+      dueDate,
+      priority,
+      category,
+      type,
+    });
     res.status(200).send({
       statusCode: 200,
       message: "Task updated successfully",

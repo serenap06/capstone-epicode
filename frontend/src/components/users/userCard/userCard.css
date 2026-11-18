@@ -36,9 +36,10 @@
   overflow-wrap: anywhere;
 }
 
-/* negozio e ore a sinistra, bottoni a destra */
+/* negozio e ore a sinistra, bottoni a destra; se non ci stanno i bottoni vanno sotto */
 .user-card-bottom {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
@@ -53,12 +54,16 @@
   min-width: 0;
 }
 
+/* "Bookshop Museo · 40 h" su una riga sola */
 .user-card-detail {
   font-size: 0.9rem;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
+/* margin-left: auto tiene i bottoni a destra anche quando vanno sotto */
 .user-card-actions {
   display: flex;
   gap: 0.5rem;
+  margin-left: auto;
 }

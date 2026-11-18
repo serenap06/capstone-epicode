@@ -31,7 +31,8 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
   });
 
   // negozio e ore servono solo ai dipendenti: li mostro solo con quel ruolo
-  const isEmployee = (useWatch({ control, name: "role" }) ?? user?.role) === "employee";
+  const isEmployee =
+    (useWatch({ control, name: "role" }) ?? user?.role) === "employee";
 
   const onSubmit = async (formData) => {
     setServerError("");
@@ -67,7 +68,11 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
       {serverError && <Message type="error">{serverError}</Message>}
 
       <div className="form-row">
-        <FormField label="Nome" htmlFor="user-name" error={errors.name?.message}>
+        <FormField
+          label="Nome"
+          htmlFor="user-name"
+          error={errors.name?.message}
+        >
           <input
             id="user-name"
             type="text"
@@ -91,7 +96,11 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
         </FormField>
       </div>
 
-      <FormField label="Email" htmlFor="user-email" error={errors.email?.message}>
+      <FormField
+        label="Email"
+        htmlFor="user-email"
+        error={errors.email?.message}
+      >
         <input
           id="user-email"
           type="email"
@@ -166,7 +175,9 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
         )}
       </div>
       {isSelf && (
-        <p className="form-hint m-0">Il tuo ruolo non si può cambiare da qui.</p>
+        <p className="form-hint m-0">
+          Il tuo ruolo non si può cambiare da qui.
+        </p>
       )}
 
       {isEmployee && (
@@ -197,7 +208,11 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
           Annulla
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Salvataggio..." : isEditing ? "Salva" : "Crea utente"}
+          {isSubmitting
+            ? "Salvataggio..."
+            : isEditing
+              ? "Salva"
+              : "Crea utente"}
         </Button>
       </div>
     </form>

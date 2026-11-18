@@ -8,7 +8,6 @@ const PERIOD_FORMATS = {
   month: "%Y-%m",
 };
 
-
 const findRevenue = async ({ from, to, groupBy = "day", store }) => {
   // 1. Filtro: vendite tra from e to, eventualmente di un solo negozio
   const toDate = new Date(to);

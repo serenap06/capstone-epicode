@@ -1,0 +1,12 @@
+/* rotellina magenta e testo grigio, come i messaggi "Nessun..." */
+.loader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  color: var(--text-muted);
+}
+
+.loader .spinner-border {
+  color: var(--primary);
+}

@@ -11,9 +11,7 @@ const LowStockList = ({ stocks }) => {
             <span className="low-stock-store">{stock.store.name}</span>
           </div>
           <div>
-            <span className="low-stock-amount">
-              {stock.amount} pz
-            </span>
+            <span className="low-stock-amount">{stock.amount} pz</span>
           </div>
         </div>
       ))}

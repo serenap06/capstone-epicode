@@ -4,7 +4,6 @@ const Stock = require("../stock/schema");
 const HttpException = require("../../exceptions/index");
 const round = require("../../utils/round");
 
-
 const findAll = async (
   { store, soldBy, from, to, page = 1, limit = 20 },
   currentUser,
@@ -68,17 +67,23 @@ const create = async ({ items, paymentMethod }, currentUser) => {
   });
 
   const unavailableItems = items.filter((item) => {
-    const stock = stocks.find((s) => s.product.toString() === item.product);
+    const stock = stocks.find(
+      (storeStock) => storeStock.product.toString() === item.product,
+    );
     return !stock || stock.amount < item.quantity;
   });
   if (unavailableItems.length > 0) {
     const names = unavailableItems.map(
-      (item) => products.find((p) => p._id.toString() === item.product).name,
+      (item) =>
+        products.find((product) => product._id.toString() === item.product)
+          .name,
     );
     throw new HttpException(`Not enough stock for: ${names.join(", ")}`, 400);
   }
   const saleItems = items.map((item) => {
-    const product = products.find((p) => p._id.toString() === item.product);
+    const product = products.find(
+      (foundProduct) => foundProduct._id.toString() === item.product,
+    );
     const lineTotal = product.price * item.quantity;
 
     return {

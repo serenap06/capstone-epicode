@@ -164,7 +164,11 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
         />
       </div>
 
-      <FormField label="Nome" htmlFor="product-name" error={errors.name?.message}>
+      <FormField
+        label="Nome"
+        htmlFor="product-name"
+        error={errors.name?.message}
+      >
         <input
           id="product-name"
           type="text"

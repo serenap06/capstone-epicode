@@ -40,10 +40,3 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-
-/* su telefono i due bottoni si dividono la riga */
-@media (max-width: 575.98px) {
-  .store-card-actions .app-button {
-    flex: 1 1 0;
-  }
-}

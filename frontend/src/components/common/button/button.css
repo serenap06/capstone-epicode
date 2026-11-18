@@ -52,6 +52,14 @@
   padding: 0;
 }
 
+/* il testo accanto all'icona (per esempio "Modifica"): su telefono sparisce e resta l'icona.
+   L'aria-label del bottone dice comunque cosa fa */
+@media (max-width: 767.98px) {
+  .app-button-label {
+    display: none;
+  }
+}
+
 /* disattivato, per esempio mentre aspetto il server */
 .app-button:disabled {
   opacity: 0.6;

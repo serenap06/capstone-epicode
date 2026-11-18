@@ -12,7 +12,7 @@ import {
   ShoppingBag,
   Users,
   Store,
-  CreditCard
+  CreditCard,
 } from "lucide-react";
 
 export const MENU = {
@@ -22,10 +22,20 @@ export const MENU = {
     { to: "/admin/shifts", label: "Turni", icon: Calendar },
     { to: "/admin/tasks", label: "Task", icon: CheckSquare },
     { to: "/admin/sales", label: "Vendite", icon: Euro },
-    { to: "/admin/reports", label: "Report", icon: BarChart3, hideOnMobile: true },
+    {
+      to: "/admin/reports",
+      label: "Report",
+      icon: BarChart3,
+      hideOnMobile: true,
+    },
     { to: "/admin/supply-requests", label: "Forniture", icon: PackagePlus },
     { to: "/admin/stock", label: "Giacenze", icon: Boxes, hideOnMobile: true },
-    { to: "/admin/products", label: "Catalogo", icon: ShoppingBag, hideOnMobile: true },
+    {
+      to: "/admin/products",
+      label: "Catalogo",
+      icon: ShoppingBag,
+      hideOnMobile: true,
+    },
     { to: "/admin/users", label: "Utenti", icon: Users, hideOnMobile: true },
     { to: "/admin/stores", label: "Negozi", icon: Store, hideOnMobile: true },
   ],
@@ -33,11 +43,26 @@ export const MENU = {
   // Giacenze e Catalogo in "Altro", come per il responsabile
   employee: [
     { to: "/employee", label: "Dashboard", icon: Home, end: true },
-    { to: "/employee/checkout", label: "Cassa", icon: CreditCard, desktopOnly: true },
+    {
+      to: "/employee/checkout",
+      label: "Cassa",
+      icon: CreditCard,
+      desktopOnly: true,
+    },
     { to: "/employee/tasks", label: "Task", icon: CheckSquare },
     { to: "/employee/shifts", label: "Turni", icon: Calendar },
-    { to: "/employee/stock", label: "Giacenze", icon: Boxes, hideOnMobile: true },
+    {
+      to: "/employee/stock",
+      label: "Giacenze",
+      icon: Boxes,
+      hideOnMobile: true,
+    },
     { to: "/employee/supply-requests", label: "Forniture", icon: PackagePlus },
-    { to: "/employee/products", label: "Catalogo", icon: ShoppingBag, hideOnMobile: true },
+    {
+      to: "/employee/products",
+      label: "Catalogo",
+      icon: ShoppingBag,
+      hideOnMobile: true,
+    },
   ],
 };

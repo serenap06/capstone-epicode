@@ -7,12 +7,26 @@
   justify-content: center;
 }
 
-/* titolo "LOGIN" magenta */
+/* logo grande e la frase sotto, centrati */
+/* width: fit-content: il gradiente si allarga solo quanto la parola, non tutta la riga */
+.app-logo.login-logo {
+  width: fit-content;
+  margin: 0 auto;
+  font-size: 2.5rem;
+}
+
+.login-tagline {
+  margin: 0.25rem 0 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* titolo "Accedi" */
 .login-title {
-  color: var(--primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
   text-align: center;
-  margin-bottom: 2rem;
 }
 
 /* riferimento per l'icona (position relative) */
@@ -27,6 +41,8 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--secondary);
+  /* z-index: sopra il campo della password, che ha un suo contenitore */
+  z-index: 1;
 }
 
 /* campo a pillola; il padding a sinistra lascia spazio all'icona */
@@ -70,27 +86,46 @@
   gap: 0.5rem;
 }
 
+/* casella vuota con il bordo visibile sul fondo chiaro */
+.login-remember .form-check-input {
+  border: 2px solid var(--border);
+}
+
 /* casella spuntata magenta invece che blu */
 .login-remember .form-check-input:checked {
   background-color: var(--primary);
   border-color: var(--primary);
 }
 
-/* bottone "accedi" a pillola; .btn davanti per vincere su Bootstrap */
-.btn.login-button {
-  background: var(--primary);
-  border: none;
+/* "Accedi": il bottone comune, a pillola e più alto come i campi */
+.app-button.login-button {
+  min-height: 56px;
   border-radius: 50rem;
-  padding: 0.8rem;
   font-size: 1.2rem;
-  font-weight: 700;
-  color: #ffffff;
 }
 
-.btn.login-button:hover,
-.btn.login-button:disabled {
-  background: var(--primary-dark);
-  color: #ffffff;
+/* demo: titoletto grigio e i due bottoni divisi a metà */
+.login-demo {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.login-demo-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.login-demo-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.login-demo-buttons .app-button {
+  flex: 1 1 0;
 }
 
 /* l'occhio della password nel campo a pillola: un po' più a destra e viola come il lucchetto */

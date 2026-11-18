@@ -152,8 +152,18 @@ const seed = async () => {
           category: "cartoleria",
           image: IMAGES.cartoline,
         },
-        { name: "Magnete", price: 4.5, category: "gadget", image: IMAGES.magnete },
-        { name: "Poster", price: 8, category: "cartoleria", image: IMAGES.poster },
+        {
+          name: "Magnete",
+          price: 4.5,
+          category: "gadget",
+          image: IMAGES.magnete,
+        },
+        {
+          name: "Poster",
+          price: 8,
+          category: "cartoleria",
+          image: IMAGES.poster,
+        },
         {
           name: "Borsa in tela",
           description: "Borsa in cotone con stampa originale",
@@ -385,10 +395,16 @@ const seed = async () => {
 
     for (let day = 1; day <= 20; day++) {
       sales.push(
-        buildSale(employees[day % 4], -day, 11, day % 2 === 0 ? "cash" : "card", [
-          [cartoline, 2],
-          [magnete, 1],
-        ]),
+        buildSale(
+          employees[day % 4],
+          -day,
+          11,
+          day % 2 === 0 ? "cash" : "card",
+          [
+            [cartoline, 2],
+            [magnete, 1],
+          ],
+        ),
         buildSale(
           employees[(day + 1) % 4],
           -day,

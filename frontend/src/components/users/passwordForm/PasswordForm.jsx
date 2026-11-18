@@ -18,7 +18,11 @@ const PasswordForm = () => {
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
 
   // dopo il salvataggio svuoto i campi con reset
@@ -89,7 +93,8 @@ const PasswordForm = () => {
             {...register("confirmPassword", {
               required: "Ripeti la nuova password",
               validate: (value, formValues) =>
-                value === formValues.newPassword || "Le due password sono diverse",
+                value === formValues.newPassword ||
+                "Le due password sono diverse",
             })}
           />
         </FormField>

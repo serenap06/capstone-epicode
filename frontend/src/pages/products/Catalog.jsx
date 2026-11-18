@@ -5,17 +5,19 @@ import { useAuth } from "../../hooks/useAuth";
 import { useIsPhone } from "../../hooks/useIsPhone";
 import { loadData } from "../../api/loadData";
 import { deleteProduct } from "../../api/products";
+import { getCategories } from "../../utils/getCategories";
+import { toCategoryOptions } from "../../utils/toCategoryOptions";
 
 import AddButton from "../../components/common/addButton/AddButton";
 import ConfirmDialog from "../../components/common/confirmDialog/ConfirmDialog";
-import FormModal from "../../components/common/formModal/FormModal";
-import Message from "../../components/common/message/Message";
-import PageHeader from "../../components/common/pageHeader/PageHeader";
 import FilterBar from "../../components/common/filterBar/FilterBar";
 import FilterChips from "../../components/common/filterBar/FilterChips";
 import FilterSearch from "../../components/common/filterBar/FilterSearch";
 import FilterSelect from "../../components/common/filterBar/FilterSelect";
-
+import FormModal from "../../components/common/formModal/FormModal";
+import Loader from "../../components/common/loader/Loader";
+import Message from "../../components/common/message/Message";
+import PageHeader from "../../components/common/pageHeader/PageHeader";
 import ProductCard from "../../components/products/productCard/ProductCard";
 import ProductForm from "../../components/products/productForm/ProductForm";
 
@@ -36,6 +38,8 @@ const Catalog = () => {
 
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
+  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  const [isLoading, setIsLoading] = useState(true);
   // le giacenze: al responsabile di tutti i negozi, al dipendente solo del suo
   const [stocks, setStocks] = useState([]);
   // filtri fatti nel browser: "" = nessun filtro
@@ -54,10 +58,13 @@ const Catalog = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // prodotti e giacenze, e di nuovo quando cambia refreshCount
+  // Promise.all aspetta tutte e due le richieste, poi finally spegne la rotellina
   useEffect(() => {
-    loadData("/products", (data) => setProducts(data.products), setError);
-    // i pezzi stanno nelle giacenze, non nei prodotti: servono per la riga sulla card
-    loadData("/stocks", (data) => setStocks(data.stocks), setError);
+    Promise.all([
+      loadData("/products", (data) => setProducts(data.products), setError),
+      // i pezzi stanno nelle giacenze, non nei prodotti: servono per la riga sulla card
+      loadData("/stocks", (data) => setStocks(data.stocks), setError),
+    ]).finally(() => setIsLoading(false));
   }, [refreshCount]);
 
   // cambia un filtro: copio gli altri e sovrascrivo quello ([name] usa il valore come chiave)
@@ -85,6 +92,7 @@ const Catalog = () => {
   // elimino sul server e tolgo il prodotto dalla lista; finally chiude sempre la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
+    setError("");
     try {
       await deleteProduct(productToDelete._id);
       setProducts((prevProducts) =>
@@ -100,14 +108,10 @@ const Catalog = () => {
 
   // valori calcolati
 
-  // le categorie senza doppioni (new Set), prese dai prodotti
-  const categories = [...new Set(products.map((product) => product.category))];
+  // le categorie senza doppioni, per il filtro e per il modulo
+  const categories = getCategories(products);
   // le categorie per il menu a tendina ("Tutte le categorie" la aggiunge FilterSelect)
-  const categoryOptions = categories.map((category) => ({
-    value: category,
-    // "libri" → "Libri"
-    label: category[0].toUpperCase() + category.slice(1),
-  }));
+  const categoryOptions = toCategoryOptions(categories);
 
   // i prodotti che passano tutti i filtri; la ricerca ignora maiuscole e minuscole
   const visibleProducts = products.filter(
@@ -121,6 +125,10 @@ const Catalog = () => {
   // quanti prodotti non sono attivi, per il sottotitolo del responsabile
   const inactiveCount = products.filter((product) => !product.active).length;
 
+  // quanti filtri sono attivi in tutto, per il messaggio "con questi filtri"
+  const activeFilterCount = Object.values(filters).filter(
+    (value) => value !== "",
+  ).length;
   // quanti filtri del menu sono attivi, per il pallino su "Filtri"
   const menuFilterCount = [filters.category, filters.state].filter(
     (value) => value !== "",
@@ -137,7 +145,7 @@ const Catalog = () => {
   // su telefono resta in vista la ricerca e gli altri vanno nel menu "Filtri"
   const searchFilter = (
     <FilterSearch
-      label="Cerca..."
+      label="Cerca un prodotto"
       value={filters.search}
       onChange={(value) => changeFilter("search", value)}
     />
@@ -199,8 +207,13 @@ const Catalog = () => {
       </FilterBar>
 
       {/* il messaggio solo quando nessun prodotto passa i filtri */}
-      {visibleProducts.length === 0 && !error && (
-        <Message>Nessun prodotto</Message>
+      {isLoading && <Loader />}
+      {!isLoading && visibleProducts.length === 0 && !error && (
+        <Message>
+          {activeFilterCount > 0
+            ? "Nessun prodotto con questi filtri"
+            : "Nessun prodotto"}
+        </Message>
       )}
 
       {/* due card per riga su telefono, tre da tablet, quattro da xl.

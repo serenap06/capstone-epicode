@@ -21,8 +21,18 @@ import HoursStatus from "../hoursStatus/HoursStatus";
 
 // i turni più comuni: un clic su "Mattina" o "Pomeriggio" riempie inizio e fine
 const SHIFT_PRESETS = [
-  { value: "morning", label: "Mattina 9–17", startTime: "09:00", endTime: "17:00" },
-  { value: "afternoon", label: "Pomeriggio 13–21", startTime: "13:00", endTime: "21:00" },
+  {
+    value: "morning",
+    label: "Mattina 9–17",
+    startTime: "09:00",
+    endTime: "17:00",
+  },
+  {
+    value: "afternoon",
+    label: "Pomeriggio 13–21",
+    startTime: "13:00",
+    endTime: "21:00",
+  },
 ];
 
 // minuti dalla mezzanotte: "09:30" → 570
@@ -231,7 +241,9 @@ const ShiftForm = ({
         <div className="shift-form-summary" aria-live="polite">
           <div>
             <p className="shift-form-summary-label">Durata del turno</p>
-            <p className="shift-form-summary-value">{formatHours(duration)} h</p>
+            <p className="shift-form-summary-value">
+              {formatHours(duration)} h
+            </p>
           </div>
           <div>
             <p className="shift-form-summary-label">
@@ -261,7 +273,7 @@ const ShiftForm = ({
           Annulla
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Salvataggio..." : "Salva turno"}
+          {isSubmitting ? "Salvataggio..." : isEditing ? "Salva" : "Crea turno"}
         </Button>
       </div>
     </form>

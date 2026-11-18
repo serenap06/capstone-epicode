@@ -71,7 +71,9 @@ const ShiftWeekGrid = ({ days, shifts, hours, onShiftClick, onEmptyClick }) => {
                               onClick={() => onShiftClick?.(shift)}
                             >
                               {formatHourRange(shift.startAt, shift.endAt)}
-                              <span className="visually-hidden">, modifica</span>
+                              <span className="visually-hidden">
+                                , modifica
+                              </span>
                             </button>
                           ))
                         ) : (
@@ -81,7 +83,9 @@ const ShiftWeekGrid = ({ days, shifts, hours, onShiftClick, onEmptyClick }) => {
                             onClick={() => onEmptyClick?.(row.employeeId, day)}
                           >
                             Riposo
-                            <span className="visually-hidden">, aggiungi un turno</span>
+                            <span className="visually-hidden">
+                              , aggiungi un turno
+                            </span>
                           </button>
                         )}
                       </td>

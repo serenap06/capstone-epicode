@@ -7,7 +7,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 // method e body solo quando servono (di base è una GET)
 const api = async (path, { method = "GET", body } = {}) => {
   // il token salvato al login
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
 
   // i file viaggiano in un FormData: niente JSON, il Content-Type lo scrive il browser
   const isFormData = body instanceof FormData;

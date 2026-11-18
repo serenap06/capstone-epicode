@@ -40,12 +40,16 @@ const UserTable = ({ users, currentUserId, onEdit, onDelete }) => {
                 <td className="user-table-muted">{user.email}</td>
                 <td>
                   {/* viola per il responsabile, grigio per i dipendenti */}
-                  <Badge color={user.role === "admin" ? "secondary" : "neutral"}>
+                  <Badge
+                    color={user.role === "admin" ? "secondary" : "neutral"}
+                  >
                     {ROLE_LABEL[user.role]}
                   </Badge>
                 </td>
                 <td>{user.store?.name ?? "—"}</td>
-                <td>{user.weeklyHours != null ? `${user.weeklyHours} h` : "—"}</td>
+                <td>
+                  {user.weeklyHours != null ? `${user.weeklyHours} h` : "—"}
+                </td>
                 <td>
                   <div className="user-table-actions">
                     <Button
@@ -65,7 +69,9 @@ const UserTable = ({ users, currentUserId, onEdit, onDelete }) => {
                           ? "Non puoi eliminare il tuo account"
                           : `Elimina ${formatFullName(user)}`
                       }
-                      title={isSelf ? "Non puoi eliminare il tuo account" : undefined}
+                      title={
+                        isSelf ? "Non puoi eliminare il tuo account" : undefined
+                      }
                       disabled={isSelf}
                       onClick={() => onDelete(user)}
                     >

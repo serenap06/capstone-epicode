@@ -1,26 +1,26 @@
+import { useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+
+import { useIsPhone } from "../../../hooks/useIsPhone";
 import { loadData } from "../../../api/loadData";
 import { deleteTaskGroup } from "../../../api/tasks";
-
-import { useEffect, useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
-
 import { addDays, getToday, isSameDay } from "../../../utils/dates";
-import { toQuery } from "../../../utils/toQuery";
 import { formatDayLabel } from "../../../utils/formatDayLabel";
 import { isTaskDone } from "../../../utils/isTaskDone";
-import { useIsPhone } from "../../../hooks/useIsPhone";
+import { toQuery } from "../../../utils/toQuery";
 import { toStoreOptions } from "../../../utils/toStoreOptions";
 
-import Message from "../../../components/common/message/Message";
-import PageHeader from "../../../components/common/pageHeader/PageHeader";
-import TaskCard from "../../../components/tasks/taskCard/TaskCard";
+import AddButton from "../../../components/common/addButton/AddButton";
+import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
 import FilterBar from "../../../components/common/filterBar/FilterBar";
 import FilterChips from "../../../components/common/filterBar/FilterChips";
 import FilterSelect from "../../../components/common/filterBar/FilterSelect";
-import AddButton from "../../../components/common/addButton/AddButton";
 import FormModal from "../../../components/common/formModal/FormModal";
+import Loader from "../../../components/common/loader/Loader";
+import Message from "../../../components/common/message/Message";
+import PageHeader from "../../../components/common/pageHeader/PageHeader";
+import TaskCard from "../../../components/tasks/taskCard/TaskCard";
 import TaskForm from "../../../components/tasks/taskForm/TaskForm";
-import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
 
 // pagina Task del responsabile: le task da oggi in avanti, con i filtri
 
@@ -46,6 +46,8 @@ const Tasks = () => {
   // tasks: dal server già raggruppate (una per gruppo, con le persone dentro)
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState("");
+  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  const [isLoading, setIsLoading] = useState(true);
 
   // stores: i negozi, per i menu a tendina
   const [stores, setStores] = useState([]);
@@ -96,7 +98,11 @@ const Tasks = () => {
       store: filters.store,
       type: filters.type,
     });
-    loadData(`/tasks?${query}`, (data) => setTasks(data.tasks), setError);
+    loadData(
+      `/tasks?${query}`,
+      (data) => setTasks(data.tasks),
+      setError,
+    ).finally(() => setIsLoading(false));
   }, [filters.store, filters.type, refreshCount]);
 
   // task ancora aperte, per il sottotitolo
@@ -106,15 +112,19 @@ const Tasks = () => {
   const changeFilter = (name, value) =>
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
 
-  // dopo la creazione chiudo il modale e ricarico (servono le task raggruppate)
-  const handleCreated = () => {
+  // "Nuova task": modale con il modulo vuoto
+  const openNewForm = () => setShowForm(true);
+
+  // dopo il salvataggio chiudo il modale e ricarico (servono le task raggruppate)
+  const handleSaved = () => {
     setShowForm(false);
     setRefreshCount((prevCount) => prevCount + 1);
   };
 
-  // elimina sul server e toglie la task dalla lista; finally chiude sempre la conferma
+  // elimino sul server e tolgo la task dalla lista; finally chiude sempre la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
+    setError("");
     try {
       await deleteTaskGroup(taskToDelete._id);
       setTasks((prevTasks) =>
@@ -215,7 +225,7 @@ const Tasks = () => {
 
   // "Nuova task": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
   const addButton = (
-    <AddButton label="Nuova task" iconOnly={isPhone} onClick={() => setShowForm(true)} />
+    <AddButton label="Nuova task" iconOnly={isPhone} onClick={openNewForm} />
   );
 
   return (
@@ -250,7 +260,8 @@ const Tasks = () => {
           {typeFilter}
         </FilterBar>
       )}
-      {visibleTasks.length === 0 && !error && (
+      {isLoading && <Loader />}
+      {!isLoading && visibleTasks.length === 0 && !error && (
         <Message>
           {activeFilterCount > 0
             ? "Nessuna task con questi filtri"
@@ -279,7 +290,7 @@ const Tasks = () => {
         <TaskForm
           stores={stores}
           employees={employees}
-          onCreated={handleCreated}
+          onSaved={handleSaved}
           onCancel={() => setShowForm(false)}
         />
       </FormModal>

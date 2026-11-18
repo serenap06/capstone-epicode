@@ -27,13 +27,13 @@ const App = () => {
         <Route path="/admin" element={<AppLayout />}>
           {/* index = la pagina che si apre su /admin */}
           <Route index element={<Dashboard />} />
-          <Route path="tasks" element={<Tasks />} />
           <Route path="shifts" element={<Shifts />} />
+          <Route path="tasks" element={<Tasks />} />
           <Route path="stock" element={<Stocks />} />
           <Route path="products" element={<Catalog />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="stores" element={<Stores />} />
           <Route path="users" element={<Users />} />
+          <Route path="stores" element={<Stores />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
 
@@ -41,9 +41,9 @@ const App = () => {
       <Route element={<ProtectedRoute role="employee" />}>
         <Route path="/employee" element={<AppLayout />}>
           <Route index element={<Home />} />
+          <Route path="checkout" element={<Checkout />} />
           <Route path="tasks" element={<MyTasks />} />
           <Route path="shifts" element={<MyShifts />} />
-          <Route path="checkout" element={<Checkout />} />
           <Route path="stock" element={<Stocks />} />
           <Route path="products" element={<Catalog />} />
           <Route path="profile" element={<Profile />} />

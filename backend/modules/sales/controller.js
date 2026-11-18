@@ -34,7 +34,7 @@ const create = async (req, res, next) => {
     );
     res.status(201).send({
       statusCode: 201,
-      message: "Sale registered",
+      message: "Sale created successfully",
       sale,
       lowStock,
     });

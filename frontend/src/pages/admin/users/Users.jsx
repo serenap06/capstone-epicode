@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
 import { useAuth } from "../../../hooks/useAuth";
-import { useMediaQuery } from "../../../hooks/useMediaQuery";
 import { useIsPhone } from "../../../hooks/useIsPhone";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
 import { loadData } from "../../../api/loadData";
 import { deleteUser } from "../../../api/users";
 import { formatFullName } from "../../../utils/formatFullName";
@@ -11,6 +11,7 @@ import { formatFullName } from "../../../utils/formatFullName";
 import AddButton from "../../../components/common/addButton/AddButton";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
 import FormModal from "../../../components/common/formModal/FormModal";
+import Loader from "../../../components/common/loader/Loader";
 import Message from "../../../components/common/message/Message";
 import PageHeader from "../../../components/common/pageHeader/PageHeader";
 import UserCard from "../../../components/users/userCard/UserCard";
@@ -22,13 +23,17 @@ const Users = () => {
   // currentUser: chi è collegato; setUser per aggiornare la barra in alto se modifico me stessa
   const { user: currentUser, setUser } = useAuth();
   const [users, setUsers] = useState([]);
+  // i negozi, per il menu del modulo
   const [stores, setStores] = useState([]);
   const [error, setError] = useState("");
+  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  const [isLoading, setIsLoading] = useState(true);
+  // aumentarlo ricarica la lista (dopo un salvataggio)
   const [refreshCount, setRefreshCount] = useState(0);
   // modale del modulo: userToEdit è la persona da modificare (null = nuova)
   const [showForm, setShowForm] = useState(false);
   const [userToEdit, setUserToEdit] = useState(null);
-  // conferma dell'eliminazione
+  // conferma dell'eliminazione: la persona da eliminare, oppure null
   const [userToDelete, setUserToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -38,19 +43,25 @@ const Users = () => {
   // la tabella con il menu a sinistra ci sta comoda solo sopra
   const showCards = useMediaQuery("(max-width: 1280px)");
 
+  // le persone, e di nuovo quando cambia refreshCount
   useEffect(() => {
-    loadData("/users", (data) => setUsers(data.users), setError);
+    loadData("/users", (data) => setUsers(data.users), setError).finally(() =>
+      setIsLoading(false),
+    );
   }, [refreshCount]);
 
+  // i negozi una volta sola
   useEffect(() => {
     loadData("/stores", (data) => setStores(data.stores), setError);
   }, []);
 
+  // "Nuovo utente": modale con il modulo vuoto
   const openNewForm = () => {
     setUserToEdit(null);
     setShowForm(true);
   };
 
+  // matita sulla card o nella tabella: modale con i dati di quella persona
   const openEditForm = (user) => {
     setUserToEdit(user);
     setShowForm(true);
@@ -66,8 +77,10 @@ const Users = () => {
     }
   };
 
+  // elimino sul server e tolgo la persona dalla lista; finally chiude sempre la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
+    setError("");
     try {
       await deleteUser(userToDelete._id);
       setUsers((prevUsers) =>
@@ -97,10 +110,14 @@ const Users = () => {
         subtitle={`${users.length} ${peopleLabel} · in ordine di cognome`}
         error={error}
       >
+        {/* da tablet in su il bottone va a destra dell'intestazione */}
         {!isPhone && addButton}
       </PageHeader>
 
-      {users.length === 0 && !error && <Message>Nessun utente</Message>}
+      {isLoading && <Loader />}
+      {!isLoading && users.length === 0 && !error && (
+        <Message>Nessun utente</Message>
+      )}
 
       {users.length > 0 &&
         (showCards ? (

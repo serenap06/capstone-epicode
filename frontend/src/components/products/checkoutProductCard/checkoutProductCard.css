@@ -1,0 +1,51 @@
+/* card bassa: foto e nome in alto, prezzo e pezzi, il bottone in fondo.
+   height 100%: le card della stessa riga sono alte uguali */
+.checkout-product-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.9rem;
+}
+
+.checkout-product-card p {
+  margin: 0;
+}
+
+.checkout-product-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* nome e categoria prendono lo spazio che resta; un nome lungo va a capo */
+.checkout-product-card-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.checkout-product-card-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.checkout-product-card-category {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+/* margin-top: auto tiene prezzo e bottone in fondo anche se il nome va su due righe */
+.checkout-product-card-row {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.checkout-product-card-price {
+  font-size: 1.15rem;
+  font-weight: 800;
+}

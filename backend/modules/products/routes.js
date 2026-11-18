@@ -6,7 +6,7 @@ const authenticate = require("../../middlewares/auth/auth");
 const authorizeRole = require("../../middlewares/auth/authorizeRoles");
 const validate = require("../../middlewares/validate/validate");
 const { param } = require("express-validator");
-const {uploadProductImage}=require("../../middlewares/upload/cloudinary")
+const { uploadProductImage } = require("../../middlewares/upload/cloudinary");
 
 const productBodyRules = require("../../middlewares/products/productBodyRules");
 const productUpdateRules = require("../../middlewares/products/productUpdateRules");
@@ -56,7 +56,6 @@ productsRouter.delete(
   validate,
   productController.removeImage,
 );
-
 
 productsRouter.delete(
   "/:productId",

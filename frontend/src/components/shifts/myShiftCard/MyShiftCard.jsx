@@ -24,7 +24,11 @@ const MyShiftCard = ({ shift, colleagues }) => {
         )}
         <div className="my-shift-badges">
           {colleagues.map((colleague) => (
-            <ColleagueBadge key={colleague._id} shift={colleague} color="white" />
+            <ColleagueBadge
+              key={colleague._id}
+              shift={colleague}
+              color="white"
+            />
           ))}
         </div>
       </div>

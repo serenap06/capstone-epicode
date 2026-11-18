@@ -19,8 +19,8 @@ const TYPE_OPTIONS = [
   { value: "monthly", label: "Mensile" },
 ];
 
-// modulo "Nuova task"; stores, employees, onCreated e onCancel arrivano dalla pagina
-const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
+// modulo "Nuova task"; stores, employees, onSaved e onCancel arrivano dalla pagina
+const TaskForm = ({ stores, employees, onSaved, onCancel }) => {
   // errore del server (per esempio un negozio senza dipendenti)
   const [serverError, setServerError] = useState("");
 
@@ -73,7 +73,7 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
         // globale: le persone le sceglie il server
         assignedTo: formData.isGlobal ? undefined : formData.assignedTo,
       });
-      onCreated();
+      onSaved();
     } catch (e) {
       setServerError(e.message);
     }
@@ -81,11 +81,7 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
 
   return (
     // noValidate: i controlli li fa react-hook-form, non il browser
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      noValidate
-      className="form-stack"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="form-stack">
       {serverError && <Message type="error">{serverError}</Message>}
 
       {/* due blocchi: affiancati da 992px, uno sotto l'altro prima */}
@@ -205,8 +201,8 @@ const TaskForm = ({ stores, employees, onCreated, onCancel }) => {
           </FormField>
 
           <label className="form-check-row">
-            <input type="checkbox" {...register("isGlobal")} />
-            A tutto il negozio
+            <input type="checkbox" {...register("isGlobal")} />A tutto il
+            negozio
           </label>
           {!selectedStore && (
             <p className="form-hint m-0">Scegli prima il negozio</p>

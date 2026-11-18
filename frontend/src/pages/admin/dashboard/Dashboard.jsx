@@ -1,26 +1,31 @@
-import { useState, useEffect } from "react";
+import "./dashboard.css";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Col, Container, Row } from "react-bootstrap";
+
 import { loadData } from "../../../api/loadData";
+import { getToday } from "../../../utils/dates";
+import { formatEuro } from "../../../utils/formatEuro";
+import { formatLongDate } from "../../../utils/formatLongDate";
+import { toQuery } from "../../../utils/toQuery";
+
 import KpiCard from "../../../components/common/kpiCard/KpiCard";
+import Loader from "../../../components/common/loader/Loader";
 import Message from "../../../components/common/message/Message";
 import PageHeader from "../../../components/common/pageHeader/PageHeader";
 import Panel from "../../../components/common/panel/Panel";
 import SectionHeader from "../../../components/common/sectionHeader/SectionHeader";
-import TaskCard from "../../../components/tasks/taskCard/TaskCard";
 import ShiftList from "../../../components/shifts/shiftList/ShiftList";
 import LowStockList from "../../../components/stocks/lowStockList/LowStockList";
-import { formatEuro } from "../../../utils/formatEuro";
-import { formatLongDate } from "../../../utils/formatLongDate";
-import { getToday } from "../../../utils/dates";
-import { toQuery } from "../../../utils/toQuery";
-import { Container, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import "./dashboard.css";
+import TaskCard from "../../../components/tasks/taskCard/TaskCard";
 
 // pagina iniziale del responsabile: indicatori, task e turni di oggi, prodotti sotto scorta
 const Dashboard = () => {
   // kpis: null finché non arrivano (intanto le card mostrano "–")
   const [kpis, setKpis] = useState(null);
   const [error, setError] = useState("");
+  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  const [isLoading, setIsLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [shifts, setShifts] = useState([]);
   const [lowStocks, setLowStocks] = useState([]);
@@ -33,18 +38,25 @@ const Dashboard = () => {
     // "from=...&to=..." di oggi
     const todayQuery = toQuery(getToday());
 
-    loadData("/dashboard", (data) => setKpis(data.kpis), setError);
-    loadData(`/tasks?${todayQuery}`, (data) => setTasks(data.tasks), setError);
-    loadData(
-      `/shifts?${todayQuery}`,
-      (data) => setShifts(data.shifts),
-      setError,
-    );
-    loadData(
-      "/stocks?lowStock=true",
-      (data) => setLowStocks(data.stocks),
-      setError,
-    );
+    // Promise.all aspetta tutte le richieste, poi finally spegne la rotellina
+    Promise.all([
+      loadData("/dashboard", (data) => setKpis(data.kpis), setError),
+      loadData(
+        `/tasks?${todayQuery}`,
+        (data) => setTasks(data.tasks),
+        setError,
+      ),
+      loadData(
+        `/shifts?${todayQuery}`,
+        (data) => setShifts(data.shifts),
+        setError,
+      ),
+      loadData(
+        "/stocks?lowStock=true",
+        (data) => setLowStocks(data.stocks),
+        setError,
+      ),
+    ]).finally(() => setIsLoading(false));
   }, []);
 
   return (
@@ -64,7 +76,7 @@ const Dashboard = () => {
           <KpiCard
             to="/admin/shifts"
             color="primary"
-            label="In turno oggi:"
+            label="In turno oggi"
             value={kpis?.employeesOnShiftToday ?? "–"}
             detail="dipendenti"
           />
@@ -73,7 +85,7 @@ const Dashboard = () => {
           <KpiCard
             to="/admin/tasks"
             color="secondary"
-            label="Task:"
+            label="Task di oggi"
             value={
               kpis ? `${kpis.tasksToday.done} su ${kpis.tasksToday.total}` : "–"
             }
@@ -84,7 +96,7 @@ const Dashboard = () => {
           <KpiCard
             to="/admin/sales"
             color="blue"
-            label="Vendite:"
+            label="Vendite di oggi"
             value={kpis ? formatEuro(kpis.salesToday.revenue) : "–"}
             detail={`${kpis?.salesToday.count ?? "–"} vendite`}
           />
@@ -93,7 +105,7 @@ const Dashboard = () => {
           <KpiCard
             to="/admin/stock"
             color="turquoise"
-            label="Sotto scorta:"
+            label="Sotto scorta"
             value={kpis?.lowStockItems ?? "–"}
             detail="prodotti"
           />
@@ -102,7 +114,7 @@ const Dashboard = () => {
           <KpiCard
             to="/admin/supply-requests"
             color="orange"
-            label="Richieste di fornitura:"
+            label="Richieste di fornitura"
             value={kpis?.pendingSupplyRequests ?? "–"}
             detail="aperte"
           />
@@ -121,7 +133,10 @@ const Dashboard = () => {
               </Link>
             }
           />
-          {tasks.length === 0 && <Message>Nessuna task per oggi</Message>}
+          {isLoading && <Loader />}
+          {!isLoading && tasks.length === 0 && !error && (
+            <Message>Nessuna task per oggi</Message>
+          )}
           {/* lista che scorre dentro (dashboard.css) */}
           <div className="dashboard-tasks">
             {tasks.map((task) => (
@@ -139,7 +154,10 @@ const Dashboard = () => {
               </Link>
             }
           >
-            {shifts.length === 0 && <Message>Nessun turno oggi</Message>}
+            {isLoading && <Loader />}
+            {!isLoading && shifts.length === 0 && !error && (
+              <Message>Nessun turno oggi</Message>
+            )}
             <div className="dashboard-list">
               <ShiftList shifts={shifts} />
             </div>
@@ -153,7 +171,8 @@ const Dashboard = () => {
               </Link>
             }
           >
-            {lowStocks.length === 0 && (
+            {isLoading && <Loader />}
+            {!isLoading && lowStocks.length === 0 && !error && (
               <Message>Nessun prodotto sotto scorta</Message>
             )}
             <div className="dashboard-list">

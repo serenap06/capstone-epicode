@@ -17,7 +17,10 @@ const taskUpdateRules = [
     .trim()
     .isLength({ max: 255 })
     .withMessage("Description must be at most 255 characters"),
-  body("dueDate").optional().isISO8601().withMessage("dueDate must be a valid ISO date"),
+  body("dueDate")
+    .optional()
+    .isISO8601()
+    .withMessage("dueDate must be a valid ISO date"),
   body("priority")
     .optional()
     .isIn(["high", "medium", "low"])

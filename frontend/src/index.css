@@ -29,7 +29,6 @@
   --orange: #ee8631;
   --blue: #34479e;
 
-
   /* avvisi: "da fare", scorta bassa */
   --warning-soft: #ffebd6;
   --warning-text: #8a3f05;
@@ -168,4 +167,23 @@ a:hover {
 .dropdown-item:active {
   background: var(--primary-soft);
   color: var(--primary-dark);
+}
+
+/* logo sfumato dal viola al magenta (barra in alto e Login): il gradiente si vede
+   solo dentro le lettere */
+.app-logo,
+.app-logo:hover {
+  font-weight: 800;
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  color: var(--secondary);
+  background: linear-gradient(90deg, var(--secondary) 35%, var(--primary) 55%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.app-logo span {
+  color: inherit;
 }

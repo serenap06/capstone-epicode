@@ -46,7 +46,9 @@ const DayStaffList = ({ day, shifts, hours, onShiftClick, onEmptyClick }) => {
                     <span className="day-staff-name">{row.employee}</span>
                     <span className="day-staff-rest">
                       Riposo
-                      <span className="visually-hidden">, aggiungi un turno</span>
+                      <span className="visually-hidden">
+                        , aggiungi un turno
+                      </span>
                     </span>
                   </button>
                 )}

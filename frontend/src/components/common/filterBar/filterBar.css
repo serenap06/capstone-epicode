@@ -117,6 +117,41 @@
   }
 }
 
+/* telefoni piccoli (fino a 374px, per esempio 320px): testo e spazi più piccoli,
+   così quattro pulsanti stanno nella riga senza uscire dallo schermo */
+@media (max-width: 374.98px) {
+  .filter-chips {
+    gap: 0.1rem;
+  }
+
+  .filter-chip {
+    padding: 0 0.3rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* su telefono il bottone "Filtri" sta sulla stessa riga della ricerca (o dello stato, se la
+   pagina non ha la ricerca): la riga è larga tutta la barra, il primo filtro prende lo spazio
+   che resta e il bottone resta a destra */
+.filter-row {
+  flex: 1 1 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-row > :first-child {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+}
+
+/* accanto ai pulsanti dello stato il bottone mostra solo l'icona: con la scritta,
+   su un telefono stretto, la riga non ci starebbe */
+.filter-row > .filter-chips ~ .filter-dropdown .filter-dropdown-label {
+  display: none;
+}
+
 /* --- versione compatta: menu a tendina "Filtri" --- */
 
 /* bottone "Filtri" a pillola bianca */
@@ -168,6 +203,17 @@
 
 .filter-dropdown-content .filter-select {
   width: 100%;
+}
+
+/* nel menu i pulsanti a scelta prendono tutta la larghezza e se la dividono,
+   a qualsiasi larghezza dello schermo (con quattro pulsanti l'ultimo usciva dal riquadro) */
+.filter-dropdown-content .filter-chips {
+  flex: 1 1 100%;
+}
+
+.filter-dropdown-content .filter-chip {
+  flex: 1 1 auto;
+  padding: 0 0.5rem;
 }
 
 /* --- da 768px in su: tutti i filtri sulla stessa riga --- */

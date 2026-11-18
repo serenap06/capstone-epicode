@@ -9,9 +9,14 @@ const FilterBar = ({ compact = false, activeCount = 0, children }) => {
     return (
       // il menu si apre a destra (align="end") e si chiude solo cliccando fuori
       <Dropdown align="end" autoClose="outside" className="filter-dropdown">
-        <Dropdown.Toggle variant="light" className="filter-dropdown-toggle">
+        {/* aria-label: quando la scritta è nascosta (vedi il CSS) resta il nome per gli screen reader */}
+        <Dropdown.Toggle
+          variant="light"
+          className="filter-dropdown-toggle"
+          aria-label="Filtri"
+        >
           <SlidersHorizontal size={16} aria-hidden="true" />
-          Filtri
+          <span className="filter-dropdown-label">Filtri</span>
           {activeCount > 0 && (
             <span className="filter-dropdown-count">{activeCount}</span>
           )}

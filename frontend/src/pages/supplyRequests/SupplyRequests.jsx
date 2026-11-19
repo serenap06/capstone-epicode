@@ -109,6 +109,8 @@ const SupplyRequests = () => {
   // una pagina di richieste (il server manda al dipendente solo quelle del suo negozio):
   // a ogni cambio di filtri, ordine o pagina, e dopo ogni modifica. toQuery salta i valori vuoti
   useEffect(() => {
+    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
     const query = toQuery({
       search: filters.search,
       store: filters.store,
@@ -121,6 +123,7 @@ const SupplyRequests = () => {
     loadData(
       `/supply-requests?${query}`,
       (data) => {
+        if (ignore) return;
         setRequests(data.supplyRequests);
         setTotals(data.totals);
         setTotalPages(data.pagination.totalPages);
@@ -134,6 +137,10 @@ const SupplyRequests = () => {
       },
       setError,
     ).finally(() => setIsLoading(false));
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
   }, [filters, sort, page, refreshCount]);
 
   // solo per il dipendente: tutte le richieste in attesa del negozio, anche dopo ogni modifica
@@ -257,7 +264,7 @@ const SupplyRequests = () => {
   // (le stesse regole del server); il responsabile accoglie o respinge
   const canDelete = (request) =>
     !isAdmin &&
-    request.requestedBy._id === user._id &&
+    request.requestedBy?._id === user._id &&
     request.state === "open";
 
   // props uguali per tabella e card: "Accogli" e "Respingi" solo per il responsabile

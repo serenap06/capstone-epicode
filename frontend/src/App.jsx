@@ -1,4 +1,5 @@
 // tutte le pagine dell'app con il loro indirizzo
+import { lazy, Suspense } from "react";
 import { Navigate, Routes, Route } from "react-router-dom";
 import Login from "./pages/login/Login.jsx";
 import Dashboard from "./pages/admin/dashboard/Dashboard.jsx";
@@ -17,6 +18,11 @@ import Catalog from "./pages/products/Catalog.jsx";
 import Checkout from "./pages/employee/checkout/Checkout.jsx";
 import Sales from "./pages/sales/Sales.jsx";
 import SupplyRequests from "./pages/supplyRequests/SupplyRequests.jsx";
+import Loader from "./components/common/loader/Loader.jsx";
+
+// il Report si scarica solo quando si apre (lazy): con lui arriva Recharts, la libreria
+// dei grafici, che è pesante e serve solo lì. Le altre pagine sono nel file principale
+const Reports = lazy(() => import("./pages/admin/reports/Reports.jsx"));
 
 const App = () => {
   return (
@@ -32,6 +38,15 @@ const App = () => {
           <Route path="shifts" element={<Shifts />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="sales" element={<Sales />} />
+          {/* Suspense: mentre il file del Report arriva, gira la rotellina */}
+          <Route
+            path="reports"
+            element={
+              <Suspense fallback={<Loader />}>
+                <Reports />
+              </Suspense>
+            }
+          />
           <Route path="supply-requests" element={<SupplyRequests />} />
           <Route path="stock" element={<Stocks />} />
           <Route path="products" element={<Catalog />} />

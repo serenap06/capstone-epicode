@@ -5,10 +5,15 @@ import { useAuth } from "../../hooks/useAuth";
 import { useIsPhone } from "../../hooks/useIsPhone";
 import { useShowCards } from "../../hooks/useShowCards";
 import { loadData } from "../../api/loadData";
-import { getMonth, getToday, getWeek } from "../../utils/dates";
 import { formatEuro } from "../../utils/formatEuro";
 import { getNextSort } from "../../utils/getNextSort";
 import { PAGE_SIZE } from "../../utils/pageSize";
+import {
+  formatPeriod,
+  getPeriodRange,
+  movePeriodDate,
+  PERIOD_NAV_LABELS,
+} from "../../utils/periods";
 import { toQuery } from "../../utils/toQuery";
 import { toStoreOptions } from "../../utils/toStoreOptions";
 
@@ -21,18 +26,19 @@ import KpiCard from "../../components/common/kpiCard/KpiCard";
 import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
 import PageHeader from "../../components/common/pageHeader/PageHeader";
+import WeekNav from "../../components/common/weekNav/WeekNav";
 import Pagination from "../../components/common/pagination/Pagination";
 import CancelSaleForm from "../../components/sales/cancelSaleForm/CancelSaleForm";
 import SaleCard from "../../components/sales/saleCard/SaleCard";
 import SaleTable from "../../components/sales/saleTable/SaleTable";
 
-// periodo del responsabile: il valore dice quale funzione delle date usare
+// periodo del responsabile: giorno, settimana o mese (i calcoli sono in utils/periods.js).
+// Le frecce spostano il periodo avanti e indietro, come nel Report
 const PERIOD_OPTIONS = [
-  { value: "today", label: "Oggi" },
+  { value: "day", label: "Giorno" },
   { value: "week", label: "Settimana" },
   { value: "month", label: "Mese" },
 ];
-const PERIOD_RANGES = { today: getToday, week: getWeek, month: getMonth };
 
 // l'ordine con cui parte la pagina: dalle più recenti
 const DEFAULT_SORT = { field: "date", direction: "desc" };
@@ -80,10 +86,10 @@ const Sales = () => {
   const [totals, setTotals] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
-  // filtri: si parte da oggi e da tutti i negozi (periodo e negozio solo per il responsabile).
+  // filtri: si parte dal giorno e da tutti i negozi (periodo e negozio solo per il responsabile).
   // status, per tutti e due: "" tutte, "valid" solo valide, "cancelled" solo annullate
   const [filters, setFilters] = useState({
-    period: "today",
+    period: "day",
     store: "",
     status: "",
   });
@@ -98,12 +104,22 @@ const Sales = () => {
   const [refreshCount, setRefreshCount] = useState(0);
   // la vendita da annullare (modale aperto), oppure null
   const [saleToCancel, setSaleToCancel] = useState(null);
+  // un giorno dentro il periodo mostrato: le frecce lo spostano (solo il responsabile)
+  const [referenceDate, setReferenceDate] = useState(new Date());
+
+  // inizio e fine del periodo: il dipendente vede sempre oggi.
+  // from e to come testo: un oggetto Date nuovo a ogni disegno farebbe ripartire l'effetto
+  const period = isAdmin ? filters.period : "day";
+  const range = getPeriodRange(period, isAdmin ? referenceDate : new Date());
+  const from = range.start.toISOString();
+  const to = range.end.toISOString();
 
   // le vendite: i filtri li applica il server (sono divise in pagine da PAGE_SIZE).
   // Il dipendente vede sempre oggi e solo le sue (soldBy); toQuery salta i valori vuoti
   useEffect(() => {
     const query = toQuery({
-      ...PERIOD_RANGES[isAdmin ? filters.period : "today"](),
+      from,
+      to,
       store: filters.store,
       soldBy: isAdmin ? "" : user._id,
       status: filters.status,
@@ -121,7 +137,7 @@ const Sales = () => {
       },
       setError,
     ).finally(() => setIsLoading(false));
-  }, [filters, sort, page, refreshCount, isAdmin, user._id]);
+  }, [from, to, filters, sort, page, refreshCount, isAdmin, user._id]);
 
   // i negozi una volta sola, solo per il responsabile
   useEffect(() => {
@@ -159,14 +175,28 @@ const Sales = () => {
     ? (stores.find((store) => store._id === filters.store)?.name ?? "")
     : "Tutti i negozi";
 
-  // l'etichetta del periodo scelto ("Oggi", "Settimana", "Mese")
-  const periodLabel = PERIOD_OPTIONS.find(
-    (option) => option.value === filters.period,
-  ).label;
-  // responsabile: periodo e negozio; dipendente: le sue vendite di oggi nel suo negozio
+  // responsabile: il periodo mostrato ("oggi", "dal 16 al 22 novembre", "novembre 2026")
+  // e il negozio; dipendente: le sue vendite di oggi nel suo negozio
   const subtitle = isAdmin
-    ? `${periodLabel} · ${storeName}`
+    ? `${formatPeriod(period, range)} · ${storeName}`
     : `Le tue vendite di oggi · ${user.store?.name}`;
+
+  // frecce: sposto il giorno di riferimento di un periodo e riparto dalla prima pagina
+  const moveReference = (step) => {
+    setReferenceDate((prevDate) => movePeriodDate(period, prevDate, step));
+    setPage(1);
+  };
+  // torno al periodo in corso
+  const goToToday = () => {
+    setReferenceDate(new Date());
+    setPage(1);
+  };
+  // true se il periodo mostrato è quello in corso (spegne "Oggi", "Questa settimana"...)
+  const isCurrentPeriod =
+    getPeriodRange(period, new Date()).start.getTime() ===
+    range.start.getTime();
+  // le scritte delle frecce per il periodo scelto
+  const [previousLabel, nextLabel, todayLabel] = PERIOD_NAV_LABELS[period];
   // quanti filtri del menu sono attivi, per il pallino su "Filtri" (nel menu c'è solo il negozio)
   const menuFilterCount = filters.store ? 1 : 0;
 
@@ -243,7 +273,20 @@ const Sales = () => {
 
   return (
     <Container fluid>
-      <PageHeader title="Vendite" subtitle={subtitle} error={error} />
+      <PageHeader title="Vendite" subtitle={subtitle} error={error}>
+        {/* le frecce solo per il responsabile: il dipendente vede sempre oggi */}
+        {isAdmin && (
+          <WeekNav
+            onPrevious={() => moveReference(-1)}
+            onNext={() => moveReference(1)}
+            onToday={goToToday}
+            isCurrentWeek={isCurrentPeriod}
+            previousLabel={previousLabel}
+            nextLabel={nextLabel}
+            todayLabel={todayLabel}
+          />
+        )}
+      </PageHeader>
 
       {/* periodo (responsabile) e stato sempre in vista; con le card negozio e "Ordina" nel
           bottone "Filtri" (su telefono accanto allo stato, da tablet in fondo alla riga),

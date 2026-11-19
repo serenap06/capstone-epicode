@@ -61,8 +61,10 @@ const findAll = async (
   if (soldBy) baseFilter.soldBy = toObjectId(soldBy);
   if (from) baseFilter.createdAt = { $gte: new Date(from) };
   if (to) {
+    // se "to" è solo un giorno ("2026-11-30") arrivo alla fine di quel giorno;
+    // se ha già l'ora (il frontend manda le 23:59 italiane) la uso così com'è
     const toDate = new Date(to);
-    toDate.setHours(23, 59, 59, 999);
+    if (to.length === 10) toDate.setHours(23, 59, 59, 999);
     baseFilter.createdAt = { ...baseFilter.createdAt, $lte: toDate };
   }
 

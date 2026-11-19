@@ -5,7 +5,9 @@ import ProgressBar from "../../common/progressBar/ProgressBar";
 
 // ore pianificate della settimana su ore di contratto; shiftCount: i turni della settimana
 const HoursSummary = ({ hours, shiftCount }) => {
-  const percent = getPercent(hours.scheduledHours, hours.weeklyHours);
+  // senza ore di contratto scrivo 0 (non "undefined")
+  const contract = hours.weeklyHours ?? 0;
+  const percent = getPercent(hours.scheduledHours, contract);
   // "1 turno", "5 turni"
   const shiftLabel = shiftCount === 1 ? "turno" : "turni";
 
@@ -18,7 +20,7 @@ const HoursSummary = ({ hours, shiftCount }) => {
       <div>
         <p className="hours-summary-label">Ore pianificate</p>
         <p className="hours-summary-value">
-          {formatHours(hours.scheduledHours)} su {hours.weeklyHours} h
+          {formatHours(hours.scheduledHours)} su {contract} h
         </p>
       </div>
       {/* a destra barra e contratto (su telefono vanno sotto) */}
@@ -26,7 +28,7 @@ const HoursSummary = ({ hours, shiftCount }) => {
         <ProgressBar percent={percent} />
         <p className="hours-summary-detail">
           <span className="text-nowrap">
-            Contratto di {hours.weeklyHours} ore a settimana ·
+            Contratto di {contract} ore a settimana ·
           </span>{" "}
           <span className="text-nowrap">
             {shiftCount} {shiftLabel}

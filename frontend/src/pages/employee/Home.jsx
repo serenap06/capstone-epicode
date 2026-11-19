@@ -139,7 +139,7 @@ const Home = () => {
             label="Le tue ore"
             value={
               hours
-                ? `${formatHours(hours.scheduledHours)} / ${hours.weeklyHours} h`
+                ? `${formatHours(hours.scheduledHours)} / ${hours.weeklyHours ?? 0} h`
                 : "–"
             }
             detail="questa settimana"

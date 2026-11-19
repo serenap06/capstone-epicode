@@ -30,7 +30,7 @@ const CheckoutProductCard = ({ product, stock, onAdd, addDisabled }) => {
           {formatEuro(product.price)}
         </span>
         {stock ? (
-          <Badge color={isLowStock(stock) ? "warning" : "primary"}>
+          <Badge color={isLowStock(stock) ? "warning" : "success"}>
             {stock.amount} pz
           </Badge>
         ) : (

@@ -1,4 +1,7 @@
 require("dotenv").config();
+// ora italiana per le date del seed: sui server di deploy l'ora di base è UTC
+// e "oggi" (Dashboard, annullamento vendite, ore dei turni) partirebbe all'una di notte
+process.env.TZ = "Europe/Rome";
 const mongoose = require("mongoose");
 
 const Store = require("./modules/stores/schema");

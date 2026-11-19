@@ -1,4 +1,7 @@
 require("dotenv").config();
+// ora italiana per tutto il server: sui server di deploy l'ora di base è UTC
+// e "oggi" (Dashboard, annullamento vendite, ore dei turni) partirebbe all'una di notte
+process.env.TZ = "Europe/Rome";
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");

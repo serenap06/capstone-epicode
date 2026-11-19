@@ -58,6 +58,8 @@ const findMe = async (userId) => findUserWithStore(userId);
 // la password la cripta il pre("save") dello schema; nella risposta la tolgo
 const create = async (userData) => {
   const user = new User(userData);
+  // il responsabile non lavora in un negozio
+  if (user.role === "admin") user.store = undefined;
   await user.save();
   const { password, ...safeUser } = user.toObject();
   return safeUser;
@@ -69,6 +71,8 @@ const update = async (userId, userData) => {
     throw new NotFoundException("User not found");
   }
   assignDefinedFields(user, userData);
+  // diventato responsabile: tolgo il negozio (non comparirà più nel suo personale)
+  if (user.role === "admin") user.store = undefined;
   await user.save();
 
   const { password, ...safeUser } = user.toObject();

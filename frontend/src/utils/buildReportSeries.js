@@ -1,15 +1,14 @@
+// import
 import { addDays } from "./dates";
 
-// la chiave di un periodo, uguale per le date del server e per quelle create qui:
-// il giorno per giorni e settimane, anno e mese per i mesi
+// chiave di un periodo, uguale per le date del server e per quelle create qui
 const toPeriodKey = (date, groupBy) => {
   const day = new Date(date);
   if (groupBy === "month") return `${day.getFullYear()}-${day.getMonth()}`;
   return day.toDateString();
 };
 
-// l'etichetta sotto la barra: "lun 17" (settimana), "17" (mese), "17 nov" (trimestre),
-// "nov" (semestre e anno)
+// etichetta sotto la barra: "lun 17", "17", "17 nov" o "nov"
 const toPeriodLabel = (date, groupBy, period) => {
   if (groupBy === "month") {
     return date.toLocaleDateString("it-IT", { month: "short" });
@@ -26,8 +25,7 @@ const toPeriodLabel = (date, groupBy, period) => {
   return String(date.getDate());
 };
 
-// il periodo per esteso, per il riquadro che compare sopra la barra:
-// "lunedì 9 novembre", "settimana dal 17 novembre", "novembre 2026"
+// periodo per esteso, per il riquadro sopra la barra: "lunedì 9 novembre", "novembre 2026"
 const toPeriodTitle = (date, groupBy) => {
   if (groupBy === "month") {
     return date.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
@@ -40,17 +38,16 @@ const toPeriodTitle = (date, groupBy) => {
   return `${date.toLocaleDateString("it-IT", { weekday: "long" })} ${dayMonth}`;
 };
 
-// tutte le barre del grafico, anche quelle dei giorni senza vendite (con 0):
-// il server manda solo i periodi con almeno una vendita.
-// series: l'andamento del server; range: { start, end, groupBy } di getPeriodRange
+// tutte le barre del grafico, anche dei periodi senza vendite (0): il server manda solo quelli con vendite.
+// range: { start, end, groupBy } di getPeriodRange
 export const buildReportSeries = (series, { start, end, groupBy }, period) => {
-  // le righe del server in un oggetto, per trovarle con la chiave
+  // righe del server per chiave
   const rowsByKey = {};
   series.forEach((row) => {
     rowsByKey[toPeriodKey(row.period, groupBy)] = row;
   });
 
-  // la prima barra: il giorno di inizio, il lunedì della sua settimana o il primo del mese
+  // prima barra: il giorno di inizio, il lunedì o il primo del mese
   const current = new Date(start);
   if (groupBy === "week")
     current.setDate(current.getDate() - ((current.getDay() + 6) % 7));
@@ -65,7 +62,7 @@ export const buildReportSeries = (series, { start, end, groupBy }, period) => {
       revenue: row?.revenue ?? 0,
       salesCount: row?.salesCount ?? 0,
     });
-    // la barra dopo: un giorno, una settimana o un mese più avanti
+    // barra dopo: un giorno, una settimana o un mese
     if (groupBy === "day") current.setTime(addDays(current, 1).getTime());
     if (groupBy === "week") current.setTime(addDays(current, 7).getTime());
     if (groupBy === "month") current.setMonth(current.getMonth() + 1);

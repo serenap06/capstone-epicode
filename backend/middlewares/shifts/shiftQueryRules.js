@@ -1,5 +1,7 @@
+// import
 const { query } = require("express-validator");
 
+// regole della query dei turni: negozio e periodo
 const shiftQueryRules = [
   query("store").optional().isMongoId().withMessage("Invalid store Id"),
   query("from")

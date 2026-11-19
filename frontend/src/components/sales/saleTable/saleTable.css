@@ -7,7 +7,7 @@
   white-space: nowrap;
 }
 
-/* vendita annullata: testo grigio e totale barrato (non conta nell'incasso) */
+/* annullata: testo grigio e totale barrato */
 .sale-row-off td {
   color: var(--text-muted);
 }
@@ -24,7 +24,7 @@
   white-space: nowrap;
 }
 
-/* la riga dei dettagli: niente spazio sopra, sembra la continuazione della vendita */
+/* riga dei dettagli: sembra la continuazione della vendita */
 .sale-details-row td {
   padding-top: 0;
 }

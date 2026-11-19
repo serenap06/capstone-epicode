@@ -1,5 +1,4 @@
-// filtro delle task a partire dai parametri della richiesta (quelli vuoti si saltano).
-// Lo usano sia la lista del responsabile sia "le mie task" del dipendente
+// filtro delle task dai parametri della query (quelli vuoti li salto)
 const buildTaskFilter = ({ status, category, type, isGlobal, from, to }) => {
   const taskFilter = {};
   if (status) taskFilter.status = status;

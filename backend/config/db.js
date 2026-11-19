@@ -1,5 +1,7 @@
+// import
 const mongoose = require("mongoose");
 
+// connessione a MongoDB: se non riesce fermo il server
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.DB_URL);

@@ -1,18 +1,18 @@
+// import
 import "./sortableHeader.css";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
-// intestazione di colonna che ordina la tabella al clic.
-// field: il campo di questa colonna; sort: l'ordine scelto ora ({ field, direction });
-// onSort(field): la pagina calcola il nuovo ordine
+// componente SortableHeader: intestazione che ordina la tabella al clic.
+// props: label, field = il campo della colonna, sort = l'ordine scelto, onSort(field), className
 const SortableHeader = ({ label, field, sort, onSort, className }) => {
   const isActive = sort.field === field;
   const isAscending = sort.direction === "asc";
 
-  // la freccia: su e giù grigia se la colonna non è scelta, altrimenti la direzione
+  // freccia: su e giù se la colonna non è scelta, altrimenti la direzione
   let Icon = ArrowUpDown;
   if (isActive) Icon = isAscending ? ArrowUp : ArrowDown;
 
-  // aria-sort dice agli screen reader come è ordinata la colonna
+  // aria-sort: come è ordinata la colonna, per lo screen reader
   let ariaSort = "none";
   if (isActive) ariaSort = isAscending ? "ascending" : "descending";
 

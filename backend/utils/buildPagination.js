@@ -1,5 +1,4 @@
-// i dati della divisione in pagine che il server rimanda al frontend:
-// la pagina, quante righe per pagina e quante pagine ci sono in tutto
+// dati delle pagine per il frontend: pagina, righe per pagina e pagine totali
 const buildPagination = (pageNumber, limitNumber, totalCount) => ({
   page: pageNumber,
   limit: limitNumber,

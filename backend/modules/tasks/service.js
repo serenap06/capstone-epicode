@@ -1,3 +1,4 @@
+// import
 const mongoose = require("mongoose");
 const Task = require("./schema");
 const Store = require("../stores/schema");
@@ -11,10 +12,8 @@ const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const HttpException = require("../../exceptions");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 
-// task del responsabile: cerco i gruppi che rispettano i filtri e li restituisco
-// raggruppati (una task con dentro tutte le persone assegnate).
-// Senza page tutte; con page una pagina sola in ordine di scadenza, più quante sono in corso.
-// Con page lo stato vale per il gruppo: "done" = l'hanno finita tutti, "pending" = qualcuno no
+// task del responsabile, raggruppate (una task con tutte le persone).
+// Con page: una pagina in ordine di scadenza; lo stato vale per il gruppo
 const findAll = async ({
   store,
   assignedTo,
@@ -23,7 +22,7 @@ const findAll = async ({
   limit = 10,
   ...filters
 }) => {
-  // senza page: come prima (lo stato filtra le singole copie)
+  // senza page: tutte (lo stato filtra le singole copie)
   if (!page) {
     const taskFilter = buildTaskFilter({ ...filters, status });
     if (store) taskFilter.store = store;
@@ -35,21 +34,21 @@ const findAll = async ({
 
   const pageNumber = Number(page);
   const limitNumber = Number(limit);
-  // il filtro delle copie, senza lo stato; ObjectId perché aggregate non converte gli id
+  // filtro delle copie senza lo stato (ObjectId per aggregate)
   const taskFilter = buildTaskFilter(filters);
   if (store) taskFilter.store = new mongoose.Types.ObjectId(String(store));
   if (assignedTo) {
     taskFilter.assignedTo = new mongoose.Types.ObjectId(String(assignedTo));
   }
 
-  // lo stato del gruppo, calcolato dopo $group (isDone: true se tutte le copie sono fatte)
+  // stato del gruppo, dopo $group
   const statusMatch = [];
   if (status === "done") statusMatch.push({ $match: { isDone: true } });
   if (status === "pending") statusMatch.push({ $match: { isDone: false } });
 
   const [result] = await Task.aggregate([
     { $match: taskFilter },
-    // una riga per gruppo: i campi comuni una volta, le persone in assignees
+    // una riga per gruppo: campi comuni una volta, persone in assignees
     {
       $group: {
         _id: "$groupId",
@@ -71,14 +70,13 @@ const findAll = async ({
         },
       },
     },
-    // isDone: true se nessuna copia è ancora da fare
+    // isDone: true se nessuna copia è da fare
     {
       $addFields: {
         isDone: { $not: [{ $in: ["pending", "$assignees.status"] }] },
       },
     },
-    // $facet: la pagina, quante passano il filtro dello stato (per le pagine)
-    // e quante sono in corso (per il sottotitolo, senza il filtro dello stato)
+    // $facet: la pagina, quante passano lo stato (per le pagine) e quante in corso
     {
       $facet: {
         tasks: [
@@ -93,14 +91,14 @@ const findAll = async ({
     },
   ]);
 
-  // aggregate restituisce solo gli id: aggiungo il nome del negozio e delle persone
+  // aggregate dà solo gli id: aggiungo i nomi di negozio e persone
   await Store.populate(result.tasks, { path: "store", select: "name" });
   await User.populate(result.tasks, {
     path: "assignees.user",
     select: "name surname",
   });
 
-  // total e open sono vuoti quando nessuna task li rispetta
+  // total e open sono vuoti se nessuna task li rispetta
   return {
     tasks: result.tasks,
     totals: { openCount: result.open[0]?.count ?? 0 },
@@ -112,7 +110,7 @@ const findAll = async ({
   };
 };
 
-// task del dipendente: solo le sue copie, una per task
+// task del dipendente: solo le sue copie
 const findMine = async (filters, currentUser) => {
   const taskFilter = {
     ...buildTaskFilter(filters),
@@ -121,8 +119,7 @@ const findMine = async (filters, currentUser) => {
   return Task.find(taskFilter).populate("store", "name").sort({ dueDate: 1 });
 };
 
-// crea una copia della task per ogni persona, tutte con lo stesso groupId.
-// Globale: tutti i dipendenti del negozio; altrimenti controllo che ognuno lavori lì
+// nuova task: una copia per persona, stesso groupId (globale = tutti i dipendenti del negozio)
 const create = async (taskData, currentUser) => {
   const { isGlobal, assignedTo, store, ...commonFields } = taskData;
 
@@ -147,7 +144,7 @@ const create = async (taskData, currentUser) => {
   return Task.insertMany(taskToCreate);
 };
 
-// modifica tutte le copie del gruppo insieme (i campi non mandati restano uguali)
+// modifico tutte le copie insieme (i campi non mandati restano)
 const update = async (groupId, taskGroupData) => {
   const fieldsToUpdate = {};
   Object.entries(taskGroupData).forEach(([field, value]) => {
@@ -167,7 +164,7 @@ const update = async (groupId, taskGroupData) => {
   return getTaskGroups([new mongoose.Types.ObjectId(groupId)]);
 };
 
-// il dipendente segna fatta (o da fare) solo la sua copia; completedAt salva l'orario
+// il dipendente segna fatta o da fare la sua copia (completedAt = l'ora)
 const updateStatus = async (taskId, { status }, currentUser) => {
   const task = await Task.findById(taskId);
   if (!task) {
@@ -183,12 +180,14 @@ const updateStatus = async (taskId, { status }, currentUser) => {
   return task;
 };
 
+// elimino una copia
 const deleteTask = async (taskId) => {
   const deletedTask = await Task.findByIdAndDelete(taskId);
   if (!deletedTask) {
     throw new NotFoundException("Task not found");
   }
 };
+// elimino tutte le copie della task
 const deleteGroupTasks = async (groupId) => {
   const deletedGroupTasks = await Task.deleteMany({ groupId });
   if (deletedGroupTasks.deletedCount === 0) {

@@ -1,17 +1,18 @@
+// import
 import { getWeekDays, isSameDay } from "../../../utils/dates";
 import { formatHourRange } from "../../../utils/formatTime";
 import { formatDayName } from "../../../utils/formatDayName";
 import "./weekShifts.css";
 
-// i sette giorni nella Home, con il mio turno o "Riposo"; shifts: solo i miei turni
+// componente WeekShifts: i sette giorni della Home con il mio turno o "Riposo". props: shifts = i miei
 const WeekShifts = ({ shifts }) => {
   const now = new Date();
 
   return (
-    // <ol> perché i giorni hanno un ordine
+    // <ol>: i giorni hanno un ordine
     <ol className="week-shifts">
       {getWeekDays().map((day) => {
-        // il turno del giorno, se c'è
+        // il turno del giorno
         const shift = shifts.find((shift) => isSameDay(shift.startAt, day));
         const isToday = isSameDay(day, now);
         const dayName = formatDayName(day);

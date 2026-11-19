@@ -1,5 +1,4 @@
-/* card bianca: in alto prodotto e pezzi, in basso stato, data e bottoni
-   (niente altezza uguale: il motivo aperto allungherebbe anche la card accanto) */
+/* card bianca: prodotto e pezzi in alto, stato, data e bottoni in basso (niente altezza uguale) */
 .supply-card {
   display: flex;
   flex-direction: column;
@@ -22,7 +21,7 @@
   gap: 0.75rem;
 }
 
-/* nome e dettaglio prendono lo spazio che resta; min-width: 0 li lascia stringere */
+/* nome e dettaglio prendono lo spazio che resta */
 .supply-card-info {
   flex: 1 1 auto;
   min-width: 0;
@@ -39,8 +38,7 @@
   color: var(--text-muted);
 }
 
-/* negozio e nome: ognuno su una riga sola (nowrap); se è più largo della colonna,
-   come su un telefono da 320px, finisce con "…" invece di uscire sopra i pezzi */
+/* negozio e nome su una riga sola: se sono lunghi finiscono con "…" */
 .supply-card-part {
   display: inline-block;
   max-width: 100%;
@@ -64,7 +62,7 @@
   color: var(--text-muted);
 }
 
-/* stato e data a sinistra, bottoni a destra (a capo se proprio non ci stanno) */
+/* stato e data a sinistra, bottoni a destra */
 .supply-card-bottom {
   min-height: 44px;
   display: flex;

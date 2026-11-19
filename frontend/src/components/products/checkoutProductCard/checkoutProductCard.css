@@ -1,5 +1,4 @@
-/* card bassa: foto e nome in alto, prezzo e pezzi, il bottone in fondo.
-   height 100%: le card della stessa riga sono alte uguali */
+/* card bassa: foto e nome, prezzo e pezzi, bottone in fondo; height 100%: alte uguali */
 .checkout-product-card {
   height: 100%;
   display: flex;
@@ -36,7 +35,7 @@
   text-transform: capitalize;
 }
 
-/* margin-top: auto tiene prezzo e bottone in fondo anche se il nome va su due righe */
+/* prezzo e bottone in fondo anche con il nome su due righe */
 .checkout-product-card-row {
   margin-top: auto;
   display: flex;

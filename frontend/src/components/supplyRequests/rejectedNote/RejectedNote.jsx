@@ -1,10 +1,9 @@
-// stesso riquadro dei dettagli delle vendite annullate
+// import (stesso riquadro delle vendite annullate)
 import "../../sales/cancelledNote/cancelledNote.css";
 import { formatFullName } from "../../../utils/formatFullName";
 import { formatShortDate } from "../../../utils/formatShortDate";
 
-// i dettagli di una richiesta respinta, che si aprono con il pulsante "Respinta":
-// chi l'ha respinta, quando e il motivo. handledBy arriva con nome e cognome
+// componente RejectedNote: chi ha respinto la richiesta, quando e il motivo. props: request
 const RejectedNote = ({ request }) => {
   return (
     <div className="cancelled-note">

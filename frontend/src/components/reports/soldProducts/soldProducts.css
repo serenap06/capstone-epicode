@@ -1,10 +1,9 @@
-/* scroll-margin-top: cambiando pagina il riquadro torna in vista sotto la barra in alto
-   (che resta ferma), non nascosto dietro */
+/* cambiando pagina il riquadro torna in vista sotto la barra in alto */
 .sold-products {
   scroll-margin-top: 140px;
 }
 
-/* la tabella sta dentro un riquadro: niente spazio ai lati della prima e dell'ultima colonna */
+/* niente spazio ai lati della prima e dell'ultima colonna */
 .sold-products-table th:first-child,
 .sold-products-table td:first-child {
   padding-left: 0;
@@ -15,13 +14,13 @@
   padding-right: 0;
 }
 
-/* il nome del prodotto va a capo se è lungo (le altre celle restano su una riga) */
+/* il nome va a capo se è lungo */
 .sold-products-table .sold-products-name {
   white-space: normal;
   font-weight: 600;
 }
 
-/* la categoria arriva in minuscolo dal database: capitalize mette la maiuscola */
+/* la categoria arriva in minuscolo: capitalize */
 .sold-products-category {
   text-transform: capitalize;
   color: var(--text-muted);
@@ -31,8 +30,7 @@
   color: var(--text-muted);
 }
 
-/* su telefono tre colonne bastano: categoria e quota si nascondono
-   e l'ultima colonna è l'incasso */
+/* su telefono tre colonne: categoria e quota si nascondono */
 @media (max-width: 575.98px) {
   .sold-products-table .sold-products-extra {
     display: none;

@@ -1,6 +1,8 @@
+// import
 import "./progressBar.css";
 
-// barra di avanzamento da 0 a 100; aria-hidden perché il numero è già scritto accanto
+// componente ProgressBar: barra da 0 a 100 (aria-hidden: il numero è già scritto accanto).
+// La larghezza cambia sempre: per questo è l'unico stile inline
 const ProgressBar = ({ percent, className = "" }) => {
   return (
     <div className={`progress-track ${className}`} aria-hidden="true">

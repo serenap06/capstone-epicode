@@ -1,5 +1,7 @@
+// import
 const mongoose = require("mongoose");
 
+// schema della richiesta di fornitura
 const supplyRequestSchema = new mongoose.Schema(
   {
     product: {
@@ -26,25 +28,25 @@ const supplyRequestSchema = new mongoose.Schema(
         message: "amount must be an integer",
       },
     },
-    // open = in attesa, handled = accolta, rejected = respinta (con il motivo)
+    // open = in attesa, handled = accolta, rejected = respinta
     state: {
       type: String,
       enum: ["open", "handled", "rejected"],
       default: "open",
     },
-    // chi ha deciso (il responsabile) e quando: si riempiono quando la richiesta viene
-    // accolta o respinta
+    // chi ha deciso e quando: si riempiono quando la richiesta viene accolta o respinta
     handledBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
     handledAt: { type: Date },
-    // il motivo, solo per le respinte: il dipendente lo legge nell'elenco
+    // motivo, solo per le respinte (il dipendente lo legge)
     rejectReason: { type: String, trim: true },
   },
   { timestamps: true, strict: true },
 );
 
+// modello SupplyRequest, collection "supplyRequests"
 module.exports = mongoose.model(
   "SupplyRequest",
   supplyRequestSchema,

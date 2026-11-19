@@ -1,8 +1,9 @@
+// import
 import api from "./api";
 
-// richieste sulle task usate da più pagine
+// richieste delle task
 
-// inverte lo stato (fatta / da fare) e restituisce la task aggiornata
+// inverto lo stato (fatta / da fare)
 export const toggleTaskStatus = async (task) => {
   const status = task.status === "done" ? "pending" : "done";
   const data = await api(`/tasks/${task._id}/status`, {
@@ -12,20 +13,19 @@ export const toggleTaskStatus = async (task) => {
   return data.task;
 };
 
-// mette nella lista la task aggiornata al posto della vecchia.
-// { ...task, ...updatedTask } tiene i campi che il server non rimanda (es. il nome del negozio)
+// metto la task aggiornata al posto della vecchia ({ ...task, ...updatedTask } tiene i campi che mancano)
 export const replaceTask = (tasks, updatedTask) =>
   tasks.map((task) =>
     task._id === updatedTask._id ? { ...task, ...updatedTask } : task,
   );
 
-// crea la task (una copia per ogni persona)
+// nuova task (una copia per persona)
 export const createTask = async (taskData) => {
   const data = await api("/tasks", { method: "POST", body: taskData });
   return data.tasks;
 };
 
-// elimina la task per tutte le persone assegnate (tutto il gruppo)
+// elimino la task per tutti
 export const deleteTaskGroup = async (groupId) => {
   await api(`/tasks/group/${groupId}`, { method: "DELETE" });
 };

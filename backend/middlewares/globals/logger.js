@@ -1,4 +1,4 @@
-// scrive nel terminale ogni richiesta che arriva, con ora, metodo e indirizzo
+// stampo ogni richiesta nel terminale: ora, metodo, indirizzo e ip
 const logger = (req, res, next) => {
   const { url, ip, method } = req;
   const timeStamp = new Date().toISOString();

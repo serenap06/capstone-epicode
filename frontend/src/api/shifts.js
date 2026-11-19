@@ -1,14 +1,15 @@
+// import
 import api from "./api";
 
-// richieste sui turni (solo per il responsabile)
+// richieste dei turni (solo il responsabile)
 
-// crea il turno e restituisce quello salvato
+// nuovo turno
 export const createShift = async (shiftData) => {
   const data = await api("/shifts", { method: "POST", body: shiftData });
   return data.shift;
 };
 
-// modifica persona, giorno o orari del turno
+// modifico il turno
 export const updateShift = async (shiftId, shiftData) => {
   const data = await api(`/shifts/${shiftId}`, {
     method: "PATCH",
@@ -17,7 +18,7 @@ export const updateShift = async (shiftId, shiftData) => {
   return data.shift;
 };
 
-// elimina il turno (la pagina chiede prima conferma)
+// elimino il turno
 export const deleteShift = async (shiftId) => {
   await api(`/shifts/${shiftId}`, { method: "DELETE" });
 };

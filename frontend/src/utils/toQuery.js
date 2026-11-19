@@ -1,6 +1,6 @@
-// { from: "...", store: "" } → "from=..." per la richiesta, saltando le voci vuote
+// { from, store: "" } → "from=...", senza le voci vuote
 export const toQuery = (params) => {
-  // Object.entries dà le coppie [chiave, valore]: tengo solo quelle con un valore
+  // tengo solo le coppie [chiave, valore] con un valore
   const filledEntries = Object.entries(params).filter(
     ([, value]) => value !== "" && value !== undefined && value !== null,
   );

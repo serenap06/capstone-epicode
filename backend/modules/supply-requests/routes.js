@@ -1,4 +1,6 @@
+// import
 const express = require("express");
+// router di /api/supply-requests
 const supplyRequestsRouter = express.Router();
 const supplyRequestController = require("./controller");
 
@@ -11,8 +13,10 @@ const supplyRequestBodyRules = require("../../middlewares/supply-requests/supply
 const supplyRequestUpdateRules = require("../../middlewares/supply-requests/supplyRequestUpdateRules");
 const supplyRequestQueryRules = require("../../middlewares/supply-requests/supplyRequestQueryRules");
 
+// serve il login
 supplyRequestsRouter.use(authenticate);
 
+// elenco e una richiesta (il dipendente vede solo il suo negozio)
 supplyRequestsRouter.get(
   "/",
   supplyRequestQueryRules,
@@ -25,6 +29,7 @@ supplyRequestsRouter.get(
   validate,
   supplyRequestController.findOne,
 );
+// nuova richiesta (solo il dipendente)
 supplyRequestsRouter.post(
   "/",
   authorizeRoles("employee"),
@@ -33,6 +38,7 @@ supplyRequestsRouter.post(
   supplyRequestController.create,
 );
 
+// accogli o respingi (solo il responsabile)
 supplyRequestsRouter.patch(
   "/:supplyId",
   authorizeRoles("admin"),
@@ -42,7 +48,7 @@ supplyRequestsRouter.patch(
   supplyRequestController.update,
 );
 
-// eliminare (annullare) una richiesta: solo il dipendente, le sue in attesa
+// annulla (solo il dipendente, le sue richieste in attesa)
 supplyRequestsRouter.delete(
   "/:supplyId",
   authorizeRoles("employee"),

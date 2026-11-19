@@ -1,3 +1,4 @@
+// import
 const mongoose = require("mongoose");
 const Product = require("../products/schema");
 const Sale = require("./schema");
@@ -7,8 +8,7 @@ const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const round = require("../../utils/round");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 
-// le colonne che si possono ordinare: il nome che arriva nella query → il campo da ordinare
-// (storeName, sellerName e itemCount li aggiungo io nella pipeline)
+// colonne ordinabili: nome nella query → campo (storeName, sellerName e itemCount li creo nella pipeline)
 const SORT_FIELDS = {
   date: "createdAt",
   store: "storeName",
@@ -18,11 +18,10 @@ const SORT_FIELDS = {
   total: "total",
 };
 
-// aggregate non converte gli id come fa find: li trasformo io in ObjectId
+// in aggregate gli id li converto io in ObjectId
 const toObjectId = (id) => new mongoose.Types.ObjectId(String(id));
 
-// $lookup: prende dalla collection "from" il documento collegato, solo i campi di "fields"
-// (mai la password degli utenti). $unwind trasforma l'array del risultato in un oggetto
+// $lookup: il documento collegato con solo i campi scelti (mai la password); $unwind lo toglie dall'array
 const lookupOne = (from, localField, fields) => [
   {
     $lookup: {
@@ -33,10 +32,11 @@ const lookupOne = (from, localField, fields) => [
       pipeline: [{ $project: fields }],
     },
   },
-  // preserveNullAndEmptyArrays: tiene la vendita anche se manca (cancelledBy c'è solo sulle annullate)
+  // preserveNullAndEmptyArrays: tengo la vendita anche se il campo manca
   { $unwind: { path: `$${localField}`, preserveNullAndEmptyArrays: true } },
 ];
 
+// elenco delle vendite: una pagina, il numero di pagine e i totali
 const findAll = async (
   {
     store,
@@ -54,45 +54,40 @@ const findAll = async (
   const pageNumber = Number(page);
   const limitNumber = Number(limit);
 
-  // filtro di base: negozio, venditore e periodo. Vale per la lista e per i totali
+  // filtro di base: negozio, venditore e periodo (per lista e totali)
   const storeId = currentUser.role === "employee" ? currentUser.store : store;
   const baseFilter = {};
   if (storeId) baseFilter.store = toObjectId(storeId);
   if (soldBy) baseFilter.soldBy = toObjectId(soldBy);
   if (from) baseFilter.createdAt = { $gte: new Date(from) };
   if (to) {
-    // se "to" è solo un giorno ("2026-11-30") arrivo alla fine di quel giorno;
-    // se ha già l'ora (il frontend manda le 23:59 italiane) la uso così com'è
+    // "to" solo giorno ("2026-11-30"): arrivo alla fine di quel giorno
     const toDate = new Date(to);
     if (to.length === 10) toDate.setHours(23, 59, 59, 999);
     baseFilter.createdAt = { ...baseFilter.createdAt, $lte: toDate };
   }
 
-  // filtro della lista: in più lo stato ("valid" o "cancelled"; vuoto = tutte).
-  // $ne: true prende anche le vecchie vendite senza il campo
+  // filtro della lista: più lo stato (valide o annullate); $ne: true prende anche le vendite senza il campo
   const listFilter = { ...baseFilter };
   if (status === "valid") listFilter.cancelled = { $ne: true };
   if (status === "cancelled") listFilter.cancelled = true;
 
-  // ordine: 1 crescente, -1 decrescente. A parità, prima le più recenti
+  // ordine: 1 crescente, -1 decrescente; a parità le più recenti
   const direction = order === "asc" ? 1 : -1;
   const sortField = SORT_FIELDS[sortBy];
   const sortStage = { [sortField]: direction };
   if (sortField !== "createdAt") sortStage.createdAt = -1;
   sortStage._id = -1;
 
-  // quattro richieste insieme:
-  // 1. una pagina di vendite, già ordinata, con i nomi di negozio e persone
-  // 2. quante sono in tutto con questi filtri, per contare le pagine
-  // 3. solo le non annullate, per i totali (non cambiano con il filtro dello stato)
-  // 4. quante sono le annullate nel periodo, per il filtro "Annullate"
+  // quattro richieste insieme: la pagina, quante sono (per le pagine),
+  // le valide (per i totali) e quante annullate (per il filtro "Annullate")
   const [sales, salesCount, validSales, cancelledCount] = await Promise.all([
     Sale.aggregate([
       { $match: listFilter },
       ...lookupOne("stores", "store", { name: 1 }),
       ...lookupOne("users", "soldBy", { name: 1, surname: 1 }),
       ...lookupOne("users", "cancelledBy", { name: 1, surname: 1 }),
-      // i campi su cui ordinare: nome del negozio, cognome e nome del venditore, pezzi venduti
+      // campi per ordinare: negozio, venditore (cognome e nome) e pezzi
       {
         $addFields: {
           storeName: "$store.name",
@@ -104,7 +99,7 @@ const findAll = async (
       { $skip: (pageNumber - 1) * limitNumber },
       { $limit: limitNumber },
     ])
-      // collation italiana: ordina i nomi senza badare a maiuscole e accenti
+      // collation italiana: niente differenze tra maiuscole e accenti
       .collation({ locale: "it" }),
     Sale.countDocuments(listFilter),
     Sale.find({ ...baseFilter, cancelled: { $ne: true } })
@@ -113,7 +108,7 @@ const findAll = async (
     Sale.countDocuments({ ...baseFilter, cancelled: true }),
   ]);
 
-  // somma il totale delle vendite che passano il controllo (per contanti e carta)
+  // somma dei totali
   const sumTotal = (salesList) =>
     round(salesList.reduce((sum, sale) => sum + sale.total, 0));
 
@@ -142,8 +137,8 @@ const findAll = async (
   };
 };
 
-// registra una vendita: controlla prodotti e giacenze, calcola totali e IVA,
-// scala le giacenze e restituisce anche i prodotti finiti sotto soglia
+// nuova vendita: controllo prodotti e pezzi, calcolo totali e IVA, scalo le giacenze
+// e restituisco i prodotti finiti sotto soglia
 const create = async ({ items, paymentMethod }, currentUser) => {
   const productIds = items.map((item) => item.product);
   const products = await Product.find({
@@ -233,14 +228,14 @@ const create = async ({ items, paymentMethod }, currentUser) => {
   return { sale, lowStock };
 };
 
-// annulla una vendita: solo chi l'ha fatta, solo se è di oggi e non è già annullata.
-// La vendita resta nel database (il responsabile vede il motivo) e i pezzi tornano nel negozio
+// annullo una vendita: solo chi l'ha fatta, solo di oggi, una volta sola.
+// La vendita resta (con il motivo) e i pezzi tornano nel negozio
 const cancel = async (saleId, reason, currentUser) => {
   const sale = await Sale.findById(saleId);
   if (!sale) {
     throw new NotFoundException("Sale not found");
   }
-  // gli id di Mongo sono oggetti: con toString() confronto il testo
+  // confronto gli id come testo
   if (sale.soldBy.toString() !== currentUser._id.toString()) {
     throw new ForbiddenException("You can only cancel your own sales");
   }
@@ -248,14 +243,14 @@ const cancel = async (saleId, reason, currentUser) => {
     throw new HttpException("Sale already cancelled", 400);
   }
 
-  // l'inizio di oggi (mezzanotte): una vendita fatta prima non si annulla più
+  // mezzanotte di oggi: le vendite prima non si annullano
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
   if (sale.createdAt < startOfToday) {
     throw new HttpException("Only today's sales can be cancelled", 400);
   }
 
-  // il contrario di create: ogni riga rimette i suoi pezzi nella giacenza del negozio
+  // rimetto i pezzi nelle giacenze
   await Promise.all(
     sale.items.map((item) =>
       Stock.updateOne(
@@ -265,7 +260,7 @@ const cancel = async (saleId, reason, currentUser) => {
     ),
   );
 
-  // la segno come annullata: chi, quando e perché
+  // segno chi, quando e perché
   sale.cancelled = true;
   sale.cancelReason = reason;
   sale.cancelledBy = currentUser._id;

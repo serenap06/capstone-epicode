@@ -1,5 +1,7 @@
+// import
 const { body, param } = require("express-validator");
 
+// regole per annullare una vendita: id e motivo
 const saleCancelRules = [
   param("saleId").isMongoId().withMessage("Invalid sale id"),
   body("reason")

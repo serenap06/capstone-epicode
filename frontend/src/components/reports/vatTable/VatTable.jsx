@@ -1,13 +1,13 @@
+// import
 import "./vatTable.css";
 
 import { formatEuro } from "../../../utils/formatEuro";
 
-// IVA per aliquota: per ogni aliquota il netto, l'IVA da versare e il totale incassato,
-// più la riga dei totali. byVatRate: le righe del server ({ vatRate, netRevenue, vat, revenue })
+// componente VatTable: per ogni aliquota netto, IVA e totale, più la riga dei totali.
+// props: byVatRate = le righe del server
 const VatTable = ({ byVatRate }) => {
-  // la riga "Totale": sommo le colonne
-  const sumOf = (field) =>
-    byVatRate.reduce((sum, row) => sum + row[field], 0);
+  // riga "Totale": sommo la colonna
+  const sumOf = (field) => byVatRate.reduce((sum, row) => sum + row[field], 0);
 
   return (
     <div className="app-table-wrap">
@@ -15,7 +15,7 @@ const VatTable = ({ byVatRate }) => {
         <thead>
           <tr>
             <th scope="col">Aliquota</th>
-            {/* su telefono la colonna Netto si nasconde (vatTable.css): c'è già nella card in alto */}
+            {/* su telefono Netto si nasconde: c'è già nella card in alto */}
             <th scope="col" className="text-end vat-table-net">
               Netto
             </th>

@@ -1,5 +1,7 @@
+// import
 const HttpException = require("../index");
 
+// 403: l'utente non ha i permessi
 class ForbiddenException extends HttpException {
   constructor(
     message = "Forbidden",

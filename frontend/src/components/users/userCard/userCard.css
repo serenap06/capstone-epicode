@@ -1,5 +1,4 @@
-/* card bianca: in alto la persona, in basso ruolo, negozio e bottoni;
-   height 100%: nella griglia del tablet le card della stessa riga sono alte uguali */
+/* card bianca: la persona in alto, ruolo, negozio e bottoni in basso; height 100%: alte uguali */
 .user-card {
   height: 100%;
   display: flex;
@@ -36,7 +35,7 @@
   overflow-wrap: anywhere;
 }
 
-/* negozio e ore a sinistra, bottoni a destra; se non ci stanno i bottoni vanno sotto */
+/* negozio e ore a sinistra, bottoni a destra */
 .user-card-bottom {
   display: flex;
   flex-wrap: wrap;

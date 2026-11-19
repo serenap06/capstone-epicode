@@ -8,7 +8,7 @@
 }
 
 /* logo grande e la frase sotto, centrati */
-/* width: fit-content: il gradiente si allarga solo quanto la parola, non tutta la riga */
+/* il gradiente largo quanto la parola */
 .app-logo.login-logo {
   width: fit-content;
   margin: 0 auto;
@@ -128,7 +128,7 @@
   flex: 1 1 0;
 }
 
-/* l'occhio della password nel campo a pillola: un po' più a destra e viola come il lucchetto */
+/* l'occhio della password, viola come il lucchetto */
 .login-field .password-input-toggle {
   right: 0.75rem;
   color: var(--secondary);

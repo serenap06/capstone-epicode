@@ -1,3 +1,4 @@
+// import
 import "./revenueChart.css";
 import {
   Bar,
@@ -11,14 +12,14 @@ import {
 
 import { formatEuro } from "../../../utils/formatEuro";
 
-// numeri brevi per l'asse a sinistra: 1250 → "1,3k €", 800 → "800 €"
+// numeri brevi per l'asse: 1250 → "1,3k €"
 const formatShortEuro = (value) =>
   value >= 1000
     ? `${(value / 1000).toLocaleString("it-IT", { maximumFractionDigits: 1 })}k €`
     : `${value} €`;
 
-// il riquadro che compare passando sopra una barra: periodo per esteso, incasso e
-// numero di vendite. Recharts gli passa active (true sopra una barra) e payload (i dati della barra)
+// componente ChartTooltip: il riquadro sopra la barra (periodo, incasso, vendite).
+// Recharts gli passa active (sopra una barra) e payload (i dati della barra)
 const ChartTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   const bar = payload[0].payload;
@@ -33,18 +34,17 @@ const ChartTooltip = ({ active, payload }) => {
   );
 };
 
-// grafico a barre dell'andamento degli incassi (Recharts).
-// bars: [{ label, title, revenue, salesCount }] di buildReportSeries, una barra per periodo.
-// Colori e testo del grafico sono in revenueChart.css, sulle classi che Recharts dà a ogni pezzo
+// componente RevenueChart: grafico a barre degli incassi (Recharts).
+// props: bars = [{ label, title, revenue, salesCount }] di buildReportSeries; i colori sono nel CSS
 const RevenueChart = ({ bars }) => {
   return (
-    // ResponsiveContainer: il grafico prende tutta la larghezza del riquadro
+    // ResponsiveContainer: tutta la larghezza del riquadro
     <div className="revenue-chart">
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={bars} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          {/* solo le linee orizzontali */}
+          {/* solo le righe orizzontali */}
           <CartesianGrid vertical={false} />
-          {/* preserveStartEnd: con tante barre salta qualche etichetta ma tiene la prima e l'ultima */}
+          {/* con tante barre salta qualche etichetta ma tiene la prima e l'ultima */}
           <XAxis
             dataKey="label"
             tickLine={false}
@@ -58,7 +58,7 @@ const RevenueChart = ({ bars }) => {
             width={60}
           />
           <Tooltip content={<ChartTooltip />} />
-          {/* le barre (arancio, nel CSS); angoli tondi solo in alto */}
+          {/* barre arancio (nel CSS), angoli tondi solo in alto */}
           <Bar dataKey="revenue" radius={[6, 6, 0, 0]} maxBarSize={40} />
         </BarChart>
       </ResponsiveContainer>

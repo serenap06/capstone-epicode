@@ -1,3 +1,4 @@
+// import
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
@@ -32,19 +33,17 @@ import CancelSaleForm from "../../components/sales/cancelSaleForm/CancelSaleForm
 import SaleCard from "../../components/sales/saleCard/SaleCard";
 import SaleTable from "../../components/sales/saleTable/SaleTable";
 
-// periodo del responsabile: giorno, settimana o mese (i calcoli sono in utils/periods.js).
-// Le frecce spostano il periodo avanti e indietro, come nel Report
+// periodi del responsabile (i calcoli sono in utils/periods.js)
 const PERIOD_OPTIONS = [
   { value: "day", label: "Giorno" },
   { value: "week", label: "Settimana" },
   { value: "month", label: "Mese" },
 ];
 
-// l'ordine con cui parte la pagina: dalle più recenti
+// ordine di partenza: le più recenti
 const DEFAULT_SORT = { field: "date", direction: "desc" };
 
-// le voci del menu "Ordina" (vista a card): le stesse scelte delle intestazioni della tabella.
-// adminOnly: negozio e venditore servono solo al responsabile
+// voci del menu "Ordina" delle card (adminOnly: negozio e venditore solo per il responsabile)
 const SORT_OPTIONS = [
   { field: "date", direction: "desc", label: "Più recenti" },
   { field: "date", direction: "asc", label: "Meno recenti" },
@@ -70,54 +69,52 @@ const SORT_OPTIONS = [
   { field: "total", direction: "desc", label: "Totale decrescente" },
 ];
 
-// pagina Vendite per i due ruoli: il responsabile vede tutti i negozi e sceglie il periodo,
-// il dipendente vede solo le sue vendite di oggi e può annullarle con un motivo
+// componente Sales: le vendite per i due ruoli. Il responsabile vede tutti i negozi e sceglie
+// il periodo, il dipendente vede le sue vendite di oggi e può annullarle
 const Sales = () => {
+  // utente collegato e ruolo
   const { user } = useAuth();
   const isAdmin = user.role === "admin";
-  // su telefono il bottone "Filtri" sta accanto allo stato, da tablet in fondo alla riga
+  // su telefono "Filtri" accanto allo stato
   const isPhone = useIsPhone();
-  // fino a 1366px le card, sopra la tabella, come in tutte le pagine con una tabella.
-  // Con le card negozio e "Ordina" vanno nel bottone "Filtri"
+  // fino a 1366px le card (negozio e "Ordina" nel bottone "Filtri"), sopra la tabella
   const showCards = useShowCards();
 
-  // una pagina di vendite, i totali (solo vendite non annullate) e quante pagine ci sono
+  // una pagina di vendite, i totali (solo le valide) e le pagine
   const [sales, setSales] = useState([]);
   const [totals, setTotals] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
-  // filtri: si parte dal giorno e da tutti i negozi (periodo e negozio solo per il responsabile).
-  // status, per tutti e due: "" tutte, "valid" solo valide, "cancelled" solo annullate
+  // filtri: periodo e negozio (responsabile), stato ("" tutte, "valid", "cancelled")
   const [filters, setFilters] = useState({
     period: "day",
     store: "",
     status: "",
   });
-  // ordine scelto: si parte dalle più recenti. Lo applica il server, come i filtri
+  // ordine scelto (lo applica il server)
   const [sort, setSort] = useState(DEFAULT_SORT);
-  // i negozi, per il menu del filtro (solo il responsabile)
+  // negozi, per il filtro
   const [stores, setStores] = useState([]);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // aumentarlo ricarica le vendite (dopo un annullamento)
+  // aumentarlo ricarica le vendite
   const [refreshCount, setRefreshCount] = useState(0);
-  // la vendita da annullare (modale aperto), oppure null
+  // vendita da annullare (modale aperto), oppure null
   const [saleToCancel, setSaleToCancel] = useState(null);
-  // un giorno dentro il periodo mostrato: le frecce lo spostano (solo il responsabile)
+  // un giorno del periodo mostrato (le frecce lo spostano)
   const [referenceDate, setReferenceDate] = useState(new Date());
 
-  // inizio e fine del periodo: il dipendente vede sempre oggi.
-  // from e to come testo: un oggetto Date nuovo a ogni disegno farebbe ripartire l'effetto
+  // inizio e fine del periodo (il dipendente sempre oggi); from e to come testo per l'effetto
   const period = isAdmin ? filters.period : "day";
   const range = getPeriodRange(period, isAdmin ? referenceDate : new Date());
   const from = range.start.toISOString();
   const to = range.end.toISOString();
 
-  // le vendite: i filtri li applica il server (sono divise in pagine da PAGE_SIZE).
-  // Il dipendente vede sempre oggi e solo le sue (soldBy); toQuery salta i valori vuoti
+  // prendo le vendite al cambio di periodo, filtri, ordine, pagina e al refreshCount
+  // (il dipendente solo le sue di oggi)
   useEffect(() => {
-    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    // ignore: true se parte una richiesta più nuova (la risposta vecchia la scarto)
     let ignore = false;
     const query = toQuery({
       from,
@@ -146,29 +143,28 @@ const Sales = () => {
     };
   }, [from, to, filters, sort, page, refreshCount, isAdmin, user._id]);
 
-  // i negozi una volta sola, solo per il responsabile
+  // prendo i negozi una volta sola (solo il responsabile)
   useEffect(() => {
     if (!isAdmin) return;
     loadData("/stores", (data) => setStores(data.stores), setError);
   }, [isAdmin]);
 
-  // cambia un filtro: copio gli altri e sovrascrivo quello ([name] usa il valore come chiave).
-  // Con un filtro nuovo si riparte dalla prima pagina
+  // cambio un filtro e torno alla pagina 1
   const changeFilter = (name, value) => {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
     setPage(1);
   };
 
-  // nuovo ordine (dal menu "Ordina" delle card): anche qui si riparte dalla prima pagina
+  // nuovo ordine dal menu "Ordina": pagina 1
   const changeSort = (newSort) => {
     setSort(newSort);
     setPage(1);
   };
 
-  // clic su un'intestazione della tabella: stessa colonna inverte, colonna nuova crescente
+  // clic su un'intestazione: nuovo ordine
   const sortByColumn = (field) => changeSort(getNextSort(sort, field));
 
-  // vendita annullata: chiudo il modale e ricarico lista, totali e pagine
+  // vendita annullata: chiudo il modale e ricarico
   const handleCancelled = () => {
     setSaleToCancel(null);
     setRefreshCount((prevCount) => prevCount + 1);
@@ -176,19 +172,17 @@ const Sales = () => {
 
   // valori calcolati
 
-  // il nome del negozio scelto, per il sottotitolo del responsabile
-  // (?? "": finché i negozi non arrivano, niente "undefined")
+  // negozio scelto, per il sottotitolo
   const storeName = filters.store
     ? (stores.find((store) => store._id === filters.store)?.name ?? "")
     : "Tutti i negozi";
 
-  // responsabile: il periodo mostrato ("oggi", "dal 16 al 22 novembre", "novembre 2026")
-  // e il negozio; dipendente: le sue vendite di oggi nel suo negozio
+  // sottotitolo: periodo e negozio (responsabile), le mie vendite di oggi (dipendente)
   const subtitle = isAdmin
     ? `${formatPeriod(period, range)} · ${storeName}`
     : `Le tue vendite di oggi · ${user.store?.name}`;
 
-  // frecce: sposto il giorno di riferimento di un periodo e riparto dalla prima pagina
+  // frecce: sposto il periodo e torno alla pagina 1
   const moveReference = (step) => {
     setReferenceDate((prevDate) => movePeriodDate(period, prevDate, step));
     setPage(1);
@@ -198,23 +192,23 @@ const Sales = () => {
     setReferenceDate(new Date());
     setPage(1);
   };
-  // true se il periodo mostrato è quello in corso (spegne "Oggi", "Questa settimana"...)
+  // true se è il periodo in corso (spegne "Oggi", "Questa settimana"...)
   const isCurrentPeriod =
     getPeriodRange(period, new Date()).start.getTime() ===
     range.start.getTime();
-  // le scritte delle frecce per il periodo scelto
+  // scritte delle frecce per il periodo
   const [previousLabel, nextLabel, todayLabel] = PERIOD_NAV_LABELS[period];
-  // quanti filtri del menu sono attivi, per il pallino su "Filtri" (nel menu c'è solo il negozio)
+  // filtri attivi nel menu, per il pallino
   const menuFilterCount = filters.store ? 1 : 0;
 
-  // stato delle vendite: "Annullate" con il numero, così si vede subito se ce ne sono
+  // stati: "Annullate" con il numero
   const statusOptions = [
     { value: "", label: "Tutte" },
     { value: "valid", label: "Valide" },
     { value: "cancelled", label: `Annullate (${totals?.cancelledCount ?? 0})` },
   ];
 
-  // il messaggio quando la lista è vuota: dipende dal ruolo e dal filtro dello stato
+  // messaggio della lista vuota, per ruolo e stato
   let emptyMessage = isAdmin
     ? "Nessuna vendita in questo periodo"
     : "Nessuna vendita oggi";
@@ -224,53 +218,53 @@ const Sales = () => {
       : "Nessuna vendita annullata oggi";
   }
 
-  // props uguali per tabella e card: "Annulla vendita" solo per il dipendente
+  // props uguali per tabella e card ("Annulla vendita" solo il dipendente)
   const listProps = {
     showStore: isAdmin,
     showSeller: isAdmin,
     onCancel: isAdmin ? undefined : setSaleToCancel,
   };
 
-  // menu "Ordina", solo con le card (la tabella si ordina dalle intestazioni)
+  // menu "Ordina", solo con le card
   const sortSelect = showCards && (
     <SortSelect
       options={SORT_OPTIONS.filter((option) => isAdmin || !option.adminOnly)}
       sort={sort}
       defaultSort={DEFAULT_SORT}
-      onChange={changeSort}
+      onChange={changeSort} // nuovo ordine: pagina 1
     />
   );
 
-  // periodo a pulsanti: resta sempre in vista, anche su telefono
+  // periodo a pulsanti, sempre in vista
   const periodFilter = isAdmin && (
     <FilterChips
       label="Periodo"
       options={PERIOD_OPTIONS}
       value={filters.period}
-      onChange={(value) => changeFilter("period", value)}
+      onChange={(value) => changeFilter("period", value)} // nuovo periodo: pagina 1
     />
   );
-  // stato a pulsanti, per tutti e due i ruoli: sempre in vista, come nelle altre pagine
+  // stato a pulsanti, per tutti e due i ruoli
   const statusFilter = (
     <FilterChips
       label="Stato"
       options={statusOptions}
       value={filters.status}
-      onChange={(value) => changeFilter("status", value)}
+      onChange={(value) => changeFilter("status", value)} // nuovo stato: pagina 1
     />
   );
-  // negozio a menu a tendina: con le card va nel bottone "Filtri", con la tabella in riga
+  // negozio a tendina: nel menu con le card, in riga con la tabella
   const storeFilter = isAdmin && (
     <FilterSelect
       label="Negozio"
       allLabel="Tutti i negozi"
       options={toStoreOptions(stores)}
       value={filters.store}
-      onChange={(value) => changeFilter("store", value)}
+      onChange={(value) => changeFilter("store", value)} // nuovo negozio: pagina 1
     />
   );
 
-  // il bottone "Filtri" con negozio (solo il responsabile) e "Ordina" (con le card, fino a 1366px)
+  // bottone "Filtri" con negozio e "Ordina"
   const filtersMenu = (
     <FilterBar compact activeCount={menuFilterCount}>
       {storeFilter}
@@ -281,12 +275,12 @@ const Sales = () => {
   return (
     <Container fluid>
       <PageHeader title="Vendite" subtitle={subtitle} error={error}>
-        {/* le frecce solo per il responsabile: il dipendente vede sempre oggi */}
+        {/* frecce solo per il responsabile */}
         {isAdmin && (
           <WeekNav
-            onPrevious={() => moveReference(-1)}
-            onNext={() => moveReference(1)}
-            onToday={goToToday}
+            onPrevious={() => moveReference(-1)} // periodo prima
+            onNext={() => moveReference(1)} // periodo dopo
+            onToday={goToToday} // periodo in corso
             isCurrentWeek={isCurrentPeriod}
             previousLabel={previousLabel}
             nextLabel={nextLabel}
@@ -295,9 +289,7 @@ const Sales = () => {
         )}
       </PageHeader>
 
-      {/* periodo (responsabile) e stato sempre in vista; con le card negozio e "Ordina" nel
-          bottone "Filtri" (su telefono accanto allo stato, da tablet in fondo alla riga),
-          con la tabella il negozio in riga */}
+      {/* periodo e stato sempre in vista; con le card negozio e "Ordina" nel bottone "Filtri" */}
       <FilterBar>
         {periodFilter}
         {!showCards && storeFilter}
@@ -312,9 +304,7 @@ const Sales = () => {
         {showCards && !isPhone && filtersMenu}
       </FilterBar>
 
-      {/* le card dei totali, uguali per i due ruoli: due per riga, quattro da xl.
-          Contano solo le vendite non annullate (lo fa il server); finché non arrivano, 0.
-          Netto e IVA stanno nei Report. Colori scelti per la pagina: arancio, blu, magenta, viola */}
+      {/* totali per tutti e due i ruoli (solo vendite valide): arancio, blu, magenta, viola */}
       <Row xs={2} xl={4} className="g-3 mb-4">
         <Col>
           <KpiCard
@@ -332,7 +322,7 @@ const Sales = () => {
             detail="scontrini"
           />
         </Col>
-        {/* contanti e carta: per far tornare la cassa e i POS a fine giornata */}
+        {/* contanti e carta: per far tornare cassa e POS a fine giornata */}
         <Col>
           <KpiCard
             color="primary"
@@ -351,19 +341,20 @@ const Sales = () => {
         </Col>
       </Row>
 
-      {/* la rotellina mentre arrivano i dati; poi il messaggio se non ci sono vendite */}
+      {/* rotellina, poi il messaggio se non ci sono vendite */}
       {isLoading && <Loader />}
       {!isLoading && sales.length === 0 && !error && (
         <Message>{emptyMessage}</Message>
       )}
 
-      {/* fino a 1366px le card (una colonna su telefono, due su tablet); sopra la tabella */}
+      {/* fino a 1366px le card, sopra la tabella */}
       {sales.length > 0 &&
         (showCards ? (
-          // align-items-start: una card con i dettagli aperti non allunga quella accanto
+          // align-items-start: una card aperta non allunga quella accanto
           <Row xs={1} md={2} className="g-3 align-items-start">
             {sales.map((sale) => (
               <Col key={sale._id}>
+                {/* passo la vendita e le props comuni */}
                 <SaleCard sale={sale} {...listProps} />
               </Col>
             ))}
@@ -372,8 +363,8 @@ const Sales = () => {
           <SaleTable
             sales={sales}
             sort={sort}
-            onSort={sortByColumn}
-            {...listProps}
+            onSort={sortByColumn} // clic su un'intestazione
+            {...listProps} // negozio, venditore e "Annulla vendita"
           />
         ))}
 
@@ -385,18 +376,18 @@ const Sales = () => {
         onChange={setPage}
       />
 
-      {/* il modale per annullare: solo il dipendente; !! trasforma la vendita in true/false */}
+      {/* modale per annullare, solo il dipendente (!! = true/false) */}
       {!isAdmin && (
         <FormModal
           show={!!saleToCancel}
           title="Annulla vendita"
           onClose={() => setSaleToCancel(null)}
         >
-          {/* il modulo c'è solo con una vendita scelta: così si riapre sempre vuoto */}
+          {/* il modulo c'è solo con una vendita scelta: si riapre vuoto */}
           {saleToCancel && (
             <CancelSaleForm
-              sale={saleToCancel}
-              onSaved={handleCancelled}
+              sale={saleToCancel} // la vendita da annullare
+              onSaved={handleCancelled} // chiudo e ricarico
               onCancel={() => setSaleToCancel(null)}
             />
           )}

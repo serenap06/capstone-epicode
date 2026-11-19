@@ -1,6 +1,8 @@
+// import
 const { query } = require("express-validator");
 const paginationRules = require("../globals/paginationRules");
 
+// regole della query del Catalogo: ricerca, filtri, ordine e pagine
 const productQueryRules = [
   query("search")
     .optional()

@@ -1,3 +1,4 @@
+// import
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
@@ -21,37 +22,35 @@ import UserCard from "../../../components/users/userCard/UserCard";
 import UserForm from "../../../components/users/userForm/UserForm";
 import UserTable from "../../../components/users/userTable/UserTable";
 
-// pagina Utenti del responsabile: le persone in ordine di cognome, 10 alla volta
-// (ordine e pagine li fa il server)
+// componente Users: il personale in ordine di cognome, 10 per pagina (le fa il server)
 const Users = () => {
-  // currentUser: chi è collegato; setUser per aggiornare la barra in alto se modifico me stessa
+  // utente collegato (setUser aggiorna la barra in alto se modifico me stessa)
   const { user: currentUser, setUser } = useAuth();
-  // una pagina di persone, quante sono in tutto e quante pagine ci sono
+  // una pagina di persone, il totale e le pagine
   const [users, setUsers] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
-  // i negozi, per il menu del modulo
+  // negozi, per il modulo
   const [stores, setStores] = useState([]);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // aumentarlo ricarica la lista (dopo un salvataggio)
+  // aumentarlo ricarica la lista
   const [refreshCount, setRefreshCount] = useState(0);
-  // modale del modulo: userToEdit è la persona da modificare (null = nuova)
+  // modale del modulo: persona da modificare (null = nuova)
   const [showForm, setShowForm] = useState(false);
   const [userToEdit, setUserToEdit] = useState(null);
-  // conferma dell'eliminazione: la persona da eliminare, oppure null
+  // conferma dell'eliminazione
   const [userToDelete, setUserToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // su telefono il "+" accanto al titolo
   const isPhone = useIsPhone();
-  // fino a 1366px le card (una colonna su telefono, due da tablet in su), sopra la tabella,
-  // come in tutte le pagine con una tabella
+  // fino a 1366px le card, sopra la tabella
   const showCards = useShowCards();
 
-  // una pagina di persone: a ogni cambio di pagina e dopo ogni salvataggio
+  // prendo gli utenti al cambio pagina e al refreshCount
   useEffect(() => {
     loadData(
       `/users?${toQuery({ page, limit: PAGE_SIZE })}`,
@@ -59,7 +58,7 @@ const Users = () => {
         setUsers(data.users);
         setTotalCount(data.totals.count);
         setTotalPages(data.pagination.totalPages);
-        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima che c'è
+        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima
         if (
           page > data.pagination.totalPages &&
           data.pagination.totalPages > 0
@@ -71,25 +70,24 @@ const Users = () => {
     ).finally(() => setIsLoading(false));
   }, [page, refreshCount]);
 
-  // i negozi una volta sola
+  // prendo i negozi una volta sola
   useEffect(() => {
     loadData("/stores", (data) => setStores(data.stores), setError);
   }, []);
 
-  // "Nuovo utente": modale con il modulo vuoto
+  // "Nuovo utente": modulo vuoto
   const openNewForm = () => {
     setUserToEdit(null);
     setShowForm(true);
   };
 
-  // matita sulla card o nella tabella: modale con i dati di quella persona
+  // matita: modulo con la persona
   const openEditForm = (user) => {
     setUserToEdit(user);
     setShowForm(true);
   };
 
-  // dopo il salvataggio chiudo e ricarico (il server rimanda la persona senza il nome del negozio).
-  // Se ho modificato me stessa, ricarico anche il mio profilo per la barra in alto
+  // salvato: chiudo e ricarico; se ero io, ricarico anche il mio profilo
   const handleSaved = (savedUser) => {
     setShowForm(false);
     setRefreshCount((prevCount) => prevCount + 1);
@@ -98,8 +96,7 @@ const Users = () => {
     }
   };
 
-  // elimino sul server e ricarico (la pagina si riempie con la persona successiva);
-  // finally chiude sempre la conferma
+  // elimino e ricarico; finally chiude la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
     setError("");
@@ -117,7 +114,7 @@ const Users = () => {
   // "1 persona", "5 persone"
   const peopleLabel = totalCount === 1 ? "persona" : "persone";
 
-  // "Nuovo utente": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
+  // "Nuovo utente": su telefono solo il "+"
   const addButton = (
     <AddButton label="Nuovo utente" iconOnly={isPhone} onClick={openNewForm} />
   );
@@ -130,7 +127,7 @@ const Users = () => {
         subtitle={`${totalCount} ${peopleLabel} · in ordine di cognome`}
         error={error}
       >
-        {/* da tablet in su il bottone va a destra dell'intestazione */}
+        {/* da tablet il bottone a destra */}
         {!isPhone && addButton}
       </PageHeader>
 
@@ -139,16 +136,17 @@ const Users = () => {
         <Message>Nessun utente</Message>
       )}
 
+      {/* fino a 1366px le card, sopra la tabella */}
       {users.length > 0 &&
         (showCards ? (
           <Row xs={1} md={2} className="g-3">
             {users.map((user) => (
               <Col key={user._id}>
                 <UserCard
-                  user={user}
-                  isSelf={user._id === currentUser._id}
-                  onEdit={openEditForm}
-                  onDelete={setUserToDelete}
+                  user={user} // passo la persona alla card
+                  isSelf={user._id === currentUser._id} // io non mi elimino
+                  onEdit={openEditForm} // apro il modulo
+                  onDelete={setUserToDelete} // chiedo conferma
                 />
               </Col>
             ))}
@@ -156,7 +154,7 @@ const Users = () => {
         ) : (
           <UserTable
             users={users}
-            currentUserId={currentUser._id}
+            currentUserId={currentUser._id} // per spegnere il mio cestino
             onEdit={openEditForm}
             onDelete={setUserToDelete}
           />
@@ -170,28 +168,29 @@ const Users = () => {
         onChange={setPage}
       />
 
+      {/* modale della persona */}
       <FormModal
         show={showForm}
         title={userToEdit ? "Modifica utente" : "Nuovo utente"}
         onClose={() => setShowForm(false)}
       >
         <UserForm
-          user={userToEdit}
+          user={userToEdit} // persona da modificare (null = nuova)
           stores={stores}
-          isSelf={userToEdit?._id === currentUser._id}
-          onSaved={handleSaved}
+          isSelf={userToEdit?._id === currentUser._id} // il mio ruolo non si cambia
+          onSaved={handleSaved} // chiudo e ricarico
           onCancel={() => setShowForm(false)}
         />
       </FormModal>
 
-      {/* eliminando una persona spariscono anche i suoi turni e le sue task */}
+      {/* conferma: con la persona spariscono turni e task */}
       <ConfirmDialog
         show={!!userToDelete}
         title="Eliminare l'utente?"
         message={`${userToDelete ? formatFullName(userToDelete) : ""} non potrà più accedere e spariranno anche i suoi turni e le sue task. Non si può annullare.`}
         confirmLabel="Elimina"
-        isLoading={isDeleting}
-        onConfirm={confirmDelete}
+        isLoading={isDeleting} // spento mentre aspetto il server
+        onConfirm={confirmDelete} // elimino la persona
         onCancel={() => setUserToDelete(null)}
       />
     </Container>

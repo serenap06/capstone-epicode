@@ -1,13 +1,12 @@
 /* stili solo della Cassa */
 
-/* il carrello resta in vista mentre si scorrono i prodotti:
-   sticky lo tiene fermo sotto la barra in alto (alta 68px) quando la pagina scorre */
+/* il carrello resta fermo sotto la barra in alto (sticky) mentre scorro i prodotti */
 .checkout-cart {
   position: sticky;
   top: calc(68px + 1rem);
 }
 
-/* le righe del carrello, una sotto l'altra, separate da una linea sottile */
+/* righe del carrello separate da una linea */
 .checkout-cart-list {
   margin: 0;
   padding: 0;
@@ -42,7 +41,7 @@
   white-space: nowrap;
 }
 
-/* la riga del carrello su due piani: sopra nome e prezzo, sotto − / + e cestino */
+/* riga del carrello: nome e prezzo sopra, − / + e cestino sotto */
 .checkout-cart-line {
   flex-wrap: wrap;
 }
@@ -99,7 +98,7 @@
   flex: 1;
 }
 
-/* "Vendita registrata": riquadro magenta chiaro con la spunta in un cerchio magenta */
+/* "Vendita registrata": riquadro magenta chiaro con la spunta */
 .checkout-cart-success {
   display: flex;
   align-items: center;
@@ -124,7 +123,7 @@
   color: #fff;
 }
 
-/* "Da riordinare": titoletto grigio e sotto le righe come quelle del carrello */
+/* "Da riordinare": titoletto e righe come nel carrello */
 .checkout-cart-low-title {
   margin: 0;
   font-size: 0.8rem;

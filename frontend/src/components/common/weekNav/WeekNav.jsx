@@ -1,10 +1,9 @@
+// import
 import "./weekNav.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-// frecce per cambiare settimana e "Questa settimana": al clic decide la pagina.
-// isCurrentWeek disattiva "Questa settimana" quando ci sei già.
-// Le scritte si possono cambiare (il Report la usa anche per mese, trimestre, anno):
-// di base sono quelle della settimana, come nei Turni
+// componente WeekNav: frecce e bottone "in corso" (Turni, Vendite, Report).
+// props: onPrevious, onNext, onToday, isCurrentWeek = spegne il bottone, le tre scritte (di base la settimana)
 const WeekNav = ({
   onPrevious,
   onNext,

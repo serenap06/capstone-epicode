@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per creare un utente
 const userBodyRules = [
   body("name")
     .isString()

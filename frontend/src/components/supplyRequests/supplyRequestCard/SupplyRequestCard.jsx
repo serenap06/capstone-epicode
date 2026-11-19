@@ -1,3 +1,4 @@
+// import
 import "./supplyRequestCard.css";
 import { useState } from "react";
 import { Check, Trash2, X } from "lucide-react";
@@ -11,8 +12,8 @@ import CancelledToggle from "../../sales/cancelledToggle/CancelledToggle";
 import RejectedNote from "../rejectedNote/RejectedNote";
 import SupplyStateBadge from "../supplyStateBadge/SupplyStateBadge";
 
-// card di una richiesta, fino a 1366px: foto, prodotto e chi l'ha chiesta, i pezzi a destra;
-// sotto lo stato con la data e i bottoni (stesse props di SupplyRequestTable)
+// componente SupplyRequestCard: card di una richiesta fino a 1366px (stesse props di SupplyRequestTable).
+// props: request, showStore, onAccept e onReject (responsabile), canDelete(request) e onDelete (dipendente)
 const SupplyRequestCard = ({
   request,
   showStore,
@@ -21,13 +22,14 @@ const SupplyRequestCard = ({
   canDelete,
   onDelete,
 }) => {
-  // true quando il motivo della richiesta respinta è aperto
+  // motivo della respinta aperto o chiuso
   const [showDetails, setShowDetails] = useState(false);
 
   const isRejected = request.state === "rejected";
   const requestedBy = formatFullName(request.requestedBy);
-  // nome completo per gli screen reader: in pagina ci sono tanti bottoni uguali
+  // nome completo per lo screen reader: i bottoni sono tanti
   const requestName = `${request.product.name}, ${request.store.name}`;
+  // il responsabile decide solo su quelle in attesa
   const canDecide = onAccept && request.state === "open";
 
   return (
@@ -40,7 +42,7 @@ const SupplyRequestCard = ({
           <h2 className="supply-card-name">{request.product.name}</h2>
           {/* il responsabile vede anche il negozio */}
           <p className="supply-card-detail">
-            {/* negozio e nome vanno a capo interi, non a metà (vedi il CSS) */}
+            {/* negozio e nome vanno a capo interi */}
             {showStore && (
               <span className="supply-card-part">{request.store.name} ·</span>
             )}{" "}
@@ -55,13 +57,13 @@ const SupplyRequestCard = ({
 
       <div className="supply-card-bottom">
         <div className="supply-card-state">
-          {/* respinta: al posto del badge il pulsante che apre il motivo */}
+          {/* respinta: al posto del badge il pulsante del motivo */}
           {isRejected ? (
             <CancelledToggle
               label="Respinta"
               ariaLabel={`Motivo della richiesta respinta di ${requestName}`}
               isOpen={showDetails}
-              onToggle={() => setShowDetails((prevShow) => !prevShow)}
+              onToggle={() => setShowDetails((prevShow) => !prevShow)} // apro o chiudo il motivo
             />
           ) : (
             <SupplyStateBadge request={request} />
@@ -72,13 +74,13 @@ const SupplyRequestCard = ({
         </div>
         {(canDecide || canDelete(request)) && (
           <div className="supply-card-actions">
-            {/* il responsabile decide: su telefono solo le icone */}
+            {/* il responsabile decide (su telefono solo le icone) */}
             {canDecide && (
               <>
                 <Button
                   variant="secondary"
                   aria-label={`Accogli la richiesta di ${requestName}`}
-                  onClick={() => onAccept(request)}
+                  onClick={() => onAccept(request)} // accolgo la richiesta
                 >
                   <Check size={16} aria-hidden="true" />
                   <span className="app-button-label">Accogli</span>
@@ -86,7 +88,7 @@ const SupplyRequestCard = ({
                 <Button
                   variant="danger"
                   aria-label={`Respingi la richiesta di ${requestName}`}
-                  onClick={() => onReject(request)}
+                  onClick={() => onReject(request)} // apro il modale con il motivo
                 >
                   <X size={16} aria-hidden="true" />
                   <span className="app-button-label">Respingi</span>
@@ -98,7 +100,7 @@ const SupplyRequestCard = ({
                 variant="danger"
                 className="app-button-icon"
                 aria-label={`Annulla la richiesta di ${requestName}`}
-                onClick={() => onDelete(request)}
+                onClick={() => onDelete(request)} // chiedo conferma prima di annullare
               >
                 <Trash2 size={16} aria-hidden="true" />
               </Button>
@@ -107,7 +109,7 @@ const SupplyRequestCard = ({
         )}
       </div>
 
-      {/* il motivo, solo dopo il clic su "Respinta" */}
+      {/* il motivo, dopo il clic su "Respinta" */}
       {isRejected && showDetails && <RejectedNote request={request} />}
     </article>
   );

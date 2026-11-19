@@ -1,4 +1,4 @@
-// tutte le pagine dell'app con il loro indirizzo
+// import
 import { lazy, Suspense } from "react";
 import { Navigate, Routes, Route } from "react-router-dom";
 import Login from "./pages/login/Login.jsx";
@@ -20,25 +20,25 @@ import Sales from "./pages/sales/Sales.jsx";
 import SupplyRequests from "./pages/supplyRequests/SupplyRequests.jsx";
 import Loader from "./components/common/loader/Loader.jsx";
 
-// il Report si scarica solo quando si apre (lazy): con lui arriva Recharts, la libreria
-// dei grafici, che è pesante e serve solo lì. Le altre pagine sono nel file principale
+// il Report si scarica solo quando si apre (lazy): porta con sé Recharts, che è pesante
 const Reports = lazy(() => import("./pages/admin/reports/Reports.jsx"));
 
+// componente App: tutte le pagine con il loro indirizzo
 const App = () => {
   return (
     <Routes>
-      {/* pagina di accesso, l'unica aperta a tutti */}
+      {/* login, l'unica pagina aperta a tutti */}
       <Route path="/" element={<Login />} />
 
       {/* responsabile: ProtectedRoute controlla il ruolo, AppLayout aggiunge barra e menu */}
       <Route element={<ProtectedRoute role="admin" />}>
         <Route path="/admin" element={<AppLayout />}>
-          {/* index = la pagina che si apre su /admin */}
+          {/* index = la pagina di /admin */}
           <Route index element={<Dashboard />} />
           <Route path="shifts" element={<Shifts />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="sales" element={<Sales />} />
-          {/* Suspense: mentre il file del Report arriva, gira la rotellina */}
+          {/* Suspense: la rotellina mentre arriva il file del Report */}
           <Route
             path="reports"
             element={
@@ -56,7 +56,7 @@ const App = () => {
         </Route>
       </Route>
 
-      {/* pagine del dipendente, stessa logica con ruolo "employee" */}
+      {/* dipendente: stessa cosa con il ruolo "employee" */}
       <Route element={<ProtectedRoute role="employee" />}>
         <Route path="/employee" element={<AppLayout />}>
           <Route index element={<Home />} />
@@ -71,7 +71,7 @@ const App = () => {
         </Route>
       </Route>
 
-      {/* qualsiasi indirizzo che non esiste riporta al login */}
+      {/* indirizzo che non esiste: torno al login */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

@@ -1,16 +1,16 @@
+// import
 import "./passwordInput.css";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-// campo password con il bottone a occhio per vederla in chiaro.
-// ...props passa all'input tutto il resto: id, className, placeholder e quello di
-// register di react-hook-form (con React 19 anche il ref arriva così)
+// componente PasswordInput: campo password con l'occhio per vederla.
+// props: passano tutte all'input (id, className, register di react-hook-form...)
 const PasswordInput = (props) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
     <div className="password-input">
-      {/* type cambia tra "password" (puntini) e "text" (in chiaro) */}
+      {/* "password" = puntini, "text" = in chiaro */}
       <input {...props} type={isVisible ? "text" : "password"} />
       <button
         type="button"

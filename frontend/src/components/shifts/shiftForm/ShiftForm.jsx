@@ -1,3 +1,4 @@
+// import
 import "./shiftForm.css";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -19,7 +20,7 @@ import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 import HoursStatus from "../hoursStatus/HoursStatus";
 
-// i turni più comuni: un clic su "Mattina" o "Pomeriggio" riempie inizio e fine
+// turni veloci: "Mattina" o "Pomeriggio" riempiono inizio e fine
 const SHIFT_PRESETS = [
   {
     value: "morning",
@@ -41,15 +42,15 @@ const toMinutes = (time) => {
   return hours * 60 + minutes;
 };
 
-// ore tra inizio e fine dello stesso giorno; 0 se manca un orario o la fine non è dopo l'inizio
+// ore tra inizio e fine (0 se manca un orario o la fine è prima)
 const getDuration = (startTime, endTime) => {
   if (!startTime || !endTime) return 0;
   return Math.max(0, (toMinutes(endTime) - toMinutes(startTime)) / 60);
 };
 
-// modulo del turno, nel modale. shift: il turno da modificare, oppure null per uno nuovo.
-// defaults: persona e giorno già scelti (clic su "Riposo"); employees: le righe delle ore,
-// con il negozio di ognuno; weekDays: i giorni della settimana mostrata
+// componente ShiftForm: modulo del turno, nel modale.
+// props: shift = da modificare (null = nuovo), defaults = persona e giorno già scelti,
+// employees = le righe delle ore, weekDays, onSaved, onCancel, onDelete
 const ShiftForm = ({
   shift,
   defaults,
@@ -59,15 +60,17 @@ const ShiftForm = ({
   onCancel,
   onDelete,
 }) => {
+  // errore del server
   const [serverError, setServerError] = useState("");
   const isEditing = Boolean(shift);
 
-  // giorno di partenza per un turno nuovo: quello cliccato, oggi se è in questa settimana, o lunedì
+  // giorno di partenza: quello cliccato, oggi se è in questa settimana, o lunedì
   const startDay =
     defaults?.day ??
     weekDays.find((day) => isSameDay(day, new Date())) ??
     weekDays[0];
 
+  // campi del modulo: in modifica quelli del turno
   const {
     register,
     handleSubmit,
@@ -90,14 +93,13 @@ const ShiftForm = ({
         },
   });
 
-  // useWatch rilegge i campi a ogni modifica: il riepilogo si aggiorna mentre scegli
+  // rileggo i campi a ogni modifica: il riepilogo si aggiorna
   const [selectedUser, startTime, endTime] = useWatch({
     control,
     name: ["user", "startTime", "endTime"],
   });
 
-  // riepilogo: durata del turno e totale della settimana con questo turno.
-  // Se modifico, la durata vecchia è già nelle ore della persona: la tolgo
+  // riepilogo: durata e totale della settimana (in modifica tolgo la durata vecchia)
   const duration = getDuration(startTime, endTime);
   const employee = employees.find((row) => row.employeeId === selectedUser);
   const oldDuration =
@@ -106,25 +108,23 @@ const ShiftForm = ({
     ? employee.scheduledHours - oldDuration + duration
     : 0;
 
-  // il pulsante acceso è quello con gli stessi orari dei campi ("" = nessuno)
+  // pulsante acceso: quello con gli stessi orari
   const activePreset =
     SHIFT_PRESETS.find(
       (preset) => preset.startTime === startTime && preset.endTime === endTime,
     )?.value ?? "";
 
-  // clic su un pulsante: scrivo inizio e fine; shouldValidate ricontrolla i campi
-  // (così sparisce un errore rimasto da prima)
+  // clic su un turno veloce: scrivo inizio e fine e ricontrollo i campi
   const choosePreset = (value) => {
     const preset = SHIFT_PRESETS.find((preset) => preset.value === value);
     setValue("startTime", preset.startTime, { shouldValidate: true });
     setValue("endTime", preset.endTime, { shouldValidate: true });
   };
 
-  // le persone divise per negozio, per il menu a tendina
+  // persone per negozio, per il menu
   const groups = groupByStore(employees);
 
-  // "2026-11-16" e "09:00" diventano una data con l'ora di qui; toISOString per il server.
-  // Il negozio è quello della persona scelta (funziona anche con "Tutti" i negozi)
+  // salvo: giorno e ora diventano una data ISO; il negozio è quello della persona
   const onSubmit = async (formData) => {
     setServerError("");
     const chosenEmployee = employees.find(
@@ -164,7 +164,7 @@ const ShiftForm = ({
           {...register("user", { required: "Scegli il dipendente" })}
         >
           <option value="">Scegli un dipendente</option>
-          {/* optgroup: le persone sotto il nome del loro negozio */}
+          {/* le persone sotto il loro negozio */}
           {groups.map((group) => (
             <optgroup key={group.store._id} label={group.store.name}>
               {group.rows.map((row) => (
@@ -177,7 +177,7 @@ const ShiftForm = ({
         </select>
       </FormField>
 
-      {/* min e max: il giorno si sceglie solo nella settimana mostrata */}
+      {/* il giorno solo nella settimana mostrata */}
       <FormField label="Giorno" htmlFor="shift-day" error={errors.day?.message}>
         <input
           id="shift-day"
@@ -190,18 +190,17 @@ const ShiftForm = ({
         />
       </FormField>
 
-      {/* orari veloci: riempiono i campi sotto, che restano modificabili.
-          Il div d-flex tiene i pulsanti larghi quanto il testo */}
+      {/* turni veloci (i campi sotto restano modificabili) */}
       <div className="d-flex">
         <FilterChips
           label="Orario veloce"
           options={SHIFT_PRESETS}
           value={activePreset}
-          onChange={choosePreset}
+          onChange={choosePreset} // riempio inizio e fine
         />
       </div>
 
-      {/* validate: la fine va bene solo se viene dopo l'inizio ("17:00" > "09:00") */}
+      {/* la fine deve venire dopo l'inizio */}
       <div className="form-row">
         <FormField
           label="Inizio"
@@ -236,7 +235,7 @@ const ShiftForm = ({
         </FormField>
       </div>
 
-      {/* riepilogo viola, solo quando c'è una persona scelta */}
+      {/* riepilogo, quando c'è una persona */}
       {employee && (
         <div className="shift-form-summary" aria-live="polite">
           <div>
@@ -250,20 +249,20 @@ const ShiftForm = ({
               Totale di {employee.employee} questa settimana
             </p>
             <HoursStatus
-              scheduled={weekTotal}
+              scheduled={weekTotal} // le ore della settimana con questo turno
               contract={employee.weeklyHours ?? 0}
             />
           </div>
         </div>
       )}
 
-      {/* in modifica c'è anche Elimina, a sinistra (me-auto lo spinge lontano dagli altri) */}
+      {/* in modifica anche Elimina, a sinistra */}
       <div className="form-actions">
         {isEditing && (
           <Button
             variant="danger"
             className="me-auto"
-            onClick={() => onDelete(shift)}
+            onClick={() => onDelete(shift)} // chiedo conferma prima di eliminare
           >
             <Trash2 size={16} aria-hidden="true" />
             Elimina

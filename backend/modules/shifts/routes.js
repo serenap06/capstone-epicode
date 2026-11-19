@@ -1,4 +1,6 @@
+// import
 const express = require("express");
+// router di /api/shifts
 const shiftsRouter = express.Router();
 const shiftController = require("./controller");
 
@@ -12,10 +14,13 @@ const shiftBodyRules = require("../../middlewares/shifts/shiftBodyRules");
 const shiftUpdateRules = require("../../middlewares/shifts/shiftUpdateRules");
 const shiftHoursQueryRules = require("../../middlewares/shifts/shiftHoursQueryRules");
 
+// serve il login
 shiftsRouter.use(authenticate);
 
+// elenco
 shiftsRouter.get("/", shiftQueryRules, validate, shiftController.findAll);
 
+// ore della settimana (prima di /:shiftId, se no "hours" sembrerebbe un id)
 shiftsRouter.get(
   "/hours",
   authorizeRoles("admin", "employee"),
@@ -24,6 +29,7 @@ shiftsRouter.get(
   shiftController.findWeeklyHours,
 );
 
+// un turno
 shiftsRouter.get(
   "/:shiftId",
   param("shiftId").isMongoId().withMessage("Invalid shift id"),
@@ -31,6 +37,7 @@ shiftsRouter.get(
   shiftController.findOne,
 );
 
+// nuovo, modifica ed elimina: solo il responsabile
 shiftsRouter.post(
   "/",
   authorizeRoles("admin"),

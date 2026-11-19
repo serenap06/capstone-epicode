@@ -1,7 +1,8 @@
+// import
 import "./paymentMethod.css";
 import { Banknote, CreditCard } from "lucide-react";
 
-// come è stata pagata una vendita: icona e testo ("Contanti" o "Carta")
+// componente PaymentMethod: icona e testo ("Contanti" o "Carta"). props: method
 const PaymentMethod = ({ method }) => {
   const isCard = method === "card";
   const Icon = isCard ? CreditCard : Banknote;

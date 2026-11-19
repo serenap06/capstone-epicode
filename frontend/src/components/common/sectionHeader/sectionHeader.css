@@ -1,4 +1,4 @@
-/* titolo a sinistra, link o conteggio a destra, sulla stessa linea di base */
+/* titolo a sinistra, link o conteggio a destra */
 .section-header {
   display: flex;
   align-items: baseline;

@@ -1,3 +1,4 @@
+// import
 import "./shiftWeekGrid.css";
 import { Fragment } from "react";
 import { isSameDay } from "../../../utils/dates";
@@ -7,18 +8,16 @@ import { groupByStore } from "../../../utils/groupByStore";
 import { getDayShifts } from "../../../utils/getDayShifts";
 import HoursStatus from "../hoursStatus/HoursStatus";
 
-// settimana del negozio per il responsabile: una riga per dipendente, una colonna per giorno
-// e in fondo le ore. hours: le righe di /shifts/hours, una per dipendente.
-// onShiftClick (modifica) e onEmptyClick (nuovo turno) arrivano dalla pagina:
-// ?.() le chiama solo se la pagina le ha passate
+// componente ShiftWeekGrid: la settimana del responsabile, una riga per persona e una colonna per giorno.
+// props: days, shifts, hours = le righe delle ore, onShiftClick = modifica, onEmptyClick = nuovo turno
 const ShiftWeekGrid = ({ days, shifts, hours, onShiftClick, onEmptyClick }) => {
   const today = new Date();
-  // le persone divise per negozio: i nomi dei negozi si vedono solo se sono più di uno
+  // persone per negozio; i nomi dei negozi solo se sono più di uno
   const groups = groupByStore(hours);
   const showStoreNames = groups.length > 1;
 
   return (
-    // su schermi stretti la tabella scorre in orizzontale
+    // su schermi stretti scorre in orizzontale
     <div className="shift-grid-scroll">
       <table className="shift-grid">
         <thead>
@@ -38,9 +37,9 @@ const ShiftWeekGrid = ({ days, shifts, hours, onShiftClick, onEmptyClick }) => {
         </thead>
         <tbody>
           {groups.map((group) => (
-            // Fragment con key: raggruppa le righe di un negozio senza aggiungere elementi
+            // Fragment con key: le righe di un negozio senza elementi in più
             <Fragment key={group.store._id}>
-              {/* con più negozi, una riga con il nome sopra le sue persone */}
+              {/* con più negozi, il nome sopra le sue persone */}
               {showStoreNames && (
                 <tr className="shift-grid-group">
                   <th scope="rowgroup" colSpan={days.length + 2}>
@@ -57,18 +56,18 @@ const ShiftWeekGrid = ({ days, shifts, hours, onShiftClick, onEmptyClick }) => {
                     </span>
                   </th>
                   {days.map((day) => {
-                    // i turni di questa persona in questo giorno (di solito uno)
+                    // i turni della persona nel giorno
                     const dayShifts = getDayShifts(shifts, row.employeeId, day);
                     return (
                       <td key={day.toDateString()}>
-                        {/* il testo nascosto dice allo screen reader cosa fa il bottone */}
+                        {/* testo nascosto per lo screen reader */}
                         {dayShifts.length > 0 ? (
                           dayShifts.map((shift) => (
                             <button
                               key={shift._id}
                               type="button"
                               className="shift-grid-shift"
-                              onClick={() => onShiftClick?.(shift)}
+                              onClick={() => onShiftClick?.(shift)} // modifico il turno
                             >
                               {formatHourRange(shift.startAt, shift.endAt)}
                               <span className="visually-hidden">
@@ -80,7 +79,7 @@ const ShiftWeekGrid = ({ days, shifts, hours, onShiftClick, onEmptyClick }) => {
                           <button
                             type="button"
                             className="shift-grid-rest"
-                            onClick={() => onEmptyClick?.(row.employeeId, day)}
+                            onClick={() => onEmptyClick?.(row.employeeId, day)} // nuovo turno per questa persona e questo giorno
                           >
                             Riposo
                             <span className="visually-hidden">

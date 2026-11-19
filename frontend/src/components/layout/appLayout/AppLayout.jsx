@@ -1,11 +1,11 @@
+// import
 import Sidebar from "../sidebar/Sidebar";
 import Topbar from "../topbar/Topbar";
 import { Outlet } from "react-router-dom";
 import "./appLayout.css";
 import Footer from "../footer/Footer";
 
-// struttura delle pagine dopo il login: barra in alto, menu e pagina.
-// Outlet: dove React Router mette la pagina dell'indirizzo attuale
+// componente AppLayout: barra in alto, menu e pagina (Outlet = la pagina dell'indirizzo)
 const AppLayout = () => {
   return (
     <div className="app-layout">

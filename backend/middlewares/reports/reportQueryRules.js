@@ -1,5 +1,7 @@
+// import
 const { query } = require("express-validator");
 
+// regole della query dei Report: periodo, raggruppamento e negozio
 const reportQueryRules = [
   query("from").isISO8601().withMessage("from must be a valid date"),
   query("to").isISO8601().withMessage("to must be a valid date"),

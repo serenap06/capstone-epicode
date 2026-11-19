@@ -1,3 +1,4 @@
+// import
 import { formatTime } from "../../../utils/formatTime";
 import { formatFullName } from "../../../utils/formatFullName";
 import { getPercent } from "../../../utils/getPercent";
@@ -12,7 +13,8 @@ import TaskStatusBadge from "../taskStatusBadge/TaskStatusBadge";
 import { Trash2 } from "lucide-react";
 import "./taskCard.css";
 
-// card di una task del responsabile; assignees: le persone assegnate, ognuna con il suo stato
+// componente TaskCard: una task del responsabile con le persone e il loro stato.
+// props: task, onDelete (la Dashboard non lo passa)
 const TaskCard = ({ task, onDelete }) => {
   // quante persone l'hanno finita
   const doneCount = task.assignees.filter(
@@ -26,7 +28,7 @@ const TaskCard = ({ task, onDelete }) => {
     <div className="app-card task-card">
       <div className="task-card-header">
         <h3 className="task-card-title">{task.title}</h3>
-        {/* viola se è globale, magenta se è per alcune persone */}
+        {/* viola se globale, magenta se per alcune persone */}
         <Badge color={task.isGlobal ? "secondary" : "primary"}>
           {task.isGlobal ? `Globale · ${task.store.name}` : task.store.name}
         </Badge>
@@ -45,7 +47,7 @@ const TaskCard = ({ task, onDelete }) => {
 
       <ProgressBar percent={percent} />
 
-      {/* un badge per ogni persona, con nome e stato */}
+      {/* un badge per persona, con nome e stato */}
       <div className="task-card-people">
         {task.assignees.map((assignee) => (
           <TaskStatusBadge
@@ -56,15 +58,15 @@ const TaskCard = ({ task, onDelete }) => {
         ))}
       </div>
 
-      {/* solo se la pagina passa onDelete (la Dashboard no); aria-label con il titolo */}
+      {/* cestino solo se la pagina passa onDelete */}
       {onDelete && (
         <div className="task-card-actions">
-          {/* solo il cestino, come nelle altre card: l'aria-label dice cosa fa */}
+          {/* l'aria-label dice cosa fa */}
           <Button
             variant="danger"
             className="app-button-icon"
             aria-label={`Elimina per tutti: ${task.title}`}
-            onClick={() => onDelete(task)}
+            onClick={() => onDelete(task)} // chiedo conferma prima di eliminare
           >
             <Trash2 size={16} aria-hidden="true" />
           </Button>

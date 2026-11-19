@@ -1,9 +1,12 @@
+// import
 const { body } = require("express-validator");
 
+// regole per registrare una vendita
 const saleBodyRules = [
   body("items")
     .isArray({ min: 1 })
     .withMessage("items must be a non-empty array"),
+  // lo stesso prodotto una volta sola
   body("items")
     .custom(
       (items) =>

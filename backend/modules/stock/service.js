@@ -1,3 +1,4 @@
+// import
 const mongoose = require("mongoose");
 const Stock = require("./schema");
 const Product = require("../products/schema");
@@ -7,8 +8,7 @@ const assignDefinedFields = require("../../utils/assignDefinedFields");
 const buildPagination = require("../../utils/buildPagination");
 const escapeRegex = require("../../utils/escapeRegex");
 
-// le colonne che si possono ordinare: il nome che arriva nella query → il campo da ordinare
-// (productName, storeName e isLow li aggiungo io nella pipeline)
+// colonne ordinabili: nome nella query → campo (productName, storeName e isLow li creo nella pipeline)
 const SORT_FIELDS = {
   product: "productName",
   store: "storeName",
@@ -17,9 +17,8 @@ const SORT_FIELDS = {
   status: "isLow",
 };
 
-// il dipendente vede solo il suo negozio; lowStock: solo quantità <= soglia.
-// Senza page restituisce tutte le giacenze (le usano Cassa, Dashboard e i moduli);
-// con page una pagina sola, cercata e ordinata dal server, più i totali per il sottotitolo
+// giacenze: il dipendente vede solo il suo negozio; lowStock = solo sotto soglia.
+// Senza page tutte (Cassa, Dashboard, moduli); con page una pagina e i totali
 const findAll = async (filters, currentUser) => {
   const {
     store,
@@ -32,7 +31,7 @@ const findAll = async (filters, currentUser) => {
     limit = 10,
   } = filters;
 
-  // il negozio: per il dipendente sempre il suo. ObjectId perché aggregate non converte gli id
+  // negozio: per il dipendente sempre il suo (ObjectId per aggregate)
   const scope = {};
   if (currentUser.role === "employee") {
     scope.store = new mongoose.Types.ObjectId(String(currentUser.store));
@@ -43,7 +42,7 @@ const findAll = async (filters, currentUser) => {
   if (product) query.product = new mongoose.Types.ObjectId(String(product));
   if (lowStock) query.$expr = { $lte: ["$amount", "$minThreshold"] };
 
-  // senza page: tutte, come prima
+  // senza page: tutte
   if (!page) {
     const stocks = await Stock.find(query)
       .populate("product", "name price category image")
@@ -53,17 +52,15 @@ const findAll = async (filters, currentUser) => {
 
   const pageNumber = Number(page);
   const limitNumber = Number(limit);
-  // ordine: 1 crescente, -1 decrescente; a parità, prodotto e negozio dalla A alla Z
+  // ordine: 1 crescente, -1 decrescente; a parità prodotto e negozio A→Z
   const direction = order === "desc" ? -1 : 1;
   const sortStage = { [SORT_FIELDS[sortBy]]: direction };
   if (sortBy !== "product") sortStage.productName = 1;
   if (sortBy !== "store") sortStage.storeName = 1;
   sortStage._id = 1;
 
-  // tre richieste insieme:
-  // 1. la pagina: unisco prodotto e negozio ($lookup), cerco nel nome del prodotto,
-  //    ordino e taglio; $facet conta anche quante righe passano i filtri, per le pagine
-  // 2. e 3. quante righe ha il negozio (o tutti) e quante sono sotto soglia, per il sottotitolo
+  // tre richieste insieme: la pagina (con prodotto e negozio, ricerca, ordine e conteggio),
+  // quante righe in tutto e quante sotto soglia
   const [[result], count, lowCount] = await Promise.all([
     Stock.aggregate([
       { $match: query },
@@ -89,7 +86,7 @@ const findAll = async (filters, currentUser) => {
         },
       },
       { $unwind: "$store" },
-      // ricerca nel nome del prodotto; "i": maiuscole e minuscole uguali
+      // ricerca nel nome del prodotto
       ...(search
         ? [
             {
@@ -99,7 +96,7 @@ const findAll = async (filters, currentUser) => {
             },
           ]
         : []),
-      // i campi su cui ordinare; isLow: 1 sotto soglia, 0 ok (crescente = prima gli ok)
+      // campi per ordinare; isLow: 1 sotto soglia, 0 ok
       {
         $addFields: {
           productName: "$product.name",
@@ -118,7 +115,7 @@ const findAll = async (filters, currentUser) => {
         },
       },
     ])
-      // collation italiana: ordina i nomi senza badare a maiuscole e accenti
+      // collation italiana: niente differenze tra maiuscole e accenti
       .collation({ locale: "it" }),
     Stock.countDocuments(scope),
     Stock.countDocuments({
@@ -127,7 +124,7 @@ const findAll = async (filters, currentUser) => {
     }),
   ]);
 
-  // total è vuoto quando nessuna riga passa i filtri
+  // total è vuoto se nessuna riga passa i filtri
   const filteredCount = result.total[0]?.count ?? 0;
   return {
     stocks: result.stocks,
@@ -136,6 +133,7 @@ const findAll = async (filters, currentUser) => {
   };
 };
 
+// una giacenza (il dipendente solo del suo negozio)
 const findOne = async (stockId, currentUser) => {
   const stock = await Stock.findById(stockId)
     .populate("product", "name price category image")
@@ -151,7 +149,7 @@ const findOne = async (stockId, currentUser) => {
   return stock;
 };
 
-// prima controllo che prodotto e negozio esistano
+// nuova giacenza: prima controllo che prodotto e negozio esistano
 const create = async (stockData) => {
   const productExists = await Product.exists({ _id: stockData.product });
   if (!productExists) {
@@ -165,6 +163,7 @@ const create = async (stockData) => {
   return await stock.save();
 };
 
+// cambio quantità e soglia
 const update = async (stockId, stockData) => {
   const stock = await Stock.findById(stockId);
   if (!stock) {
@@ -174,6 +173,7 @@ const update = async (stockId, stockData) => {
   return await stock.save();
 };
 
+// elimino la giacenza
 const deleteStock = async (stockId) => {
   const deletedStock = await Stock.findByIdAndDelete(stockId);
   if (!deletedStock) {

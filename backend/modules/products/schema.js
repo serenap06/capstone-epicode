@@ -1,5 +1,7 @@
+// import
 const mongoose = require("mongoose");
 
+// schema del prodotto
 const productSchema = new mongoose.Schema(
   {
     name: {
@@ -20,9 +22,11 @@ const productSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    // link della foto su Cloudinary
     image: {
       type: String,
     },
+    // non attivo: lo vede solo il responsabile
     active: {
       type: Boolean,
       required: true,
@@ -33,6 +37,7 @@ const productSchema = new mongoose.Schema(
       maxlength: 255,
       trim: true,
     },
+    // sempre in minuscolo, così "Libri" e "libri" sono la stessa categoria
     category: {
       type: String,
       required: true,
@@ -41,6 +46,7 @@ const productSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+    // aliquota IVA in percentuale
     vatRate: {
       type: Number,
       enum: [4, 5, 10, 22],
@@ -50,4 +56,5 @@ const productSchema = new mongoose.Schema(
   { timestamps: true, strict: true },
 );
 
+// modello Product, collection "products"
 module.exports = mongoose.model("Product", productSchema, "products");

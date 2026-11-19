@@ -1,6 +1,8 @@
+// import
 const HttpException = require("../../exceptions");
 const productService = require("./service");
 
+// GET /api/products: il catalogo (a pagine se arriva page)
 const findAll = async (req, res, next) => {
   try {
     const { search, active, brand, category, sortBy, order, page, limit } =
@@ -30,6 +32,7 @@ const findAll = async (req, res, next) => {
   }
 };
 
+// GET /api/products/:productId: un prodotto
 const findOne = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -43,6 +46,7 @@ const findOne = async (req, res, next) => {
   }
 };
 
+// POST /api/products: nuovo prodotto (solo il responsabile)
 const create = async (req, res, next) => {
   try {
     const { name, description, price, active, brand, category, vatRate } =
@@ -66,6 +70,7 @@ const create = async (req, res, next) => {
   }
 };
 
+// PATCH /api/products/:productId: modifico i dati, la foto no
 const update = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -90,6 +95,7 @@ const update = async (req, res, next) => {
   }
 };
 
+// PATCH /api/products/:productId/image: carico la foto (multer + Cloudinary)
 const updateImage = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -107,7 +113,7 @@ const updateImage = async (req, res, next) => {
   }
 };
 
-// toglie la foto del prodotto, come removeAvatar per la foto profilo
+// DELETE /api/products/:productId/image: tolgo la foto
 const removeImage = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -122,6 +128,7 @@ const removeImage = async (req, res, next) => {
   }
 };
 
+// DELETE /api/products/:productId: elimino il prodotto
 const deleteProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;

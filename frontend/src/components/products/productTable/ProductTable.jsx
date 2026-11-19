@@ -1,3 +1,4 @@
+// import
 import "./productTable.css";
 import { Pencil, Trash2 } from "lucide-react";
 
@@ -9,10 +10,9 @@ import Button from "../../common/button/Button";
 import SortableHeader from "../../common/sortableHeader/SortableHeader";
 import ProductThumb from "../productThumb/ProductThumb";
 
-// tabella del catalogo, da 1366px in su (sotto le card, stesse props di ProductCard).
-// stocksOf(product): le giacenze di quel prodotto; showStore: il negozio accanto ai pezzi
-// e la colonna Stato (per il responsabile). sort e onSort: l'ordine scelto e il clic
-// sulle intestazioni. onEdit e onDelete: i bottoni, solo se la pagina li passa (responsabile)
+// componente ProductTable: tabella del Catalogo da 1366px (sotto le card).
+// props: products, stocksOf(product) = le sue giacenze, showStore = negozio e colonna Stato,
+// sort e onSort = l'ordine, onEdit e onDelete = i bottoni (solo il responsabile)
 const ProductTable = ({
   products,
   stocksOf,
@@ -22,11 +22,11 @@ const ProductTable = ({
   onEdit,
   onDelete,
 }) => {
-  // props uguali per tutte le intestazioni che ordinano
+  // props uguali per le intestazioni che ordinano
   const sortProps = { sort, onSort };
 
   return (
-    // se la tabella non ci sta, scorre in orizzontale dentro il riquadro
+    // se non ci sta, scorre in orizzontale
     <div className="app-card app-table-wrap">
       <table className="app-table product-table">
         <thead>
@@ -50,7 +50,7 @@ const ProductTable = ({
           {products.map((product) => {
             const productStocks = stocksOf(product);
             return (
-              // riga grigia se il prodotto non è attivo (lo vede solo il responsabile)
+              // riga grigia se non è attivo
               <tr
                 key={product._id}
                 className={product.active ? "" : "product-row-off"}
@@ -66,7 +66,7 @@ const ProductTable = ({
                   <strong>{formatEuro(product.price)}</strong>
                 </td>
                 <td>{product.vatRate}%</td>
-                {/* i pezzi: una riga per negozio, badge verde o arancio come nelle Giacenze */}
+                {/* pezzi per negozio: verde se ok, arancio sotto soglia */}
                 <td>
                   {productStocks.length === 0 ? (
                     <Badge color="neutral">Non in negozio</Badge>
@@ -100,7 +100,7 @@ const ProductTable = ({
                       <Button
                         variant="secondary"
                         aria-label={`Modifica ${product.name}`}
-                        onClick={() => onEdit(product)}
+                        onClick={() => onEdit(product)} // apro il modulo con il prodotto
                       >
                         <Pencil size={16} aria-hidden="true" />
                         Modifica
@@ -109,7 +109,7 @@ const ProductTable = ({
                         variant="danger"
                         className="app-button-icon"
                         aria-label={`Elimina ${product.name}`}
-                        onClick={() => onDelete(product)}
+                        onClick={() => onDelete(product)} // chiedo conferma prima di eliminare
                       >
                         <Trash2 size={16} aria-hidden="true" />
                       </Button>

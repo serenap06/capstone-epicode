@@ -1,5 +1,7 @@
+// import
 const supplyRequestService = require("./service");
 
+// GET /api/supply-requests: le richieste (a pagine se arriva page)
 const findAll = async (req, res, next) => {
   try {
     const { store, product, state, search, sortBy, order, page, limit } =
@@ -18,6 +20,7 @@ const findAll = async (req, res, next) => {
     next(e);
   }
 };
+// GET /api/supply-requests/:supplyId: una richiesta
 const findOne = async (req, res, next) => {
   try {
     const { supplyId } = req.params;
@@ -33,6 +36,7 @@ const findOne = async (req, res, next) => {
     next(e);
   }
 };
+// POST /api/supply-requests: nuova richiesta del dipendente
 const create = async (req, res, next) => {
   try {
     const { product, requestedAmount } = req.body;
@@ -49,6 +53,7 @@ const create = async (req, res, next) => {
     next(e);
   }
 };
+// PATCH /api/supply-requests/:supplyId: il responsabile accoglie o respinge
 const update = async (req, res, next) => {
   try {
     const { supplyId } = req.params;
@@ -67,6 +72,7 @@ const update = async (req, res, next) => {
     next(e);
   }
 };
+// DELETE /api/supply-requests/:supplyId: il dipendente annulla la sua richiesta
 const deleteSupplyRequest = async (req, res, next) => {
   try {
     const { supplyId } = req.params;

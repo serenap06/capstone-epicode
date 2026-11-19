@@ -1,2 +1,2 @@
-// true se la giacenza è alla soglia minima o sotto (la stessa regola del filtro lowStock del backend)
+// true se la quantità è alla soglia o sotto (come lowStock nel backend)
 export const isLowStock = (stock) => stock.amount <= stock.minThreshold;

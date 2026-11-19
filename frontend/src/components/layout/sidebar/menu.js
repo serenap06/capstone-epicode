@@ -1,6 +1,6 @@
-// voci del menu per ruolo: to = indirizzo, label = testo, icon = icona di lucide-react,
-// end = attiva solo sull'indirizzo esatto, hideOnMobile = su telefono va in "Altro",
-// desktopOnly = su telefono non c'è proprio, nemmeno in "Altro" (la Cassa: da tablet in su sì)
+// voci del menu per ruolo: to = indirizzo, label, icon (lucide-react), end = solo l'indirizzo esatto,
+// hideOnMobile = su telefono in "Altro", desktopOnly = su telefono non c'è (la Cassa)
+// import
 import {
   Home,
   Calendar,
@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 export const MENU = {
-  // menu del responsabile
+  // responsabile
   admin: [
     { to: "/admin", label: "Dashboard", icon: Home, end: true },
     { to: "/admin/shifts", label: "Turni", icon: Calendar },
@@ -39,8 +39,7 @@ export const MENU = {
     { to: "/admin/users", label: "Utenti", icon: Users, hideOnMobile: true },
     { to: "/admin/stores", label: "Negozi", icon: Store, hideOnMobile: true },
   ],
-  // menu del dipendente: su telefono niente Cassa, di proposito;
-  // Giacenze e Catalogo in "Altro", come per il responsabile
+  // dipendente: su telefono niente Cassa, di proposito
   employee: [
     { to: "/employee", label: "Dashboard", icon: Home, end: true },
     {

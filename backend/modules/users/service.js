@@ -1,3 +1,4 @@
+// import
 const bcrypt = require("bcrypt");
 const User = require("./schema");
 const HttpException = require("../../exceptions");
@@ -7,7 +8,7 @@ const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const assignDefinedFields = require("../../utils/assignDefinedFields");
 const buildPagination = require("../../utils/buildPagination");
 
-// l'utente con nome e città del negozio (per il profilo), oppure 404
+// l'utente con nome e città del negozio, oppure 404
 const findUserWithStore = async (userId) => {
   const user = await User.findById(userId).populate("store", "name city");
   if (!user) {
@@ -16,8 +17,7 @@ const findUserWithStore = async (userId) => {
   return user;
 };
 
-// senza page restituisce tutte le persone (le usano i moduli di task e turni);
-// con page una pagina sola, in ordine di cognome, e quante sono in tutto
+// senza page tutte le persone (per i moduli); con page una pagina, in ordine di cognome
 const findAll = async ({ page, limit = 10 }) => {
   if (!page) {
     const users = await User.find()
@@ -45,6 +45,7 @@ const findAll = async ({ page, limit = 10 }) => {
   };
 };
 
+// una persona (altrimenti 404)
 const findOne = async (userId) => {
   const user = await User.findById(userId).populate("store", "name");
   if (!user) {
@@ -53,25 +54,27 @@ const findOne = async (userId) => {
   return user;
 };
 
+// il mio profilo
 const findMe = async (userId) => findUserWithStore(userId);
 
-// la password la cripta il pre("save") dello schema; nella risposta la tolgo
+// nuova persona (la password la cripta lo schema; nella risposta la tolgo)
 const create = async (userData) => {
   const user = new User(userData);
-  // il responsabile non lavora in un negozio
+  // il responsabile non ha un negozio
   if (user.role === "admin") user.store = undefined;
   await user.save();
   const { password, ...safeUser } = user.toObject();
   return safeUser;
 };
 
+// modifico una persona con i campi arrivati
 const update = async (userId, userData) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new NotFoundException("User not found");
   }
   assignDefinedFields(user, userData);
-  // diventato responsabile: tolgo il negozio (non comparirà più nel suo personale)
+  // diventato responsabile: tolgo il negozio
   if (user.role === "admin") user.store = undefined;
   await user.save();
 
@@ -79,7 +82,7 @@ const update = async (userId, userData) => {
   return safeUser;
 };
 
-// il proprio profilo: solo nome, cognome ed email (li sceglie il controller)
+// il mio profilo: nome, cognome ed email
 const updateMe = async (userId, userData) => {
   const user = await findUserWithStore(userId);
   assignDefinedFields(user, userData);
@@ -87,8 +90,7 @@ const updateMe = async (userId, userData) => {
   return user;
 };
 
-// la password è nascosta di default (select: false): con "+password" la chiedo esplicitamente.
-// La nuova la cripta il pre("save") dello schema
+// cambio password: controllo quella attuale ("+password" perché è nascosta)
 const updateMyPassword = async (userId, currentPassword, newPassword) => {
   const user = await User.findById(userId).select("+password");
   if (!user) {
@@ -105,7 +107,7 @@ const updateMyPassword = async (userId, currentPassword, newPassword) => {
   await user.save();
 };
 
-// avatarUrl: l'indirizzo della foto su Cloudinary, preparato da multer
+// foto profilo: avatarUrl è il link di Cloudinary
 const uploadAvatar = async (userId, avatarUrl) => {
   const user = await findUserWithStore(userId);
   user.avatar = avatarUrl;
@@ -113,7 +115,7 @@ const uploadAvatar = async (userId, avatarUrl) => {
   return user;
 };
 
-// undefined toglie il campo: al posto della foto tornano le iniziali
+// tolgo la foto (tornano le iniziali)
 const removeAvatar = async (userId) => {
   const user = await findUserWithStore(userId);
   user.avatar = undefined;
@@ -121,7 +123,7 @@ const removeAvatar = async (userId) => {
   return user;
 };
 
-// eliminando una persona tolgo anche i suoi turni e le sue task
+// elimino la persona con i suoi turni e le sue task
 const deleteUser = async (userId) => {
   const user = await User.findByIdAndDelete(userId);
   if (!user) {

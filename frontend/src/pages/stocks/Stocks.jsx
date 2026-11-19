@@ -1,3 +1,4 @@
+// import
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
@@ -27,16 +28,16 @@ import StockCard from "../../components/stocks/stockCard/StockCard";
 import StockForm from "../../components/stocks/stockForm/StockForm";
 import StockTable from "../../components/stocks/stockTable/StockTable";
 
-// filtro dello stato: tutte le righe o solo quelle sotto la soglia
+// filtro dello stato: tutte o solo sotto soglia
 const LEVEL_OPTIONS = [
   { value: "", label: "Tutte" },
   { value: "low", label: "Sotto soglia" },
 ];
 
-// l'ordine con cui parte la pagina: prodotto dalla A alla Z
+// ordine di partenza: prodotto A→Z
 const DEFAULT_SORT = { field: "product", direction: "asc" };
 
-// le voci del menu "Ordina" (vista a card): le stesse scelte delle intestazioni della tabella
+// voci del menu "Ordina" delle card
 const SORT_OPTIONS = [
   { field: "product", direction: "asc", label: "Prodotto A→Z" },
   { field: "product", direction: "desc", label: "Prodotto Z→A" },
@@ -50,49 +51,46 @@ const SORT_OPTIONS = [
   { field: "status", direction: "desc", label: "Prima i sotto soglia" },
 ];
 
-// pagina Giacenze per i due ruoli: il responsabile vede tutti i negozi e modifica,
-// il dipendente vede solo il suo negozio (il server gli manda solo quello).
-// Ricerca, filtri, ordine e pagine li fa il server: arrivano 10 righe alla volta
+// componente Stocks: le giacenze per i due ruoli (il responsabile vede tutti i negozi e modifica,
+// il dipendente solo il suo). Ricerca, filtri, ordine e pagine li fa il server
 const Stocks = () => {
+  // utente collegato e ruolo
   const { user } = useAuth();
   const isAdmin = user.role === "admin";
 
-  // una pagina di giacenze, i totali per il sottotitolo e quante pagine ci sono
+  // una pagina di giacenze, i totali e le pagine
   const [stocks, setStocks] = useState([]);
   const [totals, setTotals] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
-  // tutte le giacenze, solo per il modulo del responsabile (non propone un prodotto
-  // che il negozio ha già); negozi e prodotti per i filtri e il modulo
+  // tutte le giacenze (per il modulo: non riproporre quelle che ci sono), negozi e prodotti
   const [allStocks, setAllStocks] = useState([]);
   const [stores, setStores] = useState([]);
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // filtri: "" = nessun filtro
+  // filtri ("" = nessuno)
   const [filters, setFilters] = useState({ search: "", store: "", level: "" });
-  // ordine scelto: si parte dal prodotto, dalla A alla Z
+  // ordine scelto
   const [sort, setSort] = useState(DEFAULT_SORT);
-  // aumentarlo ricarica le giacenze (dopo un salvataggio)
+  // aumentarlo ricarica le giacenze
   const [refreshCount, setRefreshCount] = useState(0);
-  // modale del modulo: stockToEdit è la riga da modificare (null = nuova)
+  // modale del modulo: riga da modificare (null = nuova)
   const [showForm, setShowForm] = useState(false);
   const [stockToEdit, setStockToEdit] = useState(null);
-  // conferma dell'eliminazione: la riga da eliminare, oppure null
+  // conferma dell'eliminazione
   const [stockToDelete, setStockToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // su telefono "+" accanto al titolo e filtri nel menu "Filtri"
+  // su telefono il "+" accanto al titolo e i filtri nel menu
   const isPhone = useIsPhone();
-  // fino a 1366px le card (una colonna su telefono, due su tablet), sopra la tabella,
-  // come in tutte le pagine con una tabella. Con le card negozio e "Ordina" vanno nel bottone "Filtri"
+  // fino a 1366px le card (negozio e "Ordina" nel bottone "Filtri"), sopra la tabella
   const showCards = useShowCards();
 
-  // una pagina di giacenze: a ogni cambio di filtri, ordine o pagina, e dopo un salvataggio.
-  // toQuery salta i valori vuoti
+  // prendo una pagina di giacenze al cambio di filtri, ordine, pagina e al refreshCount
   useEffect(() => {
-    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    // ignore: true se parte una richiesta più nuova (la risposta vecchia la scarto)
     let ignore = false;
     const query = toQuery({
       search: filters.search,
@@ -110,7 +108,7 @@ const Stocks = () => {
         setStocks(data.stocks);
         setTotals(data.totals);
         setTotalPages(data.pagination.totalPages);
-        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima che c'è
+        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima
         if (
           page > data.pagination.totalPages &&
           data.pagination.totalPages > 0
@@ -126,52 +124,50 @@ const Stocks = () => {
     };
   }, [filters, sort, page, refreshCount]);
 
-  // solo per il responsabile: tutte le giacenze per il modulo, anche dopo ogni salvataggio
+  // prendo tutte le giacenze per il modulo (solo il responsabile)
   useEffect(() => {
     if (!isAdmin) return;
     loadData("/stocks", (data) => setAllStocks(data.stocks), setError);
   }, [isAdmin, refreshCount]);
 
-  // negozi e prodotti una volta sola, solo per il responsabile
+  // prendo negozi e prodotti una volta sola (solo il responsabile)
   useEffect(() => {
     if (!isAdmin) return;
     loadData("/stores", (data) => setStores(data.stores), setError);
     loadData("/products", (data) => setProducts(data.products), setError);
   }, [isAdmin]);
 
-  // cambia un filtro: copio gli altri e sovrascrivo quello ([name] usa il valore come chiave).
-  // Con un filtro nuovo si riparte dalla prima pagina
+  // cambio un filtro e torno alla pagina 1
   const changeFilter = (name, value) => {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
     setPage(1);
   };
 
-  // nuovo ordine (dal menu "Ordina" delle card): anche qui si riparte dalla prima pagina
+  // nuovo ordine dal menu "Ordina": pagina 1
   const changeSort = (newSort) => {
     setSort(newSort);
     setPage(1);
   };
 
-  // "Nuova giacenza": modale con il modulo vuoto
+  // "Nuova giacenza": modulo vuoto
   const openNewForm = () => {
     setStockToEdit(null);
     setShowForm(true);
   };
 
-  // matita sulla riga: modale con i dati di quella giacenza
+  // matita: modulo con la giacenza
   const openEditForm = (stock) => {
     setStockToEdit(stock);
     setShowForm(true);
   };
 
-  // dopo il salvataggio chiudo e ricarico (il server rimanda la riga senza nomi)
+  // salvata: chiudo e ricarico (il server rimanda la riga senza nomi)
   const handleSaved = () => {
     setShowForm(false);
     setRefreshCount((prevCount) => prevCount + 1);
   };
 
-  // elimino sul server e ricarico la pagina (così si riempie con la riga successiva);
-  // finally chiude sempre la conferma
+  // elimino e ricarico; finally chiude la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
     setError("");
@@ -186,25 +182,24 @@ const Stocks = () => {
     }
   };
 
-  // clic su un'intestazione della tabella: stessa colonna inverte, colonna nuova A→Z
+  // clic su un'intestazione: nuovo ordine
   const sortByColumn = (field) => changeSort(getNextSort(sort, field));
 
-  // quante righe in tutto e quante sotto la soglia, per il sottotitolo (le conta il server;
-  // finché non arrivano, 0)
+  // righe in tutto e sotto soglia, per il sottotitolo
   const totalCount = totals?.count ?? 0;
   const lowCount = totals?.lowCount ?? 0;
-  // negozi nel formato { value, label } di FilterSelect
+  // negozi per FilterSelect
   const storeOptions = toStoreOptions(stores);
 
-  // quanti filtri sono attivi in tutto, per il messaggio "con questi filtri"
+  // filtri attivi, per il messaggio
   const activeFilterCount = Object.values(filters).filter(
     (value) => value !== "",
   ).length;
 
-  // sottotitolo: il responsabile vede quante righe, il dipendente il suo negozio
+  // sottotitolo: righe (responsabile) o il negozio (dipendente)
   const subtitleStart = isAdmin ? `${totalCount} righe` : user.store?.name;
 
-  // "Nuova giacenza": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
+  // "Nuova giacenza": su telefono solo il "+"
   const addButton = (
     <AddButton
       label="Nuova giacenza"
@@ -213,13 +208,12 @@ const Stocks = () => {
     />
   );
 
-  // ricerca e stato sempre in vista; negozio (solo il responsabile) e "Ordina" (solo con
-  // le card): con le card nel bottone "Filtri", con la tabella il negozio in riga
+  // filtri: ricerca e stato sempre in vista; negozio e "Ordina" nel menu con le card
   const searchFilter = (
     <FilterSearch
       label="Cerca un prodotto"
       value={filters.search}
-      onChange={(value) => changeFilter("search", value)}
+      onChange={(value) => changeFilter("search", value)} // nuova ricerca: pagina 1
     />
   );
 
@@ -229,21 +223,21 @@ const Stocks = () => {
       allLabel="Tutti i negozi"
       options={storeOptions}
       value={filters.store}
-      onChange={(value) => changeFilter("store", value)}
+      onChange={(value) => changeFilter("store", value)} // nuovo negozio: pagina 1
     />
   );
 
+  // stato (tutte o sotto soglia)
   const levelFilter = (
     <FilterChips
       label="Stato"
       options={LEVEL_OPTIONS}
       value={filters.level}
-      onChange={(value) => changeFilter("level", value)}
+      onChange={(value) => changeFilter("level", value)} // nuovo stato: pagina 1
     />
   );
 
-  // menu "Ordina", solo con le card (la tabella si ordina dalle intestazioni).
-  // Il dipendente non ha la colonna Negozio, quindi niente voci sul negozio
+  // menu "Ordina", solo con le card (il dipendente non ha le voci del negozio)
   const sortSelect = showCards && (
     <SortSelect
       options={SORT_OPTIONS.filter(
@@ -251,14 +245,14 @@ const Stocks = () => {
       )}
       sort={sort}
       defaultSort={DEFAULT_SORT}
-      onChange={changeSort}
+      onChange={changeSort} // nuovo ordine: pagina 1
     />
   );
 
-  // quanti filtri del menu sono attivi, per il pallino su "Filtri" (nel menu c'è solo il negozio)
+  // filtri attivi nel menu, per il pallino
   const menuFilterCount = filters.store ? 1 : 0;
 
-  // il bottone "Filtri" con negozio e "Ordina" (con le card, fino a 1366px)
+  // bottone "Filtri" con negozio e "Ordina"
   const filtersMenu = (
     <FilterBar compact activeCount={menuFilterCount}>
       {storeFilter}
@@ -266,7 +260,7 @@ const Stocks = () => {
     </FilterBar>
   );
 
-  // props uguali per tabella e card: i bottoni solo per il responsabile
+  // props uguali per tabella e card (i bottoni solo per il responsabile)
   const listProps = {
     showStore: isAdmin,
     onEdit: isAdmin ? openEditForm : undefined,
@@ -281,12 +275,11 @@ const Stocks = () => {
         subtitle={`${subtitleStart} · ${lowCount} sotto soglia`}
         error={error}
       >
-        {/* da tablet in su il bottone va a destra dell'intestazione */}
+        {/* da tablet il bottone a destra */}
         {isAdmin && !isPhone && addButton}
       </PageHeader>
 
-      {/* sempre in vista ricerca e stato; con le card negozio e "Ordina" nel bottone "Filtri"
-          (su telefono accanto alla ricerca, da tablet dopo lo stato), con la tabella il negozio in riga */}
+      {/* ricerca e stato sempre in vista; con le card negozio e "Ordina" nel bottone "Filtri" */}
       <FilterBar>
         {showCards && isPhone ? (
           <div className="filter-row">
@@ -301,7 +294,7 @@ const Stocks = () => {
         {showCards && !isPhone && filtersMenu}
       </FilterBar>
 
-      {/* il messaggio solo quando nessuna riga passa i filtri */}
+      {/* rotellina, poi il messaggio se nessuna riga passa i filtri */}
       {isLoading && <Loader />}
       {!isLoading && stocks.length === 0 && !error && (
         <Message>
@@ -311,12 +304,13 @@ const Stocks = () => {
         </Message>
       )}
 
-      {/* fino a 1366px le card; sopra la tabella */}
+      {/* fino a 1366px le card, sopra la tabella */}
       {stocks.length > 0 &&
         (showCards ? (
           <Row xs={1} md={2} className="g-3">
             {stocks.map((stock) => (
               <Col key={stock._id}>
+                {/* passo la giacenza e le props comuni */}
                 <StockCard stock={stock} {...listProps} />
               </Col>
             ))}
@@ -325,8 +319,8 @@ const Stocks = () => {
           <StockTable
             stocks={stocks}
             sort={sort}
-            onSort={sortByColumn}
-            {...listProps}
+            onSort={sortByColumn} // clic su un'intestazione
+            {...listProps} // negozio e bottoni
           />
         ))}
 
@@ -338,7 +332,7 @@ const Stocks = () => {
         onChange={setPage}
       />
 
-      {/* modale e conferma servono solo al responsabile */}
+      {/* modale e conferma solo per il responsabile */}
       {isAdmin && (
         <>
           <FormModal
@@ -347,11 +341,11 @@ const Stocks = () => {
             onClose={() => setShowForm(false)}
           >
             <StockForm
-              stock={stockToEdit}
+              stock={stockToEdit} // giacenza da modificare (null = nuova)
               stores={stores}
               products={products}
-              stocks={allStocks}
-              onSaved={handleSaved}
+              stocks={allStocks} // tutte, per non riproporre quelle che ci sono
+              onSaved={handleSaved} // chiudo e ricarico
               onCancel={() => setShowForm(false)}
             />
           </FormModal>
@@ -361,8 +355,8 @@ const Stocks = () => {
             title="Eliminare la riga?"
             message={`"${stockToDelete?.product.name}" non comparirà più nelle giacenze di ${stockToDelete?.store.name}. Non si può annullare.`}
             confirmLabel="Elimina"
-            isLoading={isDeleting}
-            onConfirm={confirmDelete}
+            isLoading={isDeleting} // spento mentre aspetto il server
+            onConfirm={confirmDelete} // elimino la giacenza
             onCancel={() => setStockToDelete(null)}
           />
         </>

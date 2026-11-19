@@ -1,5 +1,7 @@
+// import
 const mongoose = require("mongoose");
 
+// una riga dello scontrino: nome, prezzo e IVA copiati dal prodotto al momento della vendita
 const saleItemSchema = new mongoose.Schema(
   {
     product: {
@@ -16,6 +18,7 @@ const saleItemSchema = new mongoose.Schema(
   { _id: false },
 );
 
+// schema della vendita
 const saleSchema = new mongoose.Schema(
   {
     store: {
@@ -33,7 +36,7 @@ const saleSchema = new mongoose.Schema(
     netTotal: { type: Number, required: true, min: 0 },
     vatTotal: { type: Number, required: true, min: 0 },
     paymentMethod: { type: String, enum: ["cash", "card"], required: true },
-    // annullamento: di base false; gli altri tre si riempiono solo quando si annulla
+    // annullamento: false di base, gli altri campi solo quando si annulla
     cancelled: { type: Boolean, default: false },
     cancelReason: { type: String, trim: true },
     cancelledBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -42,4 +45,5 @@ const saleSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// modello Sale
 module.exports = mongoose.model("Sale", saleSchema);

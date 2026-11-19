@@ -1,3 +1,4 @@
+// import
 import "./stockTable.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { isLowStock } from "../../../utils/isLowStock";
@@ -6,17 +7,17 @@ import SortableHeader from "../../common/sortableHeader/SortableHeader";
 import ProductThumb from "../../products/productThumb/ProductThumb";
 import StockStatusBadge from "../stockStatusBadge/StockStatusBadge";
 
-// tabella delle giacenze, da tablet in su. showStore: la colonna Negozio (per il responsabile).
-// onEdit e onDelete: i bottoni compaiono solo se la pagina li passa (solo il responsabile modifica).
-// sort e onSort: l'ordine scelto e cosa fare al clic su un'intestazione (lo decide la pagina)
+// componente StockTable: tabella delle giacenze da 1366px.
+// props: stocks, showStore = colonna Negozio, sort e onSort = l'ordine, onEdit e onDelete = i bottoni
 const StockTable = ({ stocks, showStore, sort, onSort, onEdit, onDelete }) => {
-  // props uguali per tutte le intestazioni che ordinano
+  // props uguali per le intestazioni che ordinano
   const sortProps = { sort, onSort };
 
+  // colonna dei bottoni solo se la pagina li passa
   const hasActions = Boolean(onEdit);
 
   return (
-    // se la tabella non ci sta, scorre in orizzontale dentro il riquadro
+    // se non ci sta, scorre in orizzontale
     <div className="app-card app-table-wrap">
       <table className="app-table stock-table">
         <thead>
@@ -56,7 +57,7 @@ const StockTable = ({ stocks, showStore, sort, onSort, onEdit, onDelete }) => {
                 </div>
               </td>
               {showStore && <td>{stock.store.name}</td>}
-              {/* quantità arancio quando è sotto la soglia */}
+              {/* quantità arancio sotto soglia */}
               <td
                 className={`stock-amount ${isLowStock(stock) ? "stock-amount-low" : ""}`}
               >
@@ -66,14 +67,14 @@ const StockTable = ({ stocks, showStore, sort, onSort, onEdit, onDelete }) => {
               <td>
                 <StockStatusBadge stock={stock} />
               </td>
-              {/* aria-label con prodotto e negozio: in pagina ci sono tanti bottoni uguali */}
+              {/* aria-label con prodotto e negozio: i bottoni sono tanti */}
               {hasActions && (
                 <td>
                   <div className="stock-actions">
                     <Button
                       variant="secondary"
                       aria-label={`Modifica ${stock.product.name}, ${stock.store.name}`}
-                      onClick={() => onEdit(stock)}
+                      onClick={() => onEdit(stock)} // apro il modulo con la giacenza
                     >
                       <Pencil size={16} aria-hidden="true" />
                       Modifica
@@ -82,7 +83,7 @@ const StockTable = ({ stocks, showStore, sort, onSort, onEdit, onDelete }) => {
                       variant="danger"
                       className="app-button-icon"
                       aria-label={`Elimina ${stock.product.name}, ${stock.store.name}`}
-                      onClick={() => onDelete(stock)}
+                      onClick={() => onDelete(stock)} // chiedo conferma prima di eliminare
                     >
                       <Trash2 size={16} aria-hidden="true" />
                     </Button>

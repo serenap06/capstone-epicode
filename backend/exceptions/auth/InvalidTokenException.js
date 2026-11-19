@@ -1,5 +1,7 @@
+// import
 const HttpException = require("../index");
 
+// 401: token mancante, scaduto o non valido
 class InvalidTokenException extends HttpException {
   constructor(
     message = "Invalid or missing token",

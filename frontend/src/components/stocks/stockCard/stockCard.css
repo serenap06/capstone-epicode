@@ -1,5 +1,5 @@
 /* card bianca: in alto prodotto e quantità, in basso stato e bottoni */
-/* height 100%: nella griglia del tablet le card della stessa riga sono alte uguali */
+/* height 100%: card alte uguali */
 .stock-card {
   height: 100%;
   display: flex;
@@ -14,7 +14,7 @@
   gap: 0.75rem;
 }
 
-/* nome e negozio prendono lo spazio che resta; min-width: 0 li lascia stringere */
+/* nome e negozio prendono lo spazio che resta */
 .stock-card-info {
   flex: 1 1 auto;
   min-width: 0;

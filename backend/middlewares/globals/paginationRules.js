@@ -1,6 +1,7 @@
+// import
 const { query } = require("express-validator");
 
-// page e limit, uguali per tutti gli elenchi divisi in pagine
+// page e limit, uguali per tutti gli elenchi a pagine
 const paginationRules = [
   query("page")
     .optional()

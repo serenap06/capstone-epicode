@@ -1,5 +1,7 @@
+// import
 const stockService = require("./service");
 
+// GET /api/stocks: le giacenze (a pagine se arriva page)
 const findAll = async (req, res, next) => {
   try {
     const { store, product, lowStock, search, sortBy, order, page, limit } =
@@ -19,6 +21,7 @@ const findAll = async (req, res, next) => {
   }
 };
 
+// GET /api/stocks/:stockId: una giacenza
 const findOne = async (req, res, next) => {
   try {
     const { stockId } = req.params;
@@ -32,6 +35,7 @@ const findOne = async (req, res, next) => {
   }
 };
 
+// POST /api/stocks: nuova giacenza
 const create = async (req, res, next) => {
   try {
     const { product, store, amount, minThreshold } = req.body;
@@ -51,6 +55,7 @@ const create = async (req, res, next) => {
   }
 };
 
+// PATCH /api/stocks/:stockId: cambio quantità e soglia
 const update = async (req, res, next) => {
   try {
     const { stockId } = req.params;
@@ -69,6 +74,7 @@ const update = async (req, res, next) => {
   }
 };
 
+// DELETE /api/stocks/:stockId: elimino la giacenza
 const deleteStock = async (req, res, next) => {
   try {
     const { stockId } = req.params;

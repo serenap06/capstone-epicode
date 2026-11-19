@@ -1,7 +1,8 @@
+// import
 const HttpException = require("../../exceptions");
 const User = require("../../modules/users/schema");
 
-// gli id di tutti i dipendenti del negozio, per le task globali; nessuno: 404
+// id dei dipendenti del negozio, per le task globali (nessuno: 404)
 const getStoreEmployeeIds = async (storeId) => {
   const employees = await User.find({
     store: storeId,

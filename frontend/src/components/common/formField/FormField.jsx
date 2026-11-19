@@ -1,7 +1,8 @@
+// import
 import "./formField.css";
 
-// campo del modulo con etichetta ed errore. htmlFor: l'id del campo (cliccando
-// l'etichetta si va nel campo); children: l'input, il select o il textarea
+// componente FormField: campo del modulo con etichetta ed errore.
+// props: label, htmlFor = l'id del campo, error, children = input, select o textarea
 const FormField = ({ label, htmlFor, error, children }) => {
   return (
     <div className="form-field">

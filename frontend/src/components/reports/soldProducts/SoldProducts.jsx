@@ -1,3 +1,4 @@
+// import
 import "./soldProducts.css";
 import { useRef, useState } from "react";
 
@@ -16,7 +17,7 @@ import Message from "../../common/message/Message";
 import Pagination from "../../common/pagination/Pagination";
 import SortableHeader from "../../common/sortableHeader/SortableHeader";
 
-// su cosa ordinare per ogni colonna
+// su cosa ordinare ogni colonna
 const SORT_VALUES = {
   name: (product) => product.name,
   category: (product) => product.category,
@@ -24,36 +25,32 @@ const SORT_VALUES = {
   revenue: (product) => product.revenue,
 };
 
-// tutti i prodotti venduti nel periodo, con ricerca, categoria, ordinamento e pagine da 10.
-// I prodotti arrivano già tutti con il report: ricerca, filtro, ordine e pagine li fa il browser.
-// products: le righe del server ({ product, name, category, quantity, revenue });
-// totalRevenue: l'incasso del periodo, per la quota
+// componente SoldProducts: tutti i prodotti venduti, con ricerca, categoria, ordine e pagine.
+// Arrivano già tutti con il report: filtri e pagine li fa il browser.
+// props: products = le righe del server, totalRevenue = per la quota
 const SoldProducts = ({ products, totalRevenue }) => {
-  // filtri: "" = nessun filtro
+  // filtri ("" = nessuno)
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   // si parte dal più venduto
   const [sort, setSort] = useState({ field: "quantity", direction: "desc" });
   const [page, setPage] = useState(1);
-  // l'inizio del riquadro: cambiando pagina si torna qui, non in cima al Report
+  // inizio del riquadro: cambiando pagina torno qui
   const listStartRef = useRef(null);
 
-  // con un periodo o un negozio nuovo arrivano prodotti nuovi: torno alla prima pagina.
-  // prevProducts ricorda l'elenco di prima; il controllo si fa mentre il componente si disegna
+  // prodotti nuovi (altro periodo o negozio): torno alla pagina 1 (prevProducts = l'elenco di prima)
   const [prevProducts, setPrevProducts] = useState(products);
   if (products !== prevProducts) {
     setPrevProducts(products);
     setPage(1);
   }
 
-  // le categorie dei prodotti venduti, per il menu (senza quelle vuote dei prodotti eliminati).
-  // Se la categoria scelta non ha vendite nel periodo nuovo la tengo nel menu:
-  // altrimenti il menu direbbe "Tutte le categorie" con il filtro ancora attivo
+  // categorie per il menu, senza quelle vuote; tengo anche quella scelta se nel periodo non c'è
   const categories = getCategories(products).filter(Boolean);
   if (category && !categories.includes(category)) categories.push(category);
   const categoryOptions = toCategoryOptions(categories.sort());
 
-  // i prodotti che passano i filtri, nell'ordine scelto; la ricerca ignora le maiuscole
+  // prodotti che passano i filtri, nell'ordine scelto
   const visibleProducts = sortList(
     products.filter(
       (product) =>
@@ -64,30 +61,30 @@ const SoldProducts = ({ products, totalRevenue }) => {
     sort.direction,
   );
 
-  // le pagine: quante sono e i 10 prodotti della pagina scelta
+  // le pagine e i 10 prodotti della pagina
   const totalPages = Math.ceil(visibleProducts.length / PAGE_SIZE);
   const pageProducts = visibleProducts.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE,
   );
 
-  // ricerca e categoria: con un filtro nuovo si riparte dalla prima pagina
+  // filtro nuovo: pagina 1
   const changeSearch = (value) => {
     setSearch(value);
     setPage(1);
   };
+  // nuova categoria: pagina 1
   const changeCategory = (value) => {
     setCategory(value);
     setPage(1);
   };
 
-  // clic su un'intestazione: stessa colonna inverte, colonna nuova crescente;
-  // anche qui si riparte dalla prima pagina
+  // clic su un'intestazione: nuovo ordine e pagina 1
   const sortByColumn = (field) => {
     setSort((prevSort) => getNextSort(prevSort, field));
     setPage(1);
   };
-  // props uguali per tutte le intestazioni che ordinano
+  // props uguali per le intestazioni che ordinano
   const sortProps = { sort, onSort: sortByColumn };
 
   return (
@@ -96,14 +93,14 @@ const SoldProducts = ({ products, totalRevenue }) => {
         <FilterSearch
           label="Cerca un prodotto"
           value={search}
-          onChange={changeSearch}
+          onChange={changeSearch} // nuova ricerca: pagina 1
         />
         <FilterSelect
           label="Categoria"
           allLabel="Tutte le categorie"
           options={categoryOptions}
           value={category}
-          onChange={changeCategory}
+          onChange={changeCategory} // nuova categoria: pagina 1
         />
       </FilterBar>
 
@@ -115,7 +112,7 @@ const SoldProducts = ({ products, totalRevenue }) => {
             <thead>
               <tr>
                 <SortableHeader label="Prodotto" field="name" {...sortProps} />
-                {/* su telefono categoria e quota si nascondono (soldProducts.css) */}
+                {/* su telefono categoria e quota si nascondono */}
                 <SortableHeader
                   label="Categoria"
                   field="category"
@@ -160,13 +157,13 @@ const SoldProducts = ({ products, totalRevenue }) => {
         </div>
       )}
 
-      {/* le pagine, solo se sono più di una; cambiando pagina torno all'inizio del riquadro */}
+      {/* pagine, solo se sono più di una */}
       <Pagination
         page={page}
         totalPages={totalPages}
         label="Pagine dei prodotti venduti"
         onChange={setPage}
-        scrollTarget={listStartRef}
+        scrollTarget={listStartRef} // cambiando pagina torno all'inizio del riquadro
       />
     </div>
   );

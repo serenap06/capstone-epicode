@@ -1,2 +1,2 @@
-// il ruolo scritto per l'utente: ROLE_LABEL[user.role] → "Responsabile"
+// ruolo in italiano: ROLE_LABEL[user.role]
 export const ROLE_LABEL = { admin: "Responsabile", employee: "Dipendente" };

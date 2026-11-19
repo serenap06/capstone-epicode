@@ -1,3 +1,4 @@
+// import
 import "./myTasks.css";
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
@@ -15,19 +16,20 @@ import PageHeader from "../../../components/common/pageHeader/PageHeader";
 import ProgressBar from "../../../components/common/progressBar/ProgressBar";
 import MyTaskCard from "../../../components/tasks/myTaskCard/MyTaskCard";
 
-// pagina "Le mie task" del dipendente: task divise in Oggi, Prossimi giorni e Questo mese
+// componente MyTasks: le mie task divise in Oggi, Prossimi giorni e Questo mese
 const MyTasks = () => {
+  // utente collegato
   const { user } = useAuth();
-  // myTasks: le mie task da oggi in poi; il resto si calcola da qui
+  // le mie task da oggi in poi (il resto si calcola da qui)
   const [myTasks, setMyTasks] = useState([]);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
 
-  // nome del negozio (?? "": testo vuoto se manca)
+  // il mio negozio
   const storeName = user.store?.name ?? "";
 
-  // all'apertura le task da oggi in poi
+  // prendo le task da oggi in poi all'apertura
   useEffect(() => {
     loadData(
       `/tasks/mine?${toQuery({ from: getToday().from })}`,
@@ -36,7 +38,7 @@ const MyTasks = () => {
     ).finally(() => setIsLoading(false));
   }, []);
 
-  // "Segna come fatto" e "Annulla": aggiorno la task nella lista, il resto si ricalcola
+  // "Segna come fatto" e "Annulla": aggiorno la task nella lista
   const toggleTask = async (task) => {
     try {
       const updatedTask = await toggleTaskStatus(task);
@@ -46,21 +48,21 @@ const MyTasks = () => {
     }
   };
 
-  // task di oggi, quelle fatte e la percentuale
+  // task di oggi, fatte e percentuale
   const todayTasks = myTasks.filter((task) =>
     isSameDay(task.dueDate, new Date()),
   );
   const doneTodayTasks = todayTasks.filter((task) => task.status === "done");
   const percent = getPercent(doneTodayTasks.length, todayTasks.length);
 
-  // le altre (non di oggi), divise in giornaliere e mensili
+  // le altre, divise in giornaliere e mensili
   const upcomingTasks = myTasks.filter(
     (task) => !isSameDay(task.dueDate, new Date()),
   );
   const nextDaysTasks = upcomingTasks.filter((task) => task.type === "daily");
   const monthlyTasks = upcomingTasks.filter((task) => task.type === "monthly");
 
-  // le tre sezioni in un array, per disegnarle con una map
+  // le tre sezioni, per disegnarle con una map
   const sections = [
     { title: "Oggi", tasks: todayTasks },
     { title: "Prossimi giorni", tasks: nextDaysTasks },
@@ -96,6 +98,7 @@ const MyTasks = () => {
             <Col className="my-tasks-list">
               <h2 className="section-label">{section.title}</h2>
               {section.tasks.map((task) => (
+                // onToggle: fatta / da fare
                 <MyTaskCard key={task._id} task={task} onToggle={toggleTask} />
               ))}
             </Col>

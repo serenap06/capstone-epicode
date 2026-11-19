@@ -1,14 +1,16 @@
+// import
 import "./filterBar.css";
 import { useId } from "react";
 
-// menu a tendina di un filtro; allLabel è la prima voce, quella che non filtra ("Tutti i negozi")
+// componente FilterSelect: menu a tendina di un filtro.
+// props: label, allLabel = la prima voce che non filtra ("Tutti i negozi"), options, value, onChange
 const FilterSelect = ({ label, allLabel, options, value, onChange }) => {
-  // id unico per collegare l'etichetta al menu
+  // id per collegare etichetta e menu
   const selectId = useId();
 
   return (
     <div>
-      {/* etichetta letta solo dagli screen reader */}
+      {/* etichetta solo per lo screen reader */}
       <label htmlFor={selectId} className="visually-hidden">
         {label}
       </label>
@@ -16,10 +18,10 @@ const FilterSelect = ({ label, allLabel, options, value, onChange }) => {
         id={selectId}
         className="filter-select"
         value={value}
-        // event.target.value è la voce appena scelta
+        // la voce appena scelta
         onChange={(event) => onChange(event.target.value)}
       >
-        {/* valore vuoto = nessun filtro */}
+        {/* "" = nessun filtro */}
         <option value="">{allLabel}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>

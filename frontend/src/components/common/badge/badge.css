@@ -1,4 +1,4 @@
-/* forma a pillola; flex-shrink: 0 e nowrap non lo fanno stringere né andare a capo */
+/* pillola che non si stringe e non va a capo */
 .app-badge {
   flex-shrink: 0;
   padding: 0.2rem 0.7rem;

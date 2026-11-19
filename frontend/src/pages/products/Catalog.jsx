@@ -1,3 +1,4 @@
+// import
 import "./catalog.css";
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
@@ -27,22 +28,20 @@ import ProductCard from "../../components/products/productCard/ProductCard";
 import ProductForm from "../../components/products/productForm/ProductForm";
 import ProductTable from "../../components/products/productTable/ProductTable";
 
-// filtro dello stato, solo per il responsabile ("" = tutti)
+// filtro dello stato, solo per il responsabile
 const STATE_OPTIONS = [
   { value: "", label: "Tutti" },
   { value: "active", label: "Attivi" },
   { value: "inactive", label: "Non attivi" },
 ];
 
-// prodotti per pagina: 12 e non 10 come negli altri elenchi, perché le card stanno
-// 2, 3 o 4 per riga e 12 si divide per tutti e tre: l'ultima riga è sempre piena
+// 12 prodotti per pagina: le card stanno 2, 3 o 4 per riga e l'ultima riga è sempre piena
 const CATALOG_PAGE_SIZE = 12;
 
-// l'ordine con cui parte la pagina: nome dalla A alla Z
+// ordine di partenza: nome A→Z
 const DEFAULT_SORT = { field: "name", direction: "asc" };
 
-// le voci del menu "Ordina" (vista a card): le stesse scelte delle intestazioni della tabella.
-// adminOnly: lo stato serve solo al responsabile (il dipendente vede solo gli attivi)
+// voci del menu "Ordina" delle card (lo stato solo per il responsabile)
 const SORT_OPTIONS = [
   { field: "name", direction: "asc", label: "Nome A→Z" },
   { field: "name", direction: "desc", label: "Nome Z→A" },
@@ -66,52 +65,49 @@ const SORT_OPTIONS = [
   },
 ];
 
-// pagina Catalogo per i due ruoli: il responsabile vede tutti i prodotti e li gestisce,
-// il dipendente vede solo quelli attivi (il server gli manda solo quelli).
-// Ricerca, filtri, ordine e pagine li fa il server: arrivano 12 prodotti alla volta
+// componente Catalog: il catalogo per i due ruoli (il responsabile vede tutto e gestisce,
+// il dipendente solo gli attivi). Ricerca, filtri, ordine e pagine li fa il server
 const Catalog = () => {
+  // utente collegato e ruolo
   const { user } = useAuth();
   const isAdmin = user.role === "admin";
   // su telefono il "+" accanto al titolo e "Filtri" accanto alla ricerca
   const isPhone = useIsPhone();
-  // il responsabile: fino a 1366px le card, sopra la tabella (come nelle altre pagine);
-  // il dipendente vede sempre le card, con le foto. Con le card categoria e "Ordina"
-  // vanno nel bottone "Filtri"
+  // card fino a 1366px per il responsabile, sempre per il dipendente
   const isCardsWidth = useShowCards();
   const showCards = !isAdmin || isCardsWidth;
 
-  // una pagina di prodotti, i totali per il sottotitolo, le categorie e quante pagine ci sono
+  // una pagina di prodotti, i totali, le categorie e le pagine
   const [products, setProducts] = useState([]);
   const [totals, setTotals] = useState(null);
   const [categories, setCategories] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // le giacenze: al responsabile di tutti i negozi, al dipendente solo del suo
+  // giacenze (il dipendente solo del suo negozio)
   const [stocks, setStocks] = useState([]);
-  // filtri: "" = nessun filtro
+  // filtri ("" = nessuno)
   const [filters, setFilters] = useState({
     search: "",
     category: "",
     state: "",
   });
-  // ordine scelto: si parte dal nome, dalla A alla Z
+  // ordine scelto
   const [sort, setSort] = useState(DEFAULT_SORT);
-  // aumentarlo ricarica i prodotti (dopo un salvataggio)
+  // aumentarlo ricarica i prodotti
   const [refreshCount, setRefreshCount] = useState(0);
-  // modale del modulo: productToEdit è il prodotto da modificare (null = nuovo)
+  // modale del modulo: prodotto da modificare (null = nuovo)
   const [showForm, setShowForm] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
-  // conferma dell'eliminazione: il prodotto da eliminare, oppure null
+  // conferma dell'eliminazione
   const [productToDelete, setProductToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // una pagina di prodotti: a ogni cambio di filtri o pagina, e dopo ogni salvataggio.
-  // Lo stato diventa active=true/false (solo il responsabile); toQuery salta i valori vuoti
+  // prendo una pagina di prodotti al cambio di filtri, ordine, pagina e al refreshCount
   useEffect(() => {
-    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    // ignore: true se parte una richiesta più nuova (la risposta vecchia la scarto)
     let ignore = false;
     const query = toQuery({
       search: filters.search,
@@ -130,7 +126,7 @@ const Catalog = () => {
         setTotals(data.totals);
         setCategories(data.categories);
         setTotalPages(data.pagination.totalPages);
-        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima che c'è
+        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima
         if (
           page > data.pagination.totalPages &&
           data.pagination.totalPages > 0
@@ -146,47 +142,43 @@ const Catalog = () => {
     };
   }, [filters, sort, page, refreshCount]);
 
-  // le giacenze, e di nuovo dopo ogni salvataggio: i pezzi stanno nelle giacenze,
-  // non nei prodotti, e servono per le righe sulla card
+  // prendo le giacenze all'apertura e al refreshCount (i pezzi stanno lì, non nei prodotti)
   useEffect(() => {
     loadData("/stocks", (data) => setStocks(data.stocks), setError);
   }, [refreshCount]);
 
-  // cambia un filtro: copio gli altri e sovrascrivo quello ([name] usa il valore come chiave).
-  // Con un filtro nuovo si riparte dalla prima pagina
+  // cambio un filtro e torno alla pagina 1
   const changeFilter = (name, value) => {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
     setPage(1);
   };
 
-  // nuovo ordine (dal menu "Ordina" delle card): anche qui si riparte dalla prima pagina
+  // nuovo ordine dal menu "Ordina": pagina 1
   const changeSort = (newSort) => {
     setSort(newSort);
     setPage(1);
   };
 
-  // clic su un'intestazione della tabella: stessa colonna inverte, colonna nuova A→Z
+  // clic su un'intestazione: nuovo ordine
   const sortByColumn = (field) => changeSort(getNextSort(sort, field));
 
-  // "Nuovo prodotto": modale con il modulo vuoto
+  // "Nuovo prodotto": modulo vuoto
   const openNewForm = () => {
     setProductToEdit(null);
     setShowForm(true);
   };
-  // matita sulla card: modale con i dati di quel prodotto
+  // matita: modulo con il prodotto
   const openEditForm = (product) => {
     setProductToEdit(product);
     setShowForm(true);
   };
-  // dopo il salvataggio chiudo e ricarico: la foto arriva con una seconda richiesta,
-  // così la lista torna dal server già completa
+  // salvato: chiudo e ricarico (la foto arriva con una seconda richiesta)
   const handleSaved = () => {
     setShowForm(false);
     setRefreshCount((prevCount) => prevCount + 1);
   };
 
-  // elimino sul server e ricarico (la pagina si riempie con il prodotto successivo);
-  // finally chiude sempre la conferma
+  // elimino e ricarico; finally chiude la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
     setError("");
@@ -203,73 +195,70 @@ const Catalog = () => {
 
   // valori calcolati
 
-  // le categorie per il menu a tendina ("Tutte le categorie" la aggiunge FilterSelect);
-  // le categorie senza doppioni le manda il server, servono anche al modulo
+  // categorie per il menu (senza doppioni, dal server)
   const categoryOptions = toCategoryOptions(categories);
 
-  // quanti prodotti in tutto e quanti non attivi, per il sottotitolo (li conta il server;
-  // finché non arrivano, 0)
+  // prodotti in tutto e non attivi, per il sottotitolo
   const totalCount = totals?.count ?? 0;
   const inactiveCount = totals?.inactiveCount ?? 0;
 
-  // quanti filtri sono attivi in tutto, per il messaggio "con questi filtri"
+  // filtri attivi, per il messaggio
   const activeFilterCount = Object.values(filters).filter(
     (value) => value !== "",
   ).length;
-  // quanti filtri del menu sono attivi, per il pallino su "Filtri" (nel menu c'è la categoria)
+  // filtri attivi nel menu, per il pallino
   const menuFilterCount = filters.category ? 1 : 0;
 
-  // le giacenze di un prodotto (una per negozio; il dipendente riceve solo la sua)
+  // le giacenze di un prodotto
   const stocksOf = (product) =>
     stocks.filter((stock) => stock.product._id === product._id);
 
   // "1 non attivo", "2 non attivi"
   const inactiveLabel = inactiveCount === 1 ? "non attivo" : "non attivi";
-  // il responsabile vede anche i non attivi; il dipendente il suo negozio e quanti prodotti ha
+  // sottotitolo: con i non attivi (responsabile) o con il negozio (dipendente)
   const subtitle = isAdmin
     ? `${totalCount} prodotti · ${inactiveCount} ${inactiveLabel}`
     : `${user.store?.name} · ${totalCount} prodotti disponibili`;
 
-  // ricerca e stato (solo il responsabile) sempre in vista; categoria e "Ordina" (solo con le
-  // card): con le card nel bottone "Filtri", con la tabella la categoria in riga
+  // filtri: ricerca e stato sempre in vista; categoria e "Ordina" nel menu con le card
   const searchFilter = (
     <FilterSearch
       label="Cerca un prodotto"
       value={filters.search}
-      onChange={(value) => changeFilter("search", value)}
+      onChange={(value) => changeFilter("search", value)} // nuova ricerca: pagina 1
     />
   );
-  // la categoria come menu a tendina
+  // categoria a tendina
   const categoryFilter = (
     <FilterSelect
       label="Categoria"
       allLabel="Tutte le categorie"
       options={categoryOptions}
       value={filters.category}
-      onChange={(value) => changeFilter("category", value)}
+      onChange={(value) => changeFilter("category", value)} // nuova categoria: pagina 1
     />
   );
-  // lo stato solo per il responsabile: per il dipendente vale false e non disegna niente
+  // stato solo per il responsabile (per il dipendente vale false: niente)
   const stateFilter = isAdmin && (
     <FilterChips
       label="Stato"
       options={STATE_OPTIONS}
       value={filters.state}
-      onChange={(value) => changeFilter("state", value)}
+      onChange={(value) => changeFilter("state", value)} // nuovo stato: pagina 1
     />
   );
 
-  // menu "Ordina", solo con le card (la tabella si ordina dalle intestazioni)
+  // menu "Ordina", solo con le card
   const sortSelect = showCards && (
     <SortSelect
       options={SORT_OPTIONS.filter((option) => isAdmin || !option.adminOnly)}
       sort={sort}
       defaultSort={DEFAULT_SORT}
-      onChange={changeSort}
+      onChange={changeSort} // nuovo ordine: pagina 1
     />
   );
 
-  // il bottone "Filtri" con categoria e "Ordina" (con le card, fino a 1366px)
+  // bottone "Filtri" con categoria e "Ordina"
   const filtersMenu = (
     <FilterBar compact activeCount={menuFilterCount}>
       {categoryFilter}
@@ -277,7 +266,7 @@ const Catalog = () => {
     </FilterBar>
   );
 
-  // "Nuovo prodotto": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
+  // "Nuovo prodotto": su telefono solo il "+"
   const addButton = (
     <AddButton
       label="Nuovo prodotto"
@@ -294,12 +283,11 @@ const Catalog = () => {
         subtitle={subtitle}
         error={error}
       >
-        {/* da tablet in su il bottone va a destra dell'intestazione */}
+        {/* da tablet il bottone a destra */}
         {isAdmin && !isPhone && addButton}
       </PageHeader>
 
-      {/* sempre in vista ricerca e stato; con le card categoria e "Ordina" nel bottone "Filtri"
-          (su telefono accanto alla ricerca, da tablet dopo lo stato), con la tabella la categoria in riga */}
+      {/* ricerca e stato sempre in vista; con le card categoria e "Ordina" nel bottone "Filtri" */}
       <FilterBar>
         {showCards && isPhone ? (
           <div className="filter-row">
@@ -314,7 +302,7 @@ const Catalog = () => {
         {showCards && !isPhone && filtersMenu}
       </FilterBar>
 
-      {/* il messaggio solo quando nessun prodotto passa i filtri */}
+      {/* rotellina, poi il messaggio se nessun prodotto passa i filtri */}
       {isLoading && <Loader />}
       {!isLoading && products.length === 0 && !error && (
         <Message>
@@ -324,20 +312,18 @@ const Catalog = () => {
         </Message>
       )}
 
-      {/* fino a 1366px le card: due per riga su telefono (una sotto i 375px), tre da tablet,
-          quattro da xl; sopra la tabella. A ogni prodotto passo solo le sue giacenze;
-          il responsabile vede anche il negozio. Matita e cestino solo per il responsabile */}
+      {/* fino a 1366px le card (2 per riga su telefono, 3 da tablet, 4 da xl), sopra la tabella */}
       {products.length > 0 &&
         (showCards ? (
           <Row xs={2} md={3} xl={4} className="g-3 catalog-grid">
             {products.map((product) => (
               <Col key={product._id}>
                 <ProductCard
-                  product={product}
-                  stocks={stocksOf(product)}
-                  showStore={isAdmin}
-                  onEdit={isAdmin ? openEditForm : undefined}
-                  onDelete={isAdmin ? setProductToDelete : undefined}
+                  product={product} // passo il prodotto alla card
+                  stocks={stocksOf(product)} // solo le sue giacenze
+                  showStore={isAdmin} // il negozio accanto ai pezzi (responsabile)
+                  onEdit={isAdmin ? openEditForm : undefined} // matita solo per il responsabile
+                  onDelete={isAdmin ? setProductToDelete : undefined} // cestino solo per il responsabile
                 />
               </Col>
             ))}
@@ -345,10 +331,10 @@ const Catalog = () => {
         ) : (
           <ProductTable
             products={products}
-            stocksOf={stocksOf}
+            stocksOf={stocksOf} // funzione che trova le giacenze di un prodotto
             showStore={isAdmin}
             sort={sort}
-            onSort={sortByColumn}
+            onSort={sortByColumn} // clic su un'intestazione
             onEdit={isAdmin ? openEditForm : undefined}
             onDelete={isAdmin ? setProductToDelete : undefined}
           />
@@ -362,7 +348,7 @@ const Catalog = () => {
         onChange={setPage}
       />
 
-      {/* modale e conferma servono solo al responsabile */}
+      {/* modale e conferma solo per il responsabile */}
       {isAdmin && (
         <>
           <FormModal
@@ -371,21 +357,21 @@ const Catalog = () => {
             onClose={() => setShowForm(false)}
           >
             <ProductForm
-              product={productToEdit}
-              categories={categories}
-              onSaved={handleSaved}
+              product={productToEdit} // prodotto da modificare (null = nuovo)
+              categories={categories} // categorie da suggerire
+              onSaved={handleSaved} // chiudo e ricarico
               onCancel={() => setShowForm(false)}
             />
           </FormModal>
 
-          {/* !! trasforma productToDelete in true/false; ?. perché a conferma chiusa è null */}
+          {/* conferma: !! = true/false, ?. perché a conferma chiusa è null */}
           <ConfirmDialog
             show={!!productToDelete}
             title="Eliminare il prodotto?"
             message={`"${productToDelete?.name}" verrà eliminato dal catalogo insieme alle sue giacenze e richieste di fornitura. Non si può annullare.`}
             confirmLabel="Elimina"
-            isLoading={isDeleting}
-            onConfirm={confirmDelete}
+            isLoading={isDeleting} // spento mentre aspetto il server
+            onConfirm={confirmDelete} // elimino il prodotto
             onCancel={() => setProductToDelete(null)}
           />
         </>

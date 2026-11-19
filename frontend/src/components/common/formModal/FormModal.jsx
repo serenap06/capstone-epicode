@@ -1,15 +1,16 @@
+// import
 import "./formModal.css";
 import { useId } from "react";
 import { Modal } from "react-bootstrap";
 
-// finestra con un modulo, per esempio "Nuova task"; wide: più larga, per i moduli su due colonne.
-// Il Modal di Bootstrap si chiude con Esc o cliccando fuori e tiene il Tab dentro la finestra
+// componente FormModal: finestra con un modulo (si chiude con Esc o cliccando fuori).
+// props: show, title, onClose, wide = più larga per i moduli su due colonne, children = il modulo
 const FormModal = ({ show, title, onClose, wide = false, children }) => {
-  // id unico per collegare la finestra al titolo
+  // id per collegare la finestra al titolo
   const titleId = useId();
 
   return (
-    // centered: in mezzo allo schermo; fullscreen="sm-down": a tutto schermo su telefono
+    // in mezzo allo schermo; a tutto schermo su telefono
     <Modal
       show={show}
       onHide={onClose}
@@ -18,7 +19,7 @@ const FormModal = ({ show, title, onClose, wide = false, children }) => {
       aria-labelledby={titleId}
       className={wide ? "form-modal form-modal-wide" : "form-modal"}
     >
-      {/* closeButton: la X in alto; closeLabel: il suo nome per gli screen reader */}
+      {/* la X in alto, con il nome per lo screen reader */}
       <Modal.Header closeButton closeLabel="Chiudi">
         <Modal.Title id={titleId} className="form-modal-title">
           {title}

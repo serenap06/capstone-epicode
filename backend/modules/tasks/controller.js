@@ -1,5 +1,7 @@
+// import
 const taskService = require("./service");
 
+// GET /api/tasks: le task del responsabile, raggruppate (a pagine se arriva page)
 const findAll = async (req, res, next) => {
   try {
     const {
@@ -37,6 +39,7 @@ const findAll = async (req, res, next) => {
   }
 };
 
+// GET /api/tasks/mine: le task del dipendente collegato
 const findMine = async (req, res, next) => {
   try {
     const { status, category, type, isGlobal, from, to } = req.query;
@@ -53,6 +56,7 @@ const findMine = async (req, res, next) => {
   }
 };
 
+// POST /api/tasks: nuova task, una copia per persona
 const create = async (req, res, next) => {
   try {
     const {
@@ -90,6 +94,7 @@ const create = async (req, res, next) => {
   }
 };
 
+// PATCH /api/tasks/group/:groupId: modifico tutte le copie della task
 const update = async (req, res, next) => {
   try {
     const { groupId } = req.params;
@@ -112,6 +117,7 @@ const update = async (req, res, next) => {
   }
 };
 
+// PATCH /api/tasks/:taskId/status: il dipendente segna fatta o da fare la sua copia
 const updateStatus = async (req, res, next) => {
   try {
     const { taskId } = req.params;
@@ -127,6 +133,7 @@ const updateStatus = async (req, res, next) => {
   }
 };
 
+// DELETE /api/tasks/:taskId: elimino una copia
 const deleteTask = async (req, res, next) => {
   try {
     const { taskId } = req.params;
@@ -140,6 +147,7 @@ const deleteTask = async (req, res, next) => {
   }
 };
 
+// DELETE /api/tasks/group/:groupId: elimino la task per tutti
 const deleteGroupTasks = async (req, res, next) => {
   try {
     const { groupId } = req.params;

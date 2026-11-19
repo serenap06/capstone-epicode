@@ -1,4 +1,6 @@
+// import
 const express = require("express");
+// router di /api/products
 const productsRouter = express.Router();
 const productController = require("./controller");
 
@@ -12,8 +14,10 @@ const productBodyRules = require("../../middlewares/products/productBodyRules");
 const productUpdateRules = require("../../middlewares/products/productUpdateRules");
 const productQueryRules = require("../../middlewares/products/productQueryRules");
 
+// serve il login per tutte le rotte
 productsRouter.use(authenticate);
 
+// elenco e un prodotto (tutti; il dipendente vede solo gli attivi)
 productsRouter.get("/", productQueryRules, validate, productController.findAll);
 productsRouter.get(
   "/:productId",
@@ -22,6 +26,7 @@ productsRouter.get(
   productController.findOne,
 );
 
+// nuovo (solo il responsabile)
 productsRouter.post(
   "/",
   authorizeRole("admin"),
@@ -30,6 +35,7 @@ productsRouter.post(
   productController.create,
 );
 
+// modifica
 productsRouter.patch(
   "/:productId",
   authorizeRole("admin"),
@@ -39,6 +45,7 @@ productsRouter.patch(
   productController.update,
 );
 
+// foto: multer la carica su Cloudinary
 productsRouter.patch(
   "/:productId/image",
   authorizeRole("admin"),
@@ -48,7 +55,7 @@ productsRouter.patch(
   productController.updateImage,
 );
 
-// toglie la foto: il prodotto torna senza immagine (nell'app compare il segnaposto)
+// tolgo la foto (nell'app torna l'iniziale)
 productsRouter.delete(
   "/:productId/image",
   authorizeRole("admin"),
@@ -57,6 +64,7 @@ productsRouter.delete(
   productController.removeImage,
 );
 
+// elimina
 productsRouter.delete(
   "/:productId",
   authorizeRole("admin"),

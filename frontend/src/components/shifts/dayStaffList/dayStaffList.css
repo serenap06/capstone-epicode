@@ -5,7 +5,7 @@
   list-style: none;
 }
 
-/* una riga: tutta cliccabile, nome a sinistra e orario a destra, con una linea sopra */
+/* una riga cliccabile: nome a sinistra, orario a destra */
 .day-staff-row {
   width: 100%;
   min-height: 52px;
@@ -52,7 +52,7 @@
   outline-offset: 2px;
 }
 
-/* nome del negozio sopra le sue persone, quando si vedono tutti i negozi: come i titoletti */
+/* nome del negozio sopra le sue persone */
 .day-staff-group {
   padding: 0.75rem 0 0.35rem;
   font-size: 0.8rem;

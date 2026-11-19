@@ -1,3 +1,4 @@
+// import
 import "./dashboard.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -19,13 +20,14 @@ import ShiftList from "../../../components/shifts/shiftList/ShiftList";
 import LowStockList from "../../../components/stocks/lowStockList/LowStockList";
 import TaskCard from "../../../components/tasks/taskCard/TaskCard";
 
-// pagina iniziale del responsabile: indicatori, task e turni di oggi, prodotti sotto scorta
+// componente Dashboard: numeri, task e turni di oggi, prodotti sotto scorta
 const Dashboard = () => {
-  // kpis: null finché non arrivano (intanto le card mostrano "–")
+  // numeri delle card (null finché non arrivano: si vede "–")
   const [kpis, setKpis] = useState(null);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
+  // task, turni e giacenze sotto soglia
   const [tasks, setTasks] = useState([]);
   const [shifts, setShifts] = useState([]);
   const [lowStocks, setLowStocks] = useState([]);
@@ -33,12 +35,12 @@ const Dashboard = () => {
   // oggi per esteso
   const today = formatLongDate();
 
-  // all'apertura le quattro richieste partono insieme
+  // prendo tutto all'apertura, con quattro richieste insieme
   useEffect(() => {
     // "from=...&to=..." di oggi
     const todayQuery = toQuery(getToday());
 
-    // Promise.all aspetta tutte le richieste, poi finally spegne la rotellina
+    // Promise.all aspetta tutte le richieste, poi spengo la rotellina
     Promise.all([
       loadData("/dashboard", (data) => setKpis(data.kpis), setError),
       loadData(
@@ -62,14 +64,13 @@ const Dashboard = () => {
   return (
     <Container fluid>
       <PageHeader title="Dashboard" subtitle={today} error={error} />
-      {/* le card dei numeri; ognuna porta alla sua pagina. Ci sono subito, con "–" finché
-          non arrivano i numeri: così la pagina non salta.
-          Le vendite per prime e su tutta la riga: l'incasso può essere un numero lungo */}
+      {/* card dei numeri, ognuna porta alla sua pagina ("–" finché non arrivano).
+          Le vendite su tutta la riga: l'incasso può essere lungo */}
       <section aria-label="Indicatori">
         <Row className="g-3 mb-3">
           <Col xs={12}>
             <KpiCard
-              to="/admin/sales"
+              to="/admin/sales" // la card porta alle Vendite
               color="orange"
               label="Vendite di oggi"
               value={kpis ? formatEuro(kpis.salesToday.revenue) : "–"}
@@ -77,7 +78,7 @@ const Dashboard = () => {
             />
           </Col>
         </Row>
-        {/* le altre quattro: 2 per riga su telefono e tablet, 4 da lg */}
+        {/* le altre quattro: 2 per riga, 4 da lg */}
         <Row xs={2} lg={4} className="g-3">
           <Col>
             <KpiCard
@@ -122,7 +123,7 @@ const Dashboard = () => {
         </Row>
       </section>
 
-      {/* sotto: task a sinistra (7 colonne), turni e sotto scorta a destra (5) */}
+      {/* sotto: task a sinistra, turni e sotto scorta a destra */}
       <Row className="g-4 mt-2">
         <Col lg={7}>
           <SectionHeader
@@ -138,9 +139,10 @@ const Dashboard = () => {
           {!isLoading && tasks.length === 0 && !error && (
             <Message>Nessuna task per oggi</Message>
           )}
-          {/* lista che scorre dentro (dashboard.css) */}
+          {/* lista che scorre dentro */}
           <div className="dashboard-tasks">
             {tasks.map((task) => (
+              // senza onDelete: dalla Dashboard non si elimina
               <TaskCard key={task._id} task={task} />
             ))}
           </div>
@@ -160,6 +162,7 @@ const Dashboard = () => {
               <Message>Nessun turno oggi</Message>
             )}
             <div className="dashboard-list">
+              {/* i turni di oggi, divisi per negozio */}
               <ShiftList shifts={shifts} />
             </div>
           </Panel>
@@ -177,6 +180,7 @@ const Dashboard = () => {
               <Message>Nessun prodotto sotto scorta</Message>
             )}
             <div className="dashboard-list">
+              {/* le giacenze sotto soglia */}
               <LowStockList stocks={lowStocks} />
             </div>
           </Panel>

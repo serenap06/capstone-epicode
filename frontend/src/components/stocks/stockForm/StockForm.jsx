@@ -1,3 +1,4 @@
+// import
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { createStock, updateStock } from "../../../api/stocks";
@@ -5,7 +6,7 @@ import Button from "../../common/button/Button";
 import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 
-// controllo dei numeri: valueAsNumber trasforma il campo in numero, qui verifico che sia intero e >= 0
+// regole dei numeri: valueAsNumber dà un numero, qui controllo che sia intero e >= 0
 const numberRules = (requiredMessage) => ({
   valueAsNumber: true,
   required: requiredMessage,
@@ -14,10 +15,11 @@ const numberRules = (requiredMessage) => ({
     "Scrivi un numero intero da 0 in su",
 });
 
-// modulo di una giacenza, nel modale. stock: quella da modificare, oppure null per una nuova.
-// In modifica si cambiano solo quantità e soglia; per una nuova si scelgono anche negozio e prodotto.
-// stocks: le giacenze che esistono già, per non proporre un prodotto che il negozio ha già
+// componente StockForm: modulo della giacenza, nel modale.
+// props: stock = da modificare (null = nuova; in modifica solo quantità e soglia),
+// stores, products, stocks = quelle che esistono (per non riproporle), onSaved, onCancel
 const StockForm = ({ stock, stores, products, stocks, onSaved, onCancel }) => {
+  // errore del server
   const [serverError, setServerError] = useState("");
   const isEditing = Boolean(stock);
 
@@ -36,9 +38,10 @@ const StockForm = ({ stock, stores, products, stocks, onSaved, onCancel }) => {
     },
   });
 
+  // il negozio scelto, mentre scelgo
   const selectedStore = useWatch({ control, name: "store" });
 
-  // i prodotti che il negozio scelto non ha ancora (some: true se almeno una giacenza combacia)
+  // i prodotti che il negozio scelto non ha ancora
   const availableProducts = products.filter(
     (product) =>
       !stocks.some(
@@ -47,11 +50,12 @@ const StockForm = ({ stock, stores, products, stocks, onSaved, onCancel }) => {
       ),
   );
 
-  // cambiando negozio azzero il prodotto: nell'altro negozio potrebbe esserci già
+  // cambiando negozio azzero il prodotto
   useEffect(() => {
     setValue("product", "");
   }, [selectedStore, setValue]);
 
+  // salvo: in modifica solo quantità e soglia
   const onSubmit = async (formData) => {
     setServerError("");
     try {
@@ -74,7 +78,7 @@ const StockForm = ({ stock, stores, products, stocks, onSaved, onCancel }) => {
       {serverError && <Message type="error">{serverError}</Message>}
 
       {isEditing ? (
-        // in modifica prodotto e negozio non cambiano: li scrivo e basta
+        // in modifica prodotto e negozio li scrivo e basta
         <p className="m-0">
           <strong>{stock.product.name}</strong> · {stock.store.name}
         </p>
@@ -100,7 +104,7 @@ const StockForm = ({ stock, stores, products, stocks, onSaved, onCancel }) => {
             </select>
           </FormField>
 
-          {/* il prodotto si sceglie dopo il negozio: prima il menu è spento */}
+          {/* prima il negozio, poi il prodotto */}
           <FormField
             label="Prodotto"
             htmlFor="stock-product"

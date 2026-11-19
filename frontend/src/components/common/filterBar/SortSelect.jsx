@@ -1,20 +1,20 @@
+// import
 import "./filterBar.css";
 import { useId } from "react";
 
-// menu "Ordina" per la vista a card, dove non ci sono intestazioni da cliccare.
-// options: [{ field, direction, label }]; sort: l'ordine scelto ({ field, direction });
-// defaultSort: l'ordine con cui parte la pagina. Ogni voce ha come valore "campo-direzione"
-// (per esempio "amount-desc"); la prima voce, "Ordina per", vale "" e rimette l'ordine di partenza
+// componente SortSelect: menu "Ordina" delle card (lì non ci sono intestazioni da cliccare).
+// props: options = [{ field, direction, label }], sort = l'ordine scelto, defaultSort, onChange.
+// Ogni voce vale "campo-direzione" (es. "amount-desc"); "Ordina per" vale "" = ordine di partenza
 const SortSelect = ({ options, sort, defaultSort, onChange }) => {
-  // id unico per collegare l'etichetta al menu
+  // id per collegare etichetta e menu
   const selectId = useId();
 
-  // con l'ordine di partenza il menu mostra "Ordina per", così si capisce a cosa serve
+  // con l'ordine di partenza si vede "Ordina per"
   const isDefaultSort =
     sort.field === defaultSort.field &&
     sort.direction === defaultSort.direction;
 
-  // dalla voce scelta ("amount-desc") torno all'oggetto { field, direction }
+  // da "amount-desc" a { field, direction }
   const changeSort = (value) => {
     if (value === "") {
       onChange(defaultSort);
@@ -26,7 +26,7 @@ const SortSelect = ({ options, sort, defaultSort, onChange }) => {
 
   return (
     <div className="sort-select">
-      {/* etichetta letta solo dagli screen reader */}
+      {/* etichetta solo per lo screen reader */}
       <label htmlFor={selectId} className="visually-hidden">
         Ordina
       </label>
@@ -37,7 +37,7 @@ const SortSelect = ({ options, sort, defaultSort, onChange }) => {
         onChange={(event) => changeSort(event.target.value)}
       >
         <option value="">Ordina per</option>
-        {/* l'ordine di partenza non si ripete: è già "Ordina per" */}
+        {/* l'ordine di partenza non si ripete */}
         {options
           .filter(
             (option) =>

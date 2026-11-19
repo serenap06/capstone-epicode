@@ -1,15 +1,16 @@
+// import
 const Shift = require("../../modules/shifts/schema");
 const HttpException = require("../../exceptions");
 
-// Controlla che il dipendente non abbia già un turno nello stesso orario.
+// controllo che la persona non abbia già un turno in quell'orario (altrimenti 409)
 const checkShiftOverlap = async (userId, startAt, endAt, currentShiftId) => {
   const overlapFilter = {
     user: userId,
-    startAt: { $lt: endAt }, //l'inizio del turno deve essere inferiore alla fine del turno
-    endAt: { $gt: startAt }, //la fine del turno deve essere maggiore all'inizio del turno
+    startAt: { $lt: endAt }, // inizia prima che l'altro finisca
+    endAt: { $gt: startAt }, // finisce dopo che l'altro inizia
   };
   if (currentShiftId) {
-    overlapFilter._id = { $ne: currentShiftId }; //l'id filtrato non deve essere uguale all'id del turno corrente
+    overlapFilter._id = { $ne: currentShiftId }; // in modifica escludo il turno stesso
   }
   const overlappingShift = await Shift.exists(overlapFilter);
   if (overlappingShift) {

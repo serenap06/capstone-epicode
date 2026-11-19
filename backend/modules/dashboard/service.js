@@ -1,3 +1,4 @@
+// import
 const mongoose = require("mongoose");
 const Task = require("../tasks/schema");
 const SupplyRequest = require("../supply-requests/schema");
@@ -6,18 +7,18 @@ const Shift = require("../shifts/schema");
 const Sale = require("../sales/schema");
 const round = require("../../utils/round");
 
-// i numeri delle card della Dashboard, di oggi; con store solo di quel negozio
+// numeri delle card della Dashboard di oggi (con store solo di quel negozio)
 const getKpis = async (filters) => {
   const { store } = filters;
   const storeFilter = store ? { store } : {};
 
+  // inizio e fine di oggi
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
-  // le cinque query partono insieme con Promise.all: aspetto solo la più lenta,
-  // non la somma di tutte (con await una dopo l'altra la Dashboard era lenta)
+  // le cinque query partono insieme: aspetto solo la più lenta
   const [
     taskGroups,
     pendingRequests,
@@ -25,9 +26,8 @@ const getKpis = async (filters) => {
     employeesOnShift,
     todaySales,
   ] = await Promise.all([
-    // le task di oggi contate come nella pagina Task: una per gruppo, non una per persona.
-    // pendingCount: quante copie del gruppo sono ancora da fare.
-    // aggregate non converte da solo il testo in ObjectId: lo faccio io
+    // task di oggi contate una per gruppo; pendingCount = copie ancora da fare.
+    // In aggregate l'id del negozio lo converto io in ObjectId
     Task.aggregate([
       {
         $match: {
@@ -58,7 +58,7 @@ const getKpis = async (filters) => {
     }),
     Sale.find({
       createdAt: { $gte: startOfDay, $lte: endOfDay },
-      // le vendite annullate non contano nell'incasso
+      // le annullate non contano
       cancelled: { $ne: true },
       ...storeFilter,
     })
@@ -67,7 +67,7 @@ const getKpis = async (filters) => {
   ]);
 
   const revenueToday = todaySales.reduce((sum, sale) => sum + sale.total, 0);
-  // un gruppo è fatto quando nessuna copia è più da fare
+  // gruppo fatto = nessuna copia da fare
   const tasksDone = taskGroups.filter(
     (group) => group.pendingCount === 0,
   ).length;

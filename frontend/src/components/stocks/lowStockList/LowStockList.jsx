@@ -1,6 +1,7 @@
+// import
 import "./lowStockList.css";
 
-// prodotti sotto scorta nella dashboard: nome e negozio a sinistra, pezzi a destra
+// componente LowStockList: prodotti sotto scorta della Dashboard (nome e negozio, pezzi). props: stocks
 const LowStockList = ({ stocks }) => {
   return (
     <div className="low-stock-list">

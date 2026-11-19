@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per modificare una giacenza: quantità e soglia
 const stockUpdateRules = [
   body("amount")
     .optional()

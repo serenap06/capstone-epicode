@@ -1,3 +1,4 @@
+// import
 import "./paymentSplit.css";
 
 import { formatEuro } from "../../../utils/formatEuro";
@@ -6,11 +7,10 @@ import { getPercent } from "../../../utils/getPercent";
 import ProgressBar from "../../common/progressBar/ProgressBar";
 import PaymentMethod from "../../sales/paymentMethod/PaymentMethod";
 
-// contanti e carta: incasso, numero di vendite e quanto pesano sul totale.
-// byPayment: le righe del server ({ paymentMethod, revenue, salesCount });
-// totalRevenue: l'incasso del periodo, per la percentuale
+// componente PaymentSplit: contanti e carta, con incasso, vendite e percentuale.
+// props: byPayment = le righe del server, totalRevenue = l'incasso del periodo
 const PaymentSplit = ({ byPayment, totalRevenue }) => {
-  // sempre tutti e due i metodi, anche quando uno non ha vendite (0)
+  // sempre tutti e due i metodi, anche con 0
   const rows = ["cash", "card"].map((method) => {
     const row = byPayment.find((payment) => payment.paymentMethod === method);
     return {

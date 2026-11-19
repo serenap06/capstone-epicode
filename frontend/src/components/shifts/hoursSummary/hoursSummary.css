@@ -1,4 +1,4 @@
-/* numero a sinistra e barra a destra; gap: 0.75rem tra le righe, 1.5rem tra le colonne */
+/* numero a sinistra, barra a destra */
 .hours-summary {
   display: flex;
   flex-wrap: wrap;

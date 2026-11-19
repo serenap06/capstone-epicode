@@ -1,7 +1,9 @@
+// import
 const HttpException = require("../../exceptions/index");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 const userService = require("./service");
 
+// GET /api/users: le persone (a pagine se arriva page)
 const findAll = async (req, res, next) => {
   try {
     const { page, limit } = req.query;
@@ -17,6 +19,7 @@ const findAll = async (req, res, next) => {
   }
 };
 
+// GET /api/users/:userId: una persona
 const findOne = async (req, res, next) => {
   try {
     const { userId } = req.params;
@@ -30,6 +33,7 @@ const findOne = async (req, res, next) => {
   }
 };
 
+// GET /api/users/me: il mio profilo
 const findMe = async (req, res, next) => {
   try {
     const user = await userService.findMe(req.user._id);
@@ -42,6 +46,7 @@ const findMe = async (req, res, next) => {
   }
 };
 
+// POST /api/users: nuova persona
 const create = async (req, res, next) => {
   try {
     const { name, surname, email, password, role, store, weeklyHours } =
@@ -64,11 +69,12 @@ const create = async (req, res, next) => {
     next(e);
   }
 };
+// PATCH /api/users/:userId: modifico dati, ruolo, negozio e ore
 const update = async (req, res, next) => {
   try {
     const { name, surname, email, role, store, weeklyHours } = req.body;
     const { userId } = req.params;
-    // il responsabile non può togliersi il ruolo da solo: perderebbe l'accesso alle sue pagine
+    // non posso cambiare il mio ruolo: perderei l'accesso alle mie pagine
     const isSelf = userId === req.user._id.toString();
     if (isSelf && role !== undefined && role !== req.user.role) {
       throw new ForbiddenException("You cannot change your own role");
@@ -91,6 +97,7 @@ const update = async (req, res, next) => {
   }
 };
 
+// PATCH /api/users/me: modifico nome, cognome ed email
 const updateMe = async (req, res, next) => {
   try {
     const { name, surname, email } = req.body;
@@ -109,7 +116,7 @@ const updateMe = async (req, res, next) => {
   }
 };
 
-// cambio della propria password: il service controlla quella attuale prima di salvare la nuova
+// PATCH /api/users/me/password: cambio la mia password
 const updateMyPassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -127,6 +134,7 @@ const updateMyPassword = async (req, res, next) => {
   }
 };
 
+// PATCH /api/users/me/avatar: carico la foto profilo
 const uploadAvatar = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -143,6 +151,7 @@ const uploadAvatar = async (req, res, next) => {
   }
 };
 
+// DELETE /api/users/me/avatar: tolgo la foto profilo
 const removeAvatar = async (req, res, next) => {
   try {
     const user = await userService.removeAvatar(req.user._id);
@@ -156,7 +165,7 @@ const removeAvatar = async (req, res, next) => {
   }
 };
 
-// il proprio account non si elimina
+// DELETE /api/users/:userId: elimino una persona (non me stessa)
 const deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;

@@ -1,6 +1,8 @@
+// import
 const { query } = require("express-validator");
 const paginationRules = require("../globals/paginationRules");
 
+// regole della query delle task: filtri, periodo e pagine
 const taskQueryRules = [
   query("store").optional().isMongoId().withMessage("Invalid store id"),
   query("assignedTo").optional().isMongoId().withMessage("Invalid user id"),

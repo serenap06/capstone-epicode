@@ -1,6 +1,7 @@
+// import
 const { body } = require("express-validator");
 
-// modifica del proprio profilo: tutti i campi facoltativi
+// regole per modificare il proprio profilo: tutti i campi facoltativi
 const profileUpdateRules = [
   body("name")
     .optional()
@@ -16,7 +17,7 @@ const profileUpdateRules = [
     .trim()
     .notEmpty()
     .withMessage("Surname cannot be empty"),
-  // trim e minuscole come alla creazione (normalizeEmail toglierebbe i punti dalle gmail)
+  // minuscole come alla creazione (normalizeEmail toglierebbe i punti delle gmail)
   body("email")
     .optional()
     .isString()

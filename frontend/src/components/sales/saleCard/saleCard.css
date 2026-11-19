@@ -1,6 +1,4 @@
-/* card bianca: due righe con le cose a sinistra e a destra.
-   Niente height 100%: aprendo i dettagli si allunga solo questa card, non quella accanto
-   (chiuse sono già alte uguali, perché hanno le stesse righe) */
+/* card bianca su due righe; niente height 100%: aprendo i dettagli si allunga solo questa */
 .sale-card {
   display: flex;
   flex-direction: column;
@@ -15,7 +13,7 @@
   gap: 0.75rem;
 }
 
-/* su una riga: un negozio lungo finisce con "..." (min-width: 0 lo lascia accorciare) */
+/* una riga sola: il negozio lungo finisce con "..." */
 .sale-card-title {
   min-width: 0;
   margin: 0;

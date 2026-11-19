@@ -1,3 +1,4 @@
+// import
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -12,9 +13,10 @@ import Message from "../../common/message/Message";
 // lunghezza massima del motivo, come nel backend
 const MAX_REASON_LENGTH = 200;
 
-// modulo "Annulla vendita", nel modale: il motivo è obbligatorio e il responsabile lo legge.
-// sale: la vendita da annullare; onSaved: dopo l'annullamento; onCancel: chiude senza fare niente
+// componente CancelSaleForm: modulo "Annulla vendita" con il motivo obbligatorio.
+// props: sale = la vendita, onSaved = dopo l'annullamento, onCancel = chiudo senza fare niente
 const CancelSaleForm = ({ sale, onSaved, onCancel }) => {
+  // errore del server
   const [serverError, setServerError] = useState("");
 
   const {
@@ -23,7 +25,7 @@ const CancelSaleForm = ({ sale, onSaved, onCancel }) => {
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues: { reason: "" } });
 
-  // trim: un motivo fatto solo di spazi non vale
+  // annullo la vendita (trim: solo spazi non vale)
   const onSubmit = async ({ reason }) => {
     setServerError("");
     try {
@@ -38,7 +40,7 @@ const CancelSaleForm = ({ sale, onSaved, onCancel }) => {
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="form-stack">
       {serverError && <Message type="error">{serverError}</Message>}
 
-      {/* quale vendita sto annullando, per non sbagliare riga */}
+      {/* quale vendita sto annullando */}
       <p className="m-0">
         Vendita delle <strong>{formatSaleTime(sale.createdAt)}</strong> da{" "}
         <strong>{formatEuro(sale.total)}</strong>. I pezzi tornano nel negozio.

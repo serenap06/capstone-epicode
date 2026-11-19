@@ -1,7 +1,7 @@
+// import
 const { body } = require("express-validator");
 
-// il responsabile accoglie (handled) o respinge (rejected) una richiesta.
-// Il motivo serve solo per respingere: .if controlla il motivo solo quando state è "rejected"
+// regole per accogliere o respingere: il motivo serve solo per respingere (.if)
 const supplyRequestUpdateRules = [
   body("state")
     .isIn(["handled", "rejected"])

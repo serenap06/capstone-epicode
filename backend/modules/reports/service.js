@@ -1,11 +1,12 @@
+// import
 const mongoose = require("mongoose");
 const Sale = require("../sales/schema");
 const round = require("../../utils/round");
 
+// incassi del periodo per il Report: andamento, pagamenti, IVA e prodotti venduti
 const findRevenue = async ({ from, to, groupBy = "day", store }) => {
-  // 1. Filtro: vendite tra from e to, non annullate, eventualmente di un solo negozio.
-  // Se "to" è solo un giorno ("2026-11-30") arrivo alla fine di quel giorno;
-  // se ha già l'ora (il frontend manda le 23:59 italiane) la uso così com'è
+  // 1. filtro: vendite non annullate tra from e to (eventualmente di un negozio).
+  // Se "to" è solo un giorno ("2026-11-30") arrivo alla fine di quel giorno
   const toDate = new Date(to);
   if (to.length === 10) toDate.setHours(23, 59, 59, 999);
 
@@ -15,9 +16,8 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
   };
   if (store) match.store = new mongoose.Types.ObjectId(store);
 
-  // 2. Incassi per periodo: $dateTrunc porta ogni vendita all'inizio del suo giorno,
-  // della sua settimana (dal lunedì) o del suo mese, con l'ora italiana.
-  // Il risultato è una data: il frontend ci scrive l'etichetta ("17 nov", "nov")
+  // 2. incassi per periodo: $dateTrunc porta ogni vendita all'inizio del giorno,
+  // della settimana (dal lunedì) o del mese, con l'ora italiana
   const series = await Sale.aggregate([
     { $match: match },
     {
@@ -39,7 +39,7 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
     { $sort: { _id: 1 } },
   ]);
 
-  // 3. Incassi per metodo di pagamento
+  // 3. incassi per metodo di pagamento
   const payments = await Sale.aggregate([
     { $match: match },
     {
@@ -52,7 +52,7 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
     { $sort: { _id: 1 } },
   ]);
 
-  // 4. Incassi e IVA per aliquota
+  // 4. incassi e IVA per aliquota
   const vatRates = await Sale.aggregate([
     { $match: match },
     { $unwind: "$items" },
@@ -68,8 +68,7 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
     { $sort: { _id: 1 } },
   ]);
 
-  // 5. Tutti i prodotti venduti nel periodo, dal più venduto: pezzi, incasso e categoria.
-  // La vendita salva il nome ma non la categoria: la prendo dal prodotto ($lookup)
+  // 5. prodotti venduti, dal più venduto; la categoria la prendo dal prodotto ($lookup)
   const products = await Sale.aggregate([
     { $match: match },
     { $unwind: "$items" },
@@ -97,13 +96,13 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
   const soldProducts = products.map((row) => ({
     product: row._id,
     name: row.name,
-    // productData è vuoto se il prodotto è stato eliminato dal catalogo
+    // vuoto se il prodotto è stato eliminato
     category: row.productData[0]?.category ?? "",
     quantity: row.quantity,
     revenue: round(row.revenue),
   }));
 
-  // 6. Totali dell'intervallo, sommando le righe della serie
+  // 6. totali del periodo, sommando la serie
   const totals = {
     revenue: round(series.reduce((sum, row) => sum + row.revenue, 0)),
     netRevenue: round(series.reduce((sum, row) => sum + row.netRevenue, 0)),
@@ -111,7 +110,7 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
     salesCount: series.reduce((sum, row) => sum + row.salesCount, 0),
   };
 
-  // 7. Risposta, con nomi chiari e cifre arrotondate
+  // 7. risposta con le cifre arrotondate
   return {
     totals,
     series: series.map((row) => ({
@@ -136,7 +135,7 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
         vat,
       };
     }),
-    // i cinque più venduti sono i primi dell'elenco completo
+    // i cinque più venduti
     topProducts: soldProducts.slice(0, 5),
     soldProducts,
   };

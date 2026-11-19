@@ -1,6 +1,8 @@
+// import
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
+// schema dell'utente
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -24,6 +26,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    // select: false = la password non arriva mai nelle risposte
     password: {
       type: String,
       required: true,
@@ -36,6 +39,7 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "employee"],
       default: "employee",
     },
+    // il negozio serve solo ai dipendenti
     store: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Store",
@@ -60,4 +64,5 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
+// modello User, collection "users"
 module.exports = mongoose.model("User", userSchema, "users");

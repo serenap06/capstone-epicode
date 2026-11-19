@@ -49,8 +49,7 @@
   background: transparent;
 }
 
-/* la regola sopra copriva anche il grigio del mouse e il magenta della pagina aperta:
-   li riscrivo qui sotto, così valgono anche per "Altro" (show = menu aperto) */
+/* grigio al passaggio e magenta sulla pagina aperta, anche per "Altro" (show = aperto) */
 .btn.app-more-toggle:hover,
 .btn.app-more-toggle.show {
   background: var(--bg);
@@ -81,7 +80,7 @@
     border-top: 1px solid var(--border);
   }
 
-  /* voci in riga, distribuite; gap: 0 perché con 1rem a 320px "Altro" usciva dallo schermo */
+  /* voci in riga; gap 0, se no a 320px "Altro" esce */
   .app-nav {
     flex-direction: row;
     justify-content: space-around;
@@ -114,7 +113,7 @@
   }
 }
 
-/* le voci desktopOnly (la Cassa) spariscono solo su telefono: su tablet restano nella barra */
+/* la Cassa sparisce solo su telefono */
 @media (max-width: 767.98px) {
   .app-link.hide-phone {
     display: none;

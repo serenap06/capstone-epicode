@@ -1,5 +1,4 @@
-// divide le righe delle ore per negozio, nell'ordine in cui arrivano:
-// [{ store: { _id, name }, rows: [...] }, ...]. Con un negozio solo c'è un gruppo solo
+// divido le righe delle ore per negozio: [{ store, rows }]
 export const groupByStore = (rows) => {
   const groups = [];
   rows.forEach((row) => {

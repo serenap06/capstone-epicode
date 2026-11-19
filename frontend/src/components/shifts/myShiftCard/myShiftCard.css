@@ -24,7 +24,7 @@
   font-weight: 700;
 }
 
-/* orario grande (.my-shift-card davanti per vincere sul margin: 0 qui sopra) */
+/* orario grande (.my-shift-card davanti per vincere sul margin: 0) */
 .my-shift-card .my-shift-time {
   margin-top: 0.15rem;
   font-size: clamp(1.6rem, 4vw, 2.1rem);
@@ -57,7 +57,7 @@
   margin-top: 0.35rem;
 }
 
-/* su schermi stretti il badge va a capo tra nome e orario invece di uscire dalla card */
+/* su schermi stretti il badge va a capo tra nome e orario */
 .my-shift-badges .app-badge {
   flex-shrink: 1;
   min-width: 0;

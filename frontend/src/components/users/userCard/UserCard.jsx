@@ -1,3 +1,4 @@
+// import
 import "./userCard.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { formatFullName } from "../../../utils/formatFullName";
@@ -6,8 +7,8 @@ import Avatar from "../../common/avatar/Avatar";
 import Badge from "../../common/badge/Badge";
 import Button from "../../common/button/Button";
 
-// card di un utente, per il telefono: foto, nome ed email, ruolo, negozio e ore,
-// bottoni con la sola icona (stesse props di UserTable, per un utente solo)
+// componente UserCard: card di un utente fino a 1366px.
+// props: user, isSelf = sono io (non mi elimino), onEdit, onDelete
 const UserCard = ({ user, isSelf, onEdit, onDelete }) => {
   // "Bookshop Museo · 40 h" per i dipendenti, "Tutti i negozi" per il responsabile
   const detail =
@@ -25,8 +26,7 @@ const UserCard = ({ user, isSelf, onEdit, onDelete }) => {
         </div>
       </div>
 
-      {/* in basso a sinistra ruolo e negozio, uno sotto l'altro: così in alto
-          nome ed email hanno tutta la larghezza e l'email non va a capo */}
+      {/* in basso ruolo e negozio: in alto nome ed email hanno tutta la larghezza */}
       <div className="user-card-bottom">
         <div className="user-card-role">
           <Badge color={user.role === "admin" ? "secondary" : "neutral"}>
@@ -35,22 +35,22 @@ const UserCard = ({ user, isSelf, onEdit, onDelete }) => {
           <p className="user-card-detail">{detail}</p>
         </div>
         <div className="user-card-actions">
-          {/* come nelle altre card: "Modifica" (su telefono solo la matita) e il cestino */}
+          {/* "Modifica" (su telefono solo la matita) e il cestino */}
           <Button
             variant="secondary"
             aria-label={`Modifica ${formatFullName(user)}`}
-            onClick={() => onEdit(user)}
+            onClick={() => onEdit(user)} // apro il modulo con la persona
           >
             <Pencil size={16} aria-hidden="true" />
             <span className="app-button-label">Modifica</span>
           </Button>
-          {/* il proprio account non si elimina: al posto del cestino una nota */}
+          {/* il mio account non si elimina: al posto del cestino una nota */}
           {!isSelf && (
             <Button
               variant="danger"
               className="app-button-icon"
               aria-label={`Elimina ${formatFullName(user)}`}
-              onClick={() => onDelete(user)}
+              onClick={() => onDelete(user)} // chiedo conferma prima di eliminare
             >
               <Trash2 size={16} aria-hidden="true" />
             </Button>

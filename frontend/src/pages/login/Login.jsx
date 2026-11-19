@@ -1,3 +1,4 @@
+// import
 import "./login.css";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -18,20 +19,18 @@ import Button from "../../components/common/button/Button";
 import Message from "../../components/common/message/Message";
 import PasswordInput from "../../components/common/passwordInput/PasswordInput";
 
-// password degli account demo, dal file .env (VITE_DEMO_PASSWORD): non è scritta nel codice.
-// Se manca, i bottoni della demo non compaiono
+// password demo dal .env (VITE_DEMO_PASSWORD): senza, i bottoni della demo non compaiono
 const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD;
 
-// i due account della demo, uno per ruolo
+// i due account della demo
 const DEMO_ACCOUNTS = [
   { label: "Responsabile", email: "responsabile@demo.it" },
   { label: "Dipendente", email: "marta@demo.it" },
 ];
 
-// pagina di accesso: logo, email, password, "Ricordami" e i bottoni della demo
+// componente Login: email, password, "Ricordami" e i bottoni della demo
 const Login = () => {
-  // useForm: register collega i campi, handleSubmit li controlla prima dell'invio;
-  // setValue scrive in un campo (lo usano i bottoni della demo)
+  // modulo: register collega i campi, handleSubmit li controlla, setValue li riempie (demo)
   const {
     register,
     handleSubmit,
@@ -40,9 +39,10 @@ const Login = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
+  // utente, caricamento e login dal contesto
   const { user, loading, login } = useAuth();
   const navigate = useNavigate();
-  // serverError: l'errore del server (per esempio password sbagliata)
+  // errore del server (es. password sbagliata)
   const [serverError, setServerError] = useState("");
 
   // aspetto di sapere se c'è un utente; se è già collegato va alla sua pagina
@@ -51,7 +51,7 @@ const Login = () => {
     return <Navigate to={getHomePath(user.role)} replace />;
   }
 
-  // invio: login e poi la pagina del ruolo
+  // accedo e vado alla pagina del ruolo
   const onSubmit = async ({ email, password, remember }) => {
     setServerError("");
     try {
@@ -62,7 +62,7 @@ const Login = () => {
     }
   };
 
-  // bottone della demo: riempie email e password, poi si preme "Accedi"
+  // bottone della demo: riempie email e password
   const fillDemo = (email) => {
     setValue("email", email);
     setValue("password", DEMO_PASSWORD);
@@ -72,24 +72,24 @@ const Login = () => {
 
   return (
     <Container className="login-page">
-      {/* logo come nella barra in alto, più grande */}
+      {/* logo, come nella barra in alto */}
       <p className="app-logo login-logo">
         Store<span>Squad</span>
       </p>
-      {/* lo slogan continua il nome: "StoreSquad... è un gioco di squadra" */}
+      {/* slogan: "StoreSquad... è un gioco di squadra" */}
       <p className="login-tagline">è un gioco di squadra</p>
       <h1 className="login-title">Accedi</h1>
 
-      {/* errore del server, come nelle altre pagine */}
+      {/* errore del server */}
       {serverError && <Message type="error">{serverError}</Message>}
 
       <Form
-        // noValidate: i controlli li fa react-hook-form, non il browser
+        // noValidate: i controlli li fa react-hook-form
         onSubmit={handleSubmit(onSubmit)}
         noValidate
         className="login-form mt-4"
       >
-        {/* etichetta solo per gli screen reader, icona dentro il campo */}
+        {/* etichetta per lo screen reader, icona nel campo */}
         <Form.Group className="mb-3" controlId="email">
           <FormLabel visuallyHidden>Email</FormLabel>
           <div className="login-field">
@@ -106,13 +106,12 @@ const Login = () => {
             <p className="login-error">{errors.email.message}</p>
           )}
         </Form.Group>
-        {/* campo password, stessa struttura */}
+        {/* password, stessa struttura */}
         <Form.Group className="mb-3" controlId="password">
           <FormLabel visuallyHidden>Password</FormLabel>
           <div className="login-field">
             <Lock className="login-icon" aria-hidden="true" />
-            {/* PasswordInput: il campo con l'occhio per vedere la password.
-                id="password" come il controlId del gruppo, così l'etichetta resta collegata */}
+            {/* campo con l'occhio; id uguale al controlId, così l'etichetta resta collegata */}
             <PasswordInput
               id="password"
               placeholder="Password"
@@ -134,7 +133,7 @@ const Login = () => {
           {...register("remember")}
         />
 
-        {/* il bottone comune dell'app, a pillola; spento mentre aspetto: niente doppio invio */}
+        {/* spento mentre aspetto: niente doppio invio */}
         <Button
           type="submit"
           disabled={isSubmitting}
@@ -144,8 +143,7 @@ const Login = () => {
         </Button>
       </Form>
 
-      {/* demo: un bottone per ruolo riempie i campi, così chi prova l'app non deve
-          ricordarsi email e password */}
+      {/* demo: un bottone per ruolo riempie i campi */}
       {DEMO_PASSWORD && (
         <section className="login-demo" aria-label="Prova la demo">
           <p className="login-demo-title">Prova la demo come</p>
@@ -154,7 +152,7 @@ const Login = () => {
               <Button
                 key={account.email}
                 variant="secondary"
-                onClick={() => fillDemo(account.email)}
+                onClick={() => fillDemo(account.email)} // riempio email e password dell'account
               >
                 {account.label}
               </Button>

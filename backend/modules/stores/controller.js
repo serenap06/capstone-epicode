@@ -1,5 +1,7 @@
+// import
 const storeService = require("./service");
 
+// GET /api/stores: i negozi con il loro personale
 const findAll = async (req, res, next) => {
   try {
     const stores = await storeService.findAll();
@@ -12,6 +14,7 @@ const findAll = async (req, res, next) => {
   }
 };
 
+// GET /api/stores/:storeId: un negozio
 const findOne = async (req, res, next) => {
   try {
     const { storeId } = req.params;
@@ -25,6 +28,7 @@ const findOne = async (req, res, next) => {
   }
 };
 
+// POST /api/stores: nuovo negozio
 const create = async (req, res, next) => {
   try {
     const { name, address, city } = req.body;
@@ -43,6 +47,7 @@ const create = async (req, res, next) => {
   }
 };
 
+// PATCH /api/stores/:storeId: modifico il negozio
 const update = async (req, res, next) => {
   try {
     const { name, address, city } = req.body;
@@ -62,6 +67,7 @@ const update = async (req, res, next) => {
   }
 };
 
+// DELETE /api/stores/:storeId: elimino il negozio
 const deleteStore = async (req, res, next) => {
   try {
     const { storeId } = req.params;

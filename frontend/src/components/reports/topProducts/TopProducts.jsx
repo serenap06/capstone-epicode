@@ -1,9 +1,10 @@
+// import
 import "./topProducts.css";
 
 import { formatEuro } from "../../../utils/formatEuro";
 
-// i prodotti più venduti del periodo: posizione, nome, pezzi e incasso.
-// products: le righe del server ({ product, name, quantity, revenue }), già in ordine
+// componente TopProducts: i più venduti con posizione, nome, pezzi e incasso.
+// props: products = le righe del server, già in ordine
 const TopProducts = ({ products }) => {
   return (
     <ol className="top-products">

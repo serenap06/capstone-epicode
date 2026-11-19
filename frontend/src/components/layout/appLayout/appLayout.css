@@ -20,7 +20,7 @@
   flex-direction: column;
 }
 
-/* fino a 1023px il menu è in basso: spazio sotto per non coprire la pagina */
+/* fino a 1023px il menu è in basso: spazio sotto */
 @media (max-width: 1023.98px) {
   .app-main {
     padding-bottom: 5.5rem;

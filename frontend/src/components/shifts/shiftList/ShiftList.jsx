@@ -1,12 +1,13 @@
+// import
 import { formatTimeRange } from "../../../utils/formatTime";
 import { formatFullName } from "../../../utils/formatFullName";
 import Badge from "../../common/badge/Badge";
 import "./shiftList.css";
 
-// elenco di turni raggruppati per negozio, per dashboard e home
+// componente ShiftList: turni per negozio (Dashboard). props: shifts
 const ShiftList = ({ shifts }) => {
   const now = new Date();
-  // nomi dei negozi senza doppioni (new Set)
+  // negozi senza doppioni
   const storeNames = [...new Set(shifts.map((shift) => shift.store.name))];
 
   return (

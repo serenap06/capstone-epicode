@@ -1,5 +1,4 @@
-// nuovo ordine dopo il clic su un'intestazione: sulla stessa colonna inverte
-// (crescente ↔ decrescente), su una colonna nuova parte da crescente
+// ordine dopo il clic su un'intestazione: stessa colonna inverte, colonna nuova crescente
 export const getNextSort = (prevSort, field) => ({
   field,
   direction:

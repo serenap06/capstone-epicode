@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per creare una task
 const taskBodyRules = [
   body("title")
     .isString()
@@ -26,6 +28,7 @@ const taskBodyRules = [
     .isBoolean()
     .withMessage("isGlobal must be boolean")
     .toBoolean(),
+  // le persone servono solo se la task non è globale
   body("assignedTo")
     .if((value, { req }) => !req.body.isGlobal)
     .toArray()

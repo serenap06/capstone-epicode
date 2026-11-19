@@ -1,4 +1,4 @@
-// le categorie nel formato { value, label } dei filtri, con la maiuscola ("libri" → "Libri")
+// categorie come { value, label } per i filtri, con la maiuscola
 export const toCategoryOptions = (categories) =>
   categories.map((category) => ({
     value: category,

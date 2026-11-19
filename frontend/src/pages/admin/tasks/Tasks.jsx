@@ -1,3 +1,4 @@
+// import
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
@@ -23,10 +24,7 @@ import Pagination from "../../../components/common/pagination/Pagination";
 import TaskCard from "../../../components/tasks/taskCard/TaskCard";
 import TaskForm from "../../../components/tasks/taskForm/TaskForm";
 
-// pagina Task del responsabile: le task da oggi in avanti, con i filtri.
-// Filtri e pagine li fa il server: arrivano 10 task alla volta, in ordine di scadenza
-
-// opzioni fisse dei filtri (fuori dal componente perché non cambiano)
+// opzioni fisse dei filtri
 const DUE_OPTIONS = [
   { value: "", label: "Tutte" },
   { value: "today", label: "Oggi" },
@@ -39,8 +37,7 @@ const STATUS_OPTIONS = [
   { value: "done", label: "Fatte" },
 ];
 
-// il periodo da chiedere al server per ogni scelta della scadenza:
-// tutte = da oggi in avanti, oggi, domani
+// periodo da chiedere per ogni scadenza: tutte (da oggi in poi), oggi, domani
 const DUE_RANGES = {
   "": () => ({ from: getToday().from }),
   today: getToday,
@@ -52,30 +49,30 @@ const TYPE_OPTIONS = [
   { value: "monthly", label: "Mensili" },
 ];
 
+// componente Tasks: le task da oggi in poi, con filtri e pagine (le fa il server)
 const Tasks = () => {
-  // tasks: una pagina, dal server già raggruppate (una per gruppo, con le persone dentro);
-  // openCount: quante sono in corso (sottotitolo); totalPages e page: le pagine
+  // una pagina di task raggruppate, quante in corso e le pagine
   const [tasks, setTasks] = useState([]);
   const [openCount, setOpenCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
 
-  // stores: i negozi, per i menu a tendina
+  // negozi, per i menu
   const [stores, setStores] = useState([]);
 
-  // employees: i dipendenti, per assegnare le task nuove
+  // dipendenti, per assegnare le task
   const [employees, setEmployees] = useState([]);
 
-  // showForm: true con il modale "Nuova task" aperto
+  // modale "Nuova task" aperto
   const [showForm, setShowForm] = useState(false);
 
-  // refreshCount: aumentarlo fa ripartire lo useEffect delle task (ricarica la lista)
+  // aumentarlo ricarica le task
   const [refreshCount, setRefreshCount] = useState(0);
 
-  // filters: tutti i filtri; "" = nessun filtro
+  // filtri ("" = nessuno)
   const [filters, setFilters] = useState({
     due: "",
     status: "",
@@ -83,18 +80,18 @@ const Tasks = () => {
     type: "",
   });
 
-  // taskToDelete: la task da eliminare, oppure null (conferma chiusa)
+  // la task da eliminare (null = conferma chiusa)
   const [taskToDelete, setTaskToDelete] = useState(null);
 
-  // isDeleting: true mentre aspetto il server
+  // true mentre aspetto il server
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // su telefono (fino a 767px): "+" accanto al titolo, Stato in vista
-  // e gli altri filtri nel menu "Filtri"
+  // su telefono il "+" accanto al titolo e i filtri nel menu (tranne lo Stato)
   const isPhone = useIsPhone();
 
+  // prendo negozi e dipendenti una volta sola
   useEffect(() => {
-    // negozi e dipendenti una volta sola (da /users tengo solo i dipendenti)
+    // da /users tengo solo i dipendenti
     loadData("/stores", (data) => setStores(data.stores), setError);
     loadData(
       "/users",
@@ -104,12 +101,11 @@ const Tasks = () => {
     );
   }, []);
 
+  // prendo una pagina di task a ogni cambio di filtri o pagina e al refreshCount
   useEffect(() => {
-    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    // ignore: true se parte una richiesta più nuova (la risposta vecchia la scarto)
     let ignore = false;
-    // una pagina di task: tutti i filtri li applica il server (toQuery salta i vuoti).
-    // Lo stato vale per la task intera: "Fatte" = l'hanno finita tutti.
-    // Si ricarica a ogni cambio di filtri o pagina e quando cambia refreshCount
+    // i filtri li applica il server; "Fatte" = l'hanno finita tutti
     const query = toQuery({
       ...DUE_RANGES[filters.due](),
       status: filters.status,
@@ -125,7 +121,7 @@ const Tasks = () => {
         setTasks(data.tasks);
         setOpenCount(data.totals.openCount);
         setTotalPages(data.pagination.totalPages);
-        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima che c'è
+        // dopo un'eliminazione l'ultima pagina può sparire: torno all'ultima
         if (
           page > data.pagination.totalPages &&
           data.pagination.totalPages > 0
@@ -141,24 +137,22 @@ const Tasks = () => {
     };
   }, [filters, page, refreshCount]);
 
-  // cambia un filtro: copio gli altri e sovrascrivo quello ([name] usa il valore come chiave).
-  // Con un filtro nuovo si riparte dalla prima pagina
+  // cambio un filtro e torno alla pagina 1
   const changeFilter = (name, value) => {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
     setPage(1);
   };
 
-  // "Nuova task": modale con il modulo vuoto
+  // "Nuova task": modulo vuoto
   const openNewForm = () => setShowForm(true);
 
-  // dopo il salvataggio chiudo il modale e ricarico (servono le task raggruppate)
+  // salvata: chiudo e ricarico
   const handleSaved = () => {
     setShowForm(false);
     setRefreshCount((prevCount) => prevCount + 1);
   };
 
-  // elimino sul server e ricarico (la pagina si riempie con la task successiva);
-  // finally chiude sempre la conferma
+  // elimino la task per tutti e ricarico; finally chiude la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
     setError("");
@@ -173,69 +167,71 @@ const Tasks = () => {
     }
   };
 
-  // filtri attivi, per il pallino su "Filtri"
+  // filtri attivi, per il messaggio
   const activeFilterCount = Object.values(filters).filter(
     (value) => value !== "",
   ).length;
-  // su telefono il pallino di "Filtri" conta solo quelli dentro il menu (non lo Stato)
+  // su telefono il pallino conta solo i filtri del menu
   const menuFilterCount = [filters.due, filters.store, filters.type].filter(
     (value) => value !== "",
   ).length;
 
-  // negozi nel formato { value, label } di FilterSelect
+  // negozi per FilterSelect
   const storeOptions = toStoreOptions(stores);
 
-  // i giorni con almeno una task della pagina, senza doppioni e già in ordine di scadenza
+  // giorni con almeno una task, senza doppioni (già in ordine)
   const dayKeys = [
     ...new Set(tasks.map((task) => new Date(task.dueDate).toDateString())),
   ];
-  // per ogni giorno le sue task (le tonde servono a restituire un oggetto)
+  // per ogni giorno le sue task
   const sections = dayKeys.map((dayKey) => ({
     day: dayKey,
     tasks: tasks.filter((task) => isSameDay(task.dueDate, dayKey)),
   }));
 
-  // i quattro filtri scritti una volta: da tablet in su stanno tutti in riga,
-  // su telefono lo Stato resta in vista e gli altri tre vanno nel bottone "Filtri", accanto
+  // i quattro filtri, scritti una volta (in riga da tablet, nel menu su telefono)
   const dueFilter = (
     <FilterChips
       label="Scadenza"
       options={DUE_OPTIONS}
       value={filters.due}
-      onChange={(value) => changeFilter("due", value)}
+      onChange={(value) => changeFilter("due", value)} // nuova scadenza: pagina 1
     />
   );
 
+  // stato
   const statusFilter = (
     <FilterChips
       label="Stato"
       options={STATUS_OPTIONS}
       value={filters.status}
-      onChange={(value) => changeFilter("status", value)}
+      onChange={(value) => changeFilter("status", value)} // nuovo stato: pagina 1
     />
   );
 
+  // negozio
   const storeFilter = (
     <FilterSelect
       label="Negozio"
       allLabel="Tutti i negozi"
       options={storeOptions}
       value={filters.store}
-      onChange={(value) => changeFilter("store", value)}
+      onChange={(value) => changeFilter("store", value)} // nuovo negozio: pagina 1
     />
   );
 
+  // tipo
   const typeFilter = (
     <FilterSelect
       label="Tipo"
       allLabel="Ogni tipo"
       options={TYPE_OPTIONS}
       value={filters.type}
-      onChange={(value) => changeFilter("type", value)}
+      onChange={(value) => changeFilter("type", value)} // nuovo tipo: pagina 1
     />
   );
 
-  // "Nuova task": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
+  // "Nuova task": su telefono solo il "+"
   const addButton = (
     <AddButton label="Nuova task" iconOnly={isPhone} onClick={openNewForm} />
   );
@@ -248,11 +244,10 @@ const Tasks = () => {
         subtitle={`${openCount} in corso`}
         error={error}
       >
-        {/* da tablet in su il bottone va a destra dell'intestazione */}
+        {/* da tablet il bottone a destra */}
         {!isPhone && addButton}
       </PageHeader>
-      {/* su telefono lo Stato e accanto il bottone "Filtri" (Scadenza, Negozio, Tipo);
-          da tablet in su tutti i filtri in riga */}
+      {/* telefono: lo Stato e accanto "Filtri"; da tablet tutto in riga */}
       {isPhone ? (
         <FilterBar>
           <div className="filter-row">
@@ -280,14 +275,14 @@ const Tasks = () => {
             : "Nessuna task in programma"}
         </Message>
       )}
-      {/* una sezione per giorno: "Oggi", "Domani" o la data.
-          Dentro, una card per riga fino a 1200px e due per riga sopra */}
+      {/* una sezione per giorno ("Oggi", "Domani" o la data); due card per riga da 1200px */}
       {sections.map((section) => (
         <section key={section.day} className="mb-4">
           <h2 className="section-label mb-3">{formatDayLabel(section.day)}</h2>
           <Row xs={1} xl={2} className="g-3">
             {section.tasks.map((task) => (
               <Col key={task._id}>
+                {/* passo la task alla card; il cestino chiede conferma */}
                 <TaskCard task={task} onDelete={setTaskToDelete} />
               </Col>
             ))}
@@ -303,7 +298,7 @@ const Tasks = () => {
         onChange={setPage}
       />
 
-      {/* modale "Nuova task": chiudendolo il modulo sparisce, così si riapre vuoto */}
+      {/* modale "Nuova task" (chiudendolo il modulo si svuota) */}
       <FormModal
         wide
         show={showForm}
@@ -311,21 +306,21 @@ const Tasks = () => {
         onClose={() => setShowForm(false)}
       >
         <TaskForm
-          stores={stores}
-          employees={employees}
-          onSaved={handleSaved}
+          stores={stores} // i negozi per il menu
+          employees={employees} // i dipendenti da spuntare
+          onSaved={handleSaved} // chiudo e ricarico
           onCancel={() => setShowForm(false)}
         />
       </FormModal>
 
-      {/* !! trasforma taskToDelete in true/false; ?. perché a modale chiuso è null */}
+      {/* conferma: !! = true/false, ?. perché a modale chiuso è null */}
       <ConfirmDialog
         show={!!taskToDelete}
         title="Eliminare la task?"
         message={`"${taskToDelete?.title}" verrà eliminata. Non si può annullare.`}
         confirmLabel="Elimina"
-        isLoading={isDeleting}
-        onConfirm={confirmDelete}
+        isLoading={isDeleting} // spento mentre aspetto il server
+        onConfirm={confirmDelete} // elimino la task per tutti
         onCancel={() => setTaskToDelete(null)}
       />
     </Container>

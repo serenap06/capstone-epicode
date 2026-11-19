@@ -1,5 +1,4 @@
-/* griglia di 12 colonne: su telefono lun-gio sopra (4) e ven-dom sotto (3).
-   minmax(0, 1fr) lascia stringere le colonne */
+/* 12 colonne: su telefono lun-gio sopra e ven-dom sotto */
 .week-shifts {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));

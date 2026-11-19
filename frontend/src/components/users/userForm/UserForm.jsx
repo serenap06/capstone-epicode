@@ -1,3 +1,4 @@
+// import
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { createUser, updateUser } from "../../../api/users";
@@ -6,10 +7,10 @@ import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 import PasswordInput from "../../common/passwordInput/PasswordInput";
 
-// modulo di un utente, nel modale. user: quello da modificare, oppure null per uno nuovo.
-// La password si sceglie solo alla creazione (il backend non la cambia in modifica).
-// isSelf: true se sto modificando me stessa, così il ruolo non si può cambiare
+// componente UserForm: modulo di un utente, nel modale (la password solo alla creazione).
+// props: user = da modificare (null = nuovo), stores, isSelf = sono io (il ruolo non si cambia), onSaved, onCancel
 const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
+  // errore del server
   const [serverError, setServerError] = useState("");
   const isEditing = Boolean(user);
 
@@ -30,13 +31,14 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
     },
   });
 
-  // negozio e ore servono solo ai dipendenti: li mostro solo con quel ruolo
+  // negozio e ore solo per i dipendenti
   const isEmployee =
     (useWatch({ control, name: "role" }) ?? user?.role) === "employee";
 
+  // salvo: creo o modifico
   const onSubmit = async (formData) => {
     setServerError("");
-    // un campo spento (il ruolo quando modifico me stessa) non arriva in formData
+    // un campo spento (il mio ruolo) non arriva in formData
     const role = formData.role ?? user.role;
     const employee = role === "employee";
     const userData = {
@@ -45,7 +47,7 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
       email: formData.email,
       role,
       store: employee ? formData.store : undefined,
-      // ore vuote = non le mando; altrimenti da testo a numero
+      // ore vuote non le mando; altrimenti da testo a numero
       weeklyHours:
         employee && formData.weeklyHours !== ""
           ? Number(formData.weeklyHours)
@@ -113,7 +115,7 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
         />
       </FormField>
 
-      {/* la password solo per un utente nuovo: almeno 8 caratteri, come nel backend */}
+      {/* password solo per un utente nuovo (almeno 8 caratteri) */}
       {!isEditing && (
         <FormField
           label="Password"
@@ -138,7 +140,7 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
           <select
             id="user-role"
             className="form-input"
-            disabled={isSelf}
+            disabled={isSelf} // il mio ruolo non lo cambio
             {...register("role")}
           >
             <option value="employee">Dipendente</option>
@@ -146,7 +148,7 @@ const UserForm = ({ user, stores, isSelf, onSaved, onCancel }) => {
           </select>
         </FormField>
 
-        {/* il negozio è obbligatorio solo per i dipendenti */}
+        {/* negozio obbligatorio solo per i dipendenti */}
         {isEmployee && (
           <FormField
             label="Negozio"

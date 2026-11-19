@@ -1,5 +1,7 @@
+// import
 const dashboardService = require("./service");
 
+// GET /api/dashboard: i numeri delle card di oggi (anche di un solo negozio)
 const getKpis = async (req, res, next) => {
   try {
     const { store } = req.query;

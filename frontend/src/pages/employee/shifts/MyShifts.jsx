@@ -1,3 +1,4 @@
+// import
 import "./myShifts.css";
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
@@ -14,26 +15,27 @@ import WeekNav from "../../../components/common/weekNav/WeekNav";
 import HoursSummary from "../../../components/shifts/hoursSummary/HoursSummary";
 import ShiftDayList from "../../../components/shifts/shiftDayList/ShiftDayList";
 
-// pagina "I miei turni": ore, i sette giorni e le frecce per cambiare settimana
+// componente MyShifts: le mie ore e i sette giorni, con le frecce per cambiare settimana
 const MyShifts = () => {
+  // utente collegato
   const { user } = useAuth();
-  // shifts: i turni della settimana di tutto il negozio (anche dei colleghi)
+  // turni della settimana di tutto il negozio
   const [shifts, setShifts] = useState([]);
-  // hours: null finché non arriva
+  // le mie ore (null finché non arrivano)
   const [hours, setHours] = useState(null);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // referenceDate: un giorno della settimana mostrata; le frecce la spostano di 7 giorni
+  // un giorno della settimana mostrata (le frecce lo spostano di 7 giorni)
   const [referenceDate, setReferenceDate] = useState(new Date());
 
-  // ricarico turni e ore a ogni cambio di settimana
+  // prendo turni e ore a ogni cambio di settimana
   useEffect(() => {
-    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    // ignore: true se parte una richiesta più nuova (la risposta vecchia la scarto)
     let ignore = false;
     const weekQuery = toQuery(getWeek(referenceDate));
 
-    // Promise.all aspetta tutte e due le richieste, poi finally spegne la rotellina
+    // Promise.all aspetta le due richieste, poi spengo la rotellina
     Promise.all([
       loadData(
         `/shifts?${weekQuery}`,
@@ -58,7 +60,7 @@ const MyShifts = () => {
 
   // i 7 giorni
   const weekDays = getWeekDays(referenceDate);
-  // true se è la settimana in corso (disattiva "Questa settimana")
+  // true se è la settimana in corso (spegne "Questa settimana")
   const isCurrentWeek = isSameDay(weekDays[0], getWeekDays()[0]);
   const storeName = user.store?.name ?? "";
 
@@ -81,7 +83,7 @@ const MyShifts = () => {
         }
         error={error}
       >
-        {/* le frecce cambiano solo referenceDate */}
+        {/* le frecce spostano referenceDate */}
         <WeekNav
           onPrevious={() => setReferenceDate(addDays(referenceDate, -7))}
           onNext={() => setReferenceDate(addDays(referenceDate, 7))}
@@ -101,11 +103,11 @@ const MyShifts = () => {
       <Row as="section">
         <Col>
           <h2 className="section-label mb-3">Giorni</h2>
-          {/* per ogni giorno la lista trova il mio turno e i colleghi;
-              finché non arrivano i turni la rotellina (altrimenti sembrerebbe tutto riposo) */}
+          {/* prima la rotellina (se no sembrerebbe tutto riposo) */}
           {isLoading ? (
             <Loader />
           ) : (
+            // userId: per separare i miei turni da quelli dei colleghi
             <ShiftDayList days={weekDays} shifts={shifts} userId={user._id} />
           )}
         </Col>

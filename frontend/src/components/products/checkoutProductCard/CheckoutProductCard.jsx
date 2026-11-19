@@ -1,3 +1,4 @@
+// import
 import "./checkoutProductCard.css";
 import { Plus } from "lucide-react";
 
@@ -8,10 +9,9 @@ import Badge from "../../common/badge/Badge";
 import Button from "../../common/button/Button";
 import ProductThumb from "../productThumb/ProductThumb";
 
-// card compatta della Cassa: foto piccola, nome e categoria, prezzo e pezzi, "Aggiungi".
-// Più bassa della card del Catalogo, così su tablet si vedono più prodotti senza scorrere.
-// stock: la giacenza del negozio (undefined se il prodotto non c'è);
-// onAdd: aggiunge un pezzo al carrello; addDisabled spegne il bottone (pezzi finiti)
+// componente CheckoutProductCard: card compatta della Cassa (più bassa di quella del Catalogo).
+// props: product, stock = la giacenza del negozio (undefined se non c'è),
+// onAdd = aggiunge un pezzo al carrello, addDisabled = pezzi finiti
 const CheckoutProductCard = ({ product, stock, onAdd, addDisabled }) => {
   return (
     <article className="app-card checkout-product-card">
@@ -19,12 +19,12 @@ const CheckoutProductCard = ({ product, stock, onAdd, addDisabled }) => {
         <ProductThumb product={product} size={56} />
         <div className="checkout-product-card-info">
           <h2 className="checkout-product-card-name">{product.name}</h2>
-          {/* la categoria arriva in minuscolo: la maiuscola la mette il CSS */}
+          {/* la maiuscola della categoria la mette il CSS */}
           <p className="checkout-product-card-category">{product.category}</p>
         </div>
       </div>
 
-      {/* prezzo a sinistra, pezzi a destra: arancio se sotto la soglia, come nel Catalogo */}
+      {/* prezzo a sinistra, pezzi a destra (arancio sotto soglia, verde se ok) */}
       <div className="checkout-product-card-row">
         <span className="checkout-product-card-price">
           {formatEuro(product.price)}
@@ -41,8 +41,8 @@ const CheckoutProductCard = ({ product, stock, onAdd, addDisabled }) => {
       <Button
         className="w-100"
         aria-label={`Aggiungi ${product.name} al carrello`}
-        onClick={() => onAdd(product)}
-        disabled={addDisabled}
+        onClick={() => onAdd(product)} // aggiungo un pezzo al carrello
+        disabled={addDisabled} // spento quando i pezzi sono finiti
       >
         <Plus size={16} aria-hidden="true" />
         Aggiungi

@@ -1,3 +1,4 @@
+// import
 import "./myTaskCard.css";
 
 import { CATEGORY, PRIORITY } from "../../../utils/taskLabel";
@@ -6,7 +7,7 @@ import { formatDue } from "../../../utils/formatDue";
 import Badge from "../../common/badge/Badge";
 import TaskStatusBadge from "../taskStatusBadge/TaskStatusBadge";
 
-// card di una task in "Le mie task"; onToggle la segna fatta o da fare
+// componente MyTaskCard: una task in "Le mie task". props: task, onToggle = fatta / da fare
 const MyTaskCard = ({ task, onToggle }) => {
   const isDone = task.status === "done";
   return (
@@ -34,7 +35,7 @@ const MyTaskCard = ({ task, onToggle }) => {
           </span>
         </p>
       </div>
-      {/* a destra: "Fatto alle" e Annulla, oppure "Segna come fatto" */}
+      {/* a destra "Fatto alle" e Annulla, oppure "Segna come fatto" */}
       {isDone ? (
         <div className="my-task-card-completed">
           <p className="my-task-card-completed-text">
@@ -42,12 +43,12 @@ const MyTaskCard = ({ task, onToggle }) => {
               ? `Fatto alle ${formatTime(task.completedAt)}`
               : "Fatto"}
           </p>
-          {/* aria-label con il titolo: in pagina ci sono più "Annulla" */}
+          {/* aria-label con il titolo: gli "Annulla" sono tanti */}
           <button
             type="button"
             className="my-task-card-undo"
             aria-label={`Annulla il completamento di ${task.title}`}
-            onClick={() => onToggle(task)}
+            onClick={() => onToggle(task)} // la rimetto da fare
           >
             <span className="my-task-card-undo-label">Annulla</span>
           </button>
@@ -56,7 +57,7 @@ const MyTaskCard = ({ task, onToggle }) => {
         <button
           type="button"
           className="my-task-card-button"
-          onClick={() => onToggle(task)}
+          onClick={() => onToggle(task)} // la segno fatta
         >
           Segna come fatto
         </button>

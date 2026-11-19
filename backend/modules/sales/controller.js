@@ -1,5 +1,7 @@
+// import
 const saleService = require("./service");
 
+// GET /api/sales: le vendite con filtri, pagine e totali
 const findAll = async (req, res, next) => {
   try {
     const { store, soldBy, from, to, status, sortBy, order, page, limit } =
@@ -29,6 +31,7 @@ const findAll = async (req, res, next) => {
   }
 };
 
+// POST /api/sales: registro una vendita dalla Cassa
 const create = async (req, res, next) => {
   try {
     const { items, paymentMethod } = req.body;
@@ -47,6 +50,7 @@ const create = async (req, res, next) => {
   }
 };
 
+// PATCH /api/sales/:saleId/cancel: annullo una vendita con il motivo
 const cancel = async (req, res, next) => {
   try {
     const { saleId } = req.params;

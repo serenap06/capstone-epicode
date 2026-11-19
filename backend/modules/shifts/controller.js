@@ -1,5 +1,7 @@
+// import
 const shiftService = require("./service");
 
+// GET /api/shifts: i turni del periodo
 const findAll = async (req, res, next) => {
   try {
     const { store, from, to } = req.query;
@@ -13,6 +15,7 @@ const findAll = async (req, res, next) => {
   }
 };
 
+// GET /api/shifts/:shiftId: un turno
 const findOne = async (req, res, next) => {
   try {
     const { shiftId } = req.params;
@@ -26,6 +29,7 @@ const findOne = async (req, res, next) => {
   }
 };
 
+// GET /api/shifts/hours: ore di contratto e ore pianificate della settimana
 const findWeeklyHours = async (req, res, next) => {
   try {
     const { store, from, to } = req.query;
@@ -42,6 +46,7 @@ const findWeeklyHours = async (req, res, next) => {
   }
 };
 
+// POST /api/shifts: nuovo turno
 const create = async (req, res, next) => {
   try {
     const { user, store, startAt, endAt } = req.body;
@@ -61,6 +66,7 @@ const create = async (req, res, next) => {
   }
 };
 
+// PATCH /api/shifts/:shiftId: modifico il turno
 const update = async (req, res, next) => {
   try {
     const { shiftId } = req.params;
@@ -81,6 +87,7 @@ const update = async (req, res, next) => {
   }
 };
 
+// DELETE /api/shifts/:shiftId: elimino il turno
 const deleteShift = async (req, res, next) => {
   try {
     const { shiftId } = req.params;

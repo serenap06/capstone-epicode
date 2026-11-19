@@ -1,6 +1,7 @@
+// import
 import "./sectionHeader.css";
 
-// titolo di sezione con, a destra, un link o un conteggio (aside); id serve a Panel
+// componente SectionHeader: titolo di sezione. props: title, id (per Panel), aside = link o conteggio a destra
 const SectionHeader = ({ title, id, aside, className = "" }) => {
   return (
     <div className={`section-header ${className}`}>

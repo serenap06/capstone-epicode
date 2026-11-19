@@ -1,4 +1,4 @@
-/* larghezza minima: sotto, la tabella scorre dentro il riquadro (vedi .app-table in index.css) */
+/* larghezza minima: sotto la tabella scorre */
 .user-table {
   min-width: 700px;
 }

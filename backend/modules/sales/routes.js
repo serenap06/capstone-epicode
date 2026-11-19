@@ -1,4 +1,6 @@
+// import
 const express = require("express");
+// router di /api/sales
 const salesRouter = express.Router();
 const saleController = require("./controller");
 
@@ -10,8 +12,10 @@ const saleBodyRules = require("../../middlewares/sales/saleBodyRules");
 const saleQueryRules = require("../../middlewares/sales/saleQueryRules");
 const saleCancelRules = require("../../middlewares/sales/saleCancelRules");
 
+// serve il login
 salesRouter.use(authenticate);
 
+// elenco (tutti e due i ruoli)
 salesRouter.get(
   "/",
   authorizeRoles("admin", "employee"),
@@ -20,6 +24,7 @@ salesRouter.get(
   saleController.findAll,
 );
 
+// nuova vendita (solo il dipendente)
 salesRouter.post(
   "/",
   authorizeRoles("employee"),
@@ -28,6 +33,7 @@ salesRouter.post(
   saleController.create,
 );
 
+// annullamento (solo il dipendente)
 salesRouter.patch(
   "/:saleId/cancel",
   authorizeRoles("employee"),

@@ -1,10 +1,11 @@
+// import
 import "./panel.css";
 import { useId } from "react";
 import SectionHeader from "../sectionHeader/SectionHeader";
 
-// riquadro bianco con titolo; aside: a destra del titolo; footer: in fondo
+// componente Panel: riquadro bianco con titolo. props: title, aside = a destra del titolo, footer, className
 const Panel = ({ title, aside, footer, className = "", children }) => {
-  // id unico per collegare il riquadro al titolo
+  // id per collegare il riquadro al titolo
   const titleId = useId();
 
   return (
@@ -12,6 +13,7 @@ const Panel = ({ title, aside, footer, className = "", children }) => {
       className={`app-card panel ${className}`}
       aria-labelledby={titleId}
     >
+      {/* titolo, con il suo id */}
       <SectionHeader title={title} id={titleId} aside={aside} />
       {children}
       {footer && <div className="panel-footer">{footer}</div>}

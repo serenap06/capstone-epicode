@@ -1,6 +1,6 @@
 /* stili solo della Dashboard */
 
-/* task alte al massimo il 71% dello schermo, poi scorrono; spazio a destra per la barra */
+/* task alte al massimo il 71% dello schermo, poi scorrono */
 .dashboard-tasks {
   display: flex;
   flex-direction: column;

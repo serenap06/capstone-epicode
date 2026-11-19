@@ -1,9 +1,9 @@
+// import
 import { useEffect, useState } from "react";
 
-// true quando lo schermo rispetta la media query, per esempio "(max-width: 425px)".
-// Serve quando su schermi diversi mostro componenti diversi, non solo stili diversi
+// true quando lo schermo rispetta la media query, es. "(max-width: 767.98px)"
 export const useMediaQuery = (query) => {
-  // valore iniziale: la larghezza di adesso
+  // valore iniziale
   const [matches, setMatches] = useState(
     () => window.matchMedia(query).matches,
   );

@@ -1,10 +1,11 @@
+// import
 const mongoose = require("mongoose");
 const HttpException = require("../../exceptions");
 const multer = require("multer");
 
-// ultimo middleware: riceve ogni errore passato con next(e) e risponde sempre
-// con la stessa forma { statusCode, message, error }
+// ultimo middleware: ogni errore diventa { statusCode, message, error }
 const errorHandler = (err, req, res, next) => {
+  // errori lanciati da me (HttpException)
   if (err instanceof HttpException) {
     return res.status(err.statusCode).send({
       statusCode: err.statusCode,
@@ -12,7 +13,7 @@ const errorHandler = (err, req, res, next) => {
       error: err.error,
     });
   }
-  // file troppo grande o campo sbagliato nell'upload
+  // upload: file troppo grande o campo sbagliato
   if (err instanceof multer.MulterError) {
     return res.status(400).send({
       statusCode: 400,
@@ -23,7 +24,7 @@ const errorHandler = (err, req, res, next) => {
           : err.message,
     });
   }
-  // Cloudinary rifiuta il formato del file
+  // Cloudinary: formato del file non accettato
   if (err.http_code === 400) {
     return res.status(400).send({
       statusCode: 400,
@@ -31,6 +32,7 @@ const errorHandler = (err, req, res, next) => {
       error: "File format not allowed: use png, jpg, jpeg or webp",
     });
   }
+  // id non valido
   if (err instanceof mongoose.Error.CastError) {
     return res.status(400).send({
       statusCode: 400,
@@ -38,6 +40,7 @@ const errorHandler = (err, req, res, next) => {
       error: err.message,
     });
   }
+  // dati che non rispettano lo schema
   if (err instanceof mongoose.Error.ValidationError) {
     return res.status(400).send({
       statusCode: 400,
@@ -45,7 +48,7 @@ const errorHandler = (err, req, res, next) => {
       error: Object.values(err.errors).map((error) => error.message),
     });
   }
-  // valore unico già usato (per esempio un'email o il nome di un negozio)
+  // valore unico già usato (email, nome del negozio...)
   if (err.code === 11000) {
     return res.status(409).send({
       statusCode: 409,
@@ -53,6 +56,7 @@ const errorHandler = (err, req, res, next) => {
       error: `Duplicate value for: ${Object.keys(err.keyValue ?? {}).join(", ")}`,
     });
   }
+  // JSON scritto male nel body
   if (err.type === "entity.parse.failed") {
     return res.status(400).send({
       statusCode: 400,
@@ -60,7 +64,7 @@ const errorHandler = (err, req, res, next) => {
       error: "The request body is not valid JSON",
     });
   }
-  // errore non previsto: lo scrivo nel terminale e rispondo 500
+  // errore non previsto: lo stampo e rispondo 500
   console.error(err);
   return res.status(500).send({
     statusCode: 500,

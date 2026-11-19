@@ -1,4 +1,4 @@
-/* block perché a volte è un link; height 100% per card alte uguali nella riga */
+/* block perché a volte è un link; height 100%: card alte uguali */
 .kpi-card {
   display: block;
   height: 100%;
@@ -36,10 +36,7 @@
   font-weight: 400;
 }
 
-/* colori: kpi-card-primary, kpi-card-blue... (dalla prop color).
-   Un colore per argomento, uguale in tutte le pagine: magenta = turni, viola = task,
-   arancio = vendite, blu = ore e forniture, turchese = sotto scorta
-   (nella pagina Vendite i colori sono scelti per la pagina) */
+/* colori dalla prop color: magenta turni, viola task, arancio vendite, blu ore e forniture, turchese sotto scorta */
 .kpi-card-primary {
   background: var(--primary);
 }

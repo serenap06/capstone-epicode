@@ -1,3 +1,4 @@
+// import
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { createStore, updateStore } from "../../../api/stores";
@@ -5,12 +6,13 @@ import Button from "../../common/button/Button";
 import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 
-// modulo del negozio, nel modale. store: quello da modificare, oppure null per uno nuovo
+// componente StoreForm: modulo del negozio, nel modale. props: store (null = nuovo), onSaved, onCancel
 const StoreForm = ({ store, onSaved, onCancel }) => {
+  // errore del server
   const [serverError, setServerError] = useState("");
   const isEditing = Boolean(store);
 
-  // con un negozio nuovo store è null: ?. e ?? "" fanno partire i campi vuoti
+  // campi vuoti per un negozio nuovo
   const {
     register,
     handleSubmit,
@@ -23,6 +25,7 @@ const StoreForm = ({ store, onSaved, onCancel }) => {
     },
   });
 
+  // salvo: modifico o creo
   const onSubmit = async (formData) => {
     setServerError("");
     try {

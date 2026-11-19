@@ -1,6 +1,7 @@
+// import
 const { body } = require("express-validator");
 
-// cambio password dal profilo: la password attuale e quella nuova (almeno 8 caratteri)
+// regole per cambiare password: quella attuale e la nuova (almeno 8 caratteri)
 const passwordUpdateRules = [
   body("currentPassword")
     .isString()

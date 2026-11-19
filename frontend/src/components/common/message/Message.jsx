@@ -1,6 +1,7 @@
+// import
 import "./message.css";
 
-// messaggio di pagina: type "error" (riquadro arancio) o "info" (testo grigio)
+// componente Message: messaggio di pagina. props: type = "error" (riquadro arancio) o "info"
 const Message = ({ type = "info", children }) => {
   const isError = type === "error";
   return (

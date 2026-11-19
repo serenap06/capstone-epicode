@@ -1,9 +1,10 @@
+// import
 const User = require("../users/schema");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const InvalidCredentialException = require("../../exceptions/auth/InvalidCredentialException");
 
-// login: cerco l'utente, confronto la password con bcrypt e firmo il token con il suo id
+// login: cerco l'utente, controllo la password con bcrypt e creo il token con il suo id
 const login = async (body) => {
   const { email, password } = body;
   const user = await User.findOne({
@@ -19,6 +20,7 @@ const login = async (body) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
+  // tolgo la password dalla risposta
   const { password: _password, ...safeUser } = user.toObject();
   return { token, user: safeUser };
 };

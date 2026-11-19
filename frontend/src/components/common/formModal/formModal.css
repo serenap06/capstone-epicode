@@ -1,4 +1,4 @@
-/* angoli tondi e senza le linee di Bootstrap; .form-modal: vale solo per i nostri moduli */
+/* angoli tondi e senza le linee di Bootstrap (solo i nostri moduli) */
 .form-modal .modal-content {
   border: 0;
   border-radius: 24px;
@@ -47,7 +47,7 @@
     border-radius: 0;
   }
 
-  /* più spazio sopra il titolo; ai lati margini stretti, sotto ci pensano i bottoni */
+  /* più spazio sopra il titolo, margini stretti ai lati */
   .form-modal .modal-header {
     padding: 1.75rem 1rem 0.5rem;
   }
@@ -63,8 +63,7 @@
     flex: 1 0 auto;
   }
 
-  /* bottoni in fondo allo schermo (margin-top: auto) e sempre visibili mentre si scorre
-     (sticky); il margine negativo li allarga fino ai bordi */
+  /* bottoni sempre visibili in fondo (sticky); il margine negativo li allarga ai bordi */
   .form-modal .form-actions {
     position: sticky;
     bottom: 0;

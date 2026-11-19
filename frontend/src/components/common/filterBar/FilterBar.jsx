@@ -1,15 +1,16 @@
+// import
 import "./filterBar.css";
 import { Dropdown } from "react-bootstrap";
 import { SlidersHorizontal } from "lucide-react";
 
-// contenitore dei filtri: in riga, oppure (compact) chiusi nel menu "Filtri" per gli schermi piccoli.
-// activeCount: il numero nel pallino accanto a "Filtri"
+// componente FilterBar: i filtri in riga, oppure (compact) nel menu "Filtri".
+// props: compact, activeCount = il numero nel pallino, children = i filtri
 const FilterBar = ({ compact = false, activeCount = 0, children }) => {
   if (compact) {
     return (
-      // il menu si apre a destra (align="end") e si chiude solo cliccando fuori
+      // menu a destra (align="end"), si chiude solo cliccando fuori
       <Dropdown align="end" autoClose="outside" className="filter-dropdown">
-        {/* aria-label: quando la scritta è nascosta (vedi il CSS) resta il nome per gli screen reader */}
+        {/* aria-label: il nome resta anche quando la scritta è nascosta */}
         <Dropdown.Toggle
           variant="light"
           className="filter-dropdown-toggle"

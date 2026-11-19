@@ -1,3 +1,4 @@
+// import
 const Product = require("./schema");
 const Stock = require("../stock/schema");
 const SupplyRequest = require("../supply-requests/schema");
@@ -7,7 +8,7 @@ const assignDefinedFields = require("../../utils/assignDefinedFields");
 const escapeRegex = require("../../utils/escapeRegex");
 const buildPagination = require("../../utils/buildPagination");
 
-// le colonne che si possono ordinare: il nome che arriva nella query → il campo del prodotto
+// colonne ordinabili: nome nella query → campo del prodotto
 const SORT_FIELDS = {
   name: "name",
   category: "category",
@@ -16,8 +17,7 @@ const SORT_FIELDS = {
   state: "active",
 };
 
-// senza page restituisce tutti i prodotti dalla A alla Z (li usano la Cassa e i moduli);
-// con page una pagina sola, nell'ordine scelto, più i totali e le categorie per il filtro
+// senza page tutti i prodotti A→Z (Cassa e moduli); con page una pagina, totali e categorie
 const findAll = async (filters, currentUser) => {
   const {
     search,
@@ -30,10 +30,10 @@ const findAll = async (filters, currentUser) => {
     limit = 10,
   } = filters;
 
-  // il dipendente vede solo i prodotti attivi
+  // il dipendente vede solo gli attivi
   const scope = currentUser.role === "employee" ? { active: true } : {};
   const query = { ...scope };
-  // ricerca nel nome; "i": maiuscole e minuscole uguali
+  // ricerca nel nome, senza badare alle maiuscole ("i")
   if (search) query.name = { $regex: escapeRegex(search), $options: "i" };
   if (currentUser.role !== "employee" && active !== undefined) {
     query.active = active;
@@ -41,7 +41,7 @@ const findAll = async (filters, currentUser) => {
   if (brand) query.brand = brand;
   if (category) query.category = category.toLowerCase();
 
-  // senza page: tutti, come prima
+  // senza page: tutti
   if (!page) {
     const products = await Product.find(query).sort({ name: 1 });
     return { products };
@@ -49,8 +49,8 @@ const findAll = async (filters, currentUser) => {
 
   const pageNumber = Number(page);
   const limitNumber = Number(limit);
-  // ordine: 1 crescente, -1 decrescente. Per lo stato crescente vuol dire prima gli attivi
-  // (active true), quindi giro la direzione. A parità di valore, dalla A alla Z
+  // ordine: 1 crescente, -1 decrescente; per lo stato giro la direzione (prima gli attivi).
+  // A parità, dalla A alla Z
   const direction = order === "desc" ? -1 : 1;
   const sortStage = {
     [SORT_FIELDS[sortBy]]: sortBy === "state" ? -direction : direction,
@@ -58,8 +58,7 @@ const findAll = async (filters, currentUser) => {
   if (sortBy !== "name") sortStage.name = 1;
   sortStage._id = 1;
 
-  // cinque richieste insieme: la pagina, quanti prodotti passano i filtri (per le pagine),
-  // quanti ce ne sono in tutto e quanti non attivi (sottotitolo), e le categorie (filtro)
+  // cinque richieste insieme: pagina, quanti passano i filtri, totale, non attivi e categorie
   const [products, filteredCount, count, inactiveCount, categories] =
     await Promise.all([
       Product.find(query)
@@ -70,7 +69,7 @@ const findAll = async (filters, currentUser) => {
       Product.countDocuments(query),
       Product.countDocuments(scope),
       Product.countDocuments({ ...scope, active: false }),
-      // distinct: ogni categoria una volta sola
+      // ogni categoria una volta sola
       Product.distinct("category", scope),
     ]);
 
@@ -82,6 +81,7 @@ const findAll = async (filters, currentUser) => {
   };
 };
 
+// un prodotto (il dipendente non vede quelli non attivi)
 const findOne = async (productId, currentUser) => {
   const product = await Product.findById(productId);
   if (!product || (currentUser.role === "employee" && !product.active)) {
@@ -90,11 +90,13 @@ const findOne = async (productId, currentUser) => {
   return product;
 };
 
+// nuovo prodotto
 const create = async (productData) => {
   const product = new Product(productData);
   return await product.save();
 };
 
+// modifico il prodotto con i campi arrivati
 const update = async (productId, productData) => {
   const product = await Product.findById(productId);
   if (!product) {
@@ -104,6 +106,7 @@ const update = async (productId, productData) => {
   return await product.save();
 };
 
+// salvo il link della foto
 const updateImage = async (productId, imageUrl) => {
   const product = await Product.findById(productId);
   if (!product) {
@@ -113,7 +116,7 @@ const updateImage = async (productId, imageUrl) => {
   return await product.save();
 };
 
-// undefined toglie il campo image dal documento
+// tolgo la foto (undefined toglie il campo)
 const removeImage = async (productId) => {
   const product = await Product.findById(productId);
   if (!product) {
@@ -123,12 +126,13 @@ const removeImage = async (productId) => {
   return await product.save();
 };
 
+// elimino il prodotto
 const deleteProduct = async (productId) => {
   const product = await Product.findByIdAndDelete(productId);
   if (!product) {
     throw new NotFoundException("Product not found");
   }
-  // con il prodotto spariscono anche le sue giacenze e richieste (le due insieme)
+  // con lui spariscono le sue giacenze e richieste
   await Promise.all([
     Stock.deleteMany({ product: productId }),
     SupplyRequest.deleteMany({ product: productId }),

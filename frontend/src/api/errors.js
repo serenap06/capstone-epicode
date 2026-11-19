@@ -1,4 +1,4 @@
-// messaggi del backend (a sinistra) tradotti per l'utente (a destra)
+// messaggi del backend → messaggi per l'utente
 const MESSAGES = {
   "Invalid email or password": "Email o password non corrette",
   "Validation failed": "Controlla i dati inseriti",
@@ -38,7 +38,7 @@ const MESSAGES = {
     "Il negozio ha delle vendite registrate: non si può eliminare",
 };
 
-// messaggi di riserva in base al codice, se il messaggio non è nell'elenco sopra
+// messaggi di riserva per codice
 const BY_STATUS = {
   400: "Richiesta non valida",
   401: "Sessione scaduta, accedi di nuovo",
@@ -48,11 +48,10 @@ const BY_STATUS = {
   500: "Errore del server, riprova più tardi",
 };
 
-// sceglie il messaggio: traduzione esatta, poi giacenza (contiene il nome del prodotto),
-// poi il codice, altrimenti uno generico
+// scelgo il messaggio: traduzione, poi giacenza insufficiente (con il nome), poi il codice
 export const translateError = (message, status) => {
   if (MESSAGES[message]) return MESSAGES[message];
-  // ?. evita l'errore se message è vuoto
+  // ?. se message è vuoto
   if (message?.startsWith("Not enough stock for:")) {
     return message.replace(
       "Not enough stock for:",

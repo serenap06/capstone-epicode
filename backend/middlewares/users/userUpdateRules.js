@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per modificare un utente: tutti i campi facoltativi
 const userUpdateRules = [
   body("name")
     .optional()

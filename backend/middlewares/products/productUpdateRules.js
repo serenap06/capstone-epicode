@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per modificare un prodotto: tutti i campi facoltativi
 const productUpdateRules = [
   body("name")
     .optional()

@@ -1,4 +1,6 @@
+// import
 const express = require("express");
+// router di /api/stores
 const storesRouter = express.Router();
 const storeController = require("./controller");
 
@@ -10,8 +12,10 @@ const { param } = require("express-validator");
 const storeBodyRules = require("../../middlewares/stores/storeBodyRules");
 const storeUpdateRules = require("../../middlewares/stores/storeUpdateRules");
 
+// login e solo il responsabile
 storesRouter.use(authenticate, authorizeRoles("admin"));
 
+// elenco e un negozio
 storesRouter.get("/", storeController.findAll);
 
 storesRouter.get(
@@ -21,6 +25,7 @@ storesRouter.get(
   storeController.findOne,
 );
 
+// nuovo, modifica ed elimina
 storesRouter.post("/", storeBodyRules, validate, storeController.create);
 
 storesRouter.patch(

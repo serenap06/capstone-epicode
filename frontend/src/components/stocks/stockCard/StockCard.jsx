@@ -1,3 +1,4 @@
+// import
 import "./stockCard.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { isLowStock } from "../../../utils/isLowStock";
@@ -5,8 +6,8 @@ import Button from "../../common/button/Button";
 import ProductThumb from "../../products/productThumb/ProductThumb";
 import StockStatusBadge from "../stockStatusBadge/StockStatusBadge";
 
-// card di una giacenza, per telefono e tablet: foto, nome e negozio (o categoria), quantità a destra;
-// sotto lo stato e, se la pagina li passa, i bottoni (stesse props di StockTable)
+// componente StockCard: card di una giacenza fino a 1366px (stesse props di StockTable).
+// props: stock, showStore = il negozio al posto della categoria, onEdit e onDelete = i bottoni
 const StockCard = ({ stock, showStore, onEdit, onDelete }) => {
   return (
     <article className="app-card stock-card">
@@ -32,11 +33,11 @@ const StockCard = ({ stock, showStore, onEdit, onDelete }) => {
         <StockStatusBadge stock={stock} />
         {onEdit && (
           <div className="stock-card-actions">
-            {/* come nelle altre card: "Modifica" (su telefono solo la matita) e il cestino */}
+            {/* "Modifica" (su telefono solo la matita) e il cestino */}
             <Button
               variant="secondary"
               aria-label={`Modifica ${stock.product.name}, ${stock.store.name}`}
-              onClick={() => onEdit(stock)}
+              onClick={() => onEdit(stock)} // apro il modulo con la giacenza
             >
               <Pencil size={16} aria-hidden="true" />
               <span className="app-button-label">Modifica</span>
@@ -45,7 +46,7 @@ const StockCard = ({ stock, showStore, onEdit, onDelete }) => {
               variant="danger"
               className="app-button-icon"
               aria-label={`Elimina ${stock.product.name}, ${stock.store.name}`}
-              onClick={() => onDelete(stock)}
+              onClick={() => onDelete(stock)} // chiedo conferma prima di eliminare
             >
               <Trash2 size={16} aria-hidden="true" />
             </Button>

@@ -1,3 +1,4 @@
+// import
 import "./shifts.css";
 import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
@@ -27,52 +28,49 @@ import ShiftWeekGrid from "../../../components/shifts/shiftWeekGrid/ShiftWeekGri
 import WeekDayPicker from "../../../components/shifts/weekDayPicker/WeekDayPicker";
 import WeekHoursList from "../../../components/shifts/weekHoursList/WeekHoursList";
 
-// pagina Turni del responsabile: la settimana di un negozio e le ore di ogni dipendente
+// componente Shifts: la settimana dei turni e le ore di ogni dipendente
 const Shifts = () => {
+  // negozi, per i pulsanti
   const [stores, setStores] = useState([]);
-  // selectedStore: l'id del negozio mostrato; "" = tutti i negozi (si parte da qui)
+  // negozio mostrato ("" = tutti)
   const [selectedStore, setSelectedStore] = useState("");
-  // referenceDate: un giorno della settimana mostrata, come in "I miei turni"
+  // un giorno della settimana mostrata
   const [referenceDate, setReferenceDate] = useState(new Date());
-  // shifts: i turni del negozio nella settimana
+  // turni della settimana
   const [shifts, setShifts] = useState([]);
-  // hours: una riga per dipendente, con contratto e ore pianificate
+  // una riga per dipendente: contratto e ore pianificate
   const [hours, setHours] = useState([]);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // aumentarlo ricarica turni e ore (dopo un salvataggio o un'eliminazione)
+  // aumentarlo ricarica turni e ore
   const [refreshCount, setRefreshCount] = useState(0);
-  // modale del modulo: shiftToEdit è il turno da modificare (null = nuovo);
-  // formDefaults: persona e giorno già scelti per un turno nuovo
+  // modale del modulo: turno da modificare (null = nuovo) e persona e giorno già scelti
   const [showForm, setShowForm] = useState(false);
   const [shiftToEdit, setShiftToEdit] = useState(null);
   const [formDefaults, setFormDefaults] = useState({});
   // conferma dell'eliminazione
   const [shiftToDelete, setShiftToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  // su telefono: il giorno scelto come posizione nella settimana (0 = lunedì).
-  // Parte da oggi: getDay() conta da domenica, con +6 e % 7 lunedì diventa 0
+  // su telefono il giorno scelto (0 = lunedì); parto da oggi
   const [selectedDayIndex, setSelectedDayIndex] = useState(
     (new Date().getDay() + 6) % 7,
   );
 
-  // su telefono (fino a 767px) giorni a pulsanti e liste, come nel layout mobile;
-  // da tablet in su la tabella della settimana
+  // telefono: giorni a pulsanti e liste; da tablet la tabella
   const isPhone = useIsPhone();
 
-  // i negozi una volta sola, per i pulsanti
+  // prendo i negozi una volta sola
   useEffect(() => {
     loadData("/stores", (data) => setStores(data.stores), setError);
   }, []);
 
-  // turni e ore della settimana. Con "Tutti" store è "" e toQuery non lo manda:
-  // il server restituisce tutti i negozi
+  // prendo turni e ore al cambio di negozio, di settimana e al refreshCount
   useEffect(() => {
-    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    // ignore: true se parte una richiesta più nuova (la risposta vecchia la scarto)
     let ignore = false;
     const query = toQuery({ store: selectedStore, ...getWeek(referenceDate) });
-    // Promise.all aspetta tutte e due le richieste, poi finally spegne la rotellina
+    // Promise.all aspetta le due richieste, poi spengo la rotellina
     Promise.all([
       loadData(
         `/shifts?${query}`,
@@ -95,20 +93,20 @@ const Shifts = () => {
     };
   }, [selectedStore, referenceDate, refreshCount]);
 
-  // nuovo turno: dal bottone (senza persona e giorno) o dal clic su "Riposo" (con tutti e due)
+  // nuovo turno: dal bottone (vuoto) o da "Riposo" (persona e giorno già scelti)
   const openNewForm = (employeeId, day) => {
     setShiftToEdit(null);
     setFormDefaults({ employeeId, day });
     setShowForm(true);
   };
 
-  // clic su un turno: modale con i dati di quel turno
+  // clic su un turno: lo modifico
   const openEditForm = (shift) => {
     setShiftToEdit(shift);
     setShowForm(true);
   };
 
-  // dopo il salvataggio chiudo e ricarico: cambiano sia i turni sia le ore
+  // salvato: chiudo e ricarico
   const handleSaved = () => {
     setShowForm(false);
     setRefreshCount((prevCount) => prevCount + 1);
@@ -120,8 +118,7 @@ const Shifts = () => {
     setShiftToDelete(shift);
   };
 
-  // elimino sul server e ricarico turni e ore (cambiano le ore della persona);
-  // finally chiude sempre la conferma
+  // elimino il turno e ricarico; finally chiude sempre la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
     setError("");
@@ -138,13 +135,13 @@ const Shifts = () => {
 
   // valori calcolati
   const weekDays = getWeekDays(referenceDate);
-  // il giorno scelto su telefono: cambiando settimana resta lo stesso giorno (es. sempre martedì)
+  // il giorno scelto su telefono (cambiando settimana resta lo stesso giorno)
   const selectedDay = weekDays[selectedDayIndex];
   const isCurrentWeek = isSameDay(weekDays[0], getWeekDays()[0]);
   const storeName = selectedStore
     ? stores.find((store) => store._id === selectedStore)?.name
     : "Tutti i negozi";
-  // i pulsanti: "Tutti" (valore "") e poi i negozi, nel formato { value, label } di FilterChips
+  // pulsanti: "Tutti" e poi i negozi
   const storeOptions = [
     { value: "", label: "Tutti" },
     ...toStoreOptions(stores),
@@ -164,7 +161,7 @@ const Shifts = () => {
         }
         error={error}
       >
-        {/* settimana e "Nuovo turno" sulla stessa riga; su telefono il bottone è solo "+" */}
+        {/* frecce e "Nuovo turno" sulla stessa riga (su telefono solo "+") */}
         <div className="shifts-header-actions">
           <WeekNav
             onPrevious={() => setReferenceDate(addDays(referenceDate, -7))}
@@ -175,19 +172,19 @@ const Shifts = () => {
           <AddButton
             label="Nuovo turno"
             iconOnly={isPhone}
-            onClick={() => openNewForm()}
+            onClick={() => openNewForm()} // modulo vuoto
           />
         </div>
       </PageHeader>
 
-      {/* il div serve al CSS: a 320px i pulsanti dei negozi si rimpiccioliscono */}
+      {/* a 320px i pulsanti dei negozi si rimpiccioliscono */}
       <div className="shifts-filters">
         <FilterBar>
           <FilterChips
             label="Negozio"
             options={storeOptions}
             value={selectedStore}
-            onChange={setSelectedStore}
+            onChange={setSelectedStore} // cambio negozio
           />
         </FilterBar>
       </div>
@@ -197,15 +194,14 @@ const Shifts = () => {
         <Message>Nessun dipendente</Message>
       )}
 
-      {/* telefono: giorni a pulsanti, il personale del giorno e le ore.
-          Da tablet in su: la tabella della settimana */}
+      {/* telefono: giorni a pulsanti, persone del giorno e ore; da tablet la tabella */}
       {hours.length > 0 &&
         (isPhone ? (
           <>
             <WeekDayPicker
               days={weekDays}
               selectedIndex={selectedDayIndex}
-              onSelect={setSelectedDayIndex}
+              onSelect={setSelectedDayIndex} // scelgo il giorno
             />
             <div className="d-flex flex-column gap-4">
               <Panel
@@ -213,11 +209,11 @@ const Shifts = () => {
                 className="shifts-day-panel"
               >
                 <DayStaffList
-                  day={selectedDay}
+                  day={selectedDay} // il giorno scelto
                   shifts={shifts}
-                  hours={hours}
-                  onShiftClick={openEditForm}
-                  onEmptyClick={openNewForm}
+                  hours={hours} // le persone con le loro ore
+                  onShiftClick={openEditForm} // clic su un turno: lo modifico
+                  onEmptyClick={openNewForm} // clic su "Riposo": nuovo turno
                 />
               </Panel>
               <Panel title="Ore della settimana">
@@ -228,38 +224,40 @@ const Shifts = () => {
         ) : (
           <Panel title="Settimana e ore">
             <ShiftWeekGrid
-              days={weekDays}
+              days={weekDays} // i 7 giorni
               shifts={shifts}
-              hours={hours}
-              onShiftClick={openEditForm}
-              onEmptyClick={openNewForm}
+              hours={hours} // le persone con le loro ore
+              onShiftClick={openEditForm} // clic su un turno: lo modifico
+              onEmptyClick={openNewForm} // clic su "Riposo": nuovo turno
             />
           </Panel>
         ))}
 
+      {/* modale del turno */}
       <FormModal
         show={showForm}
         title={shiftToEdit ? "Modifica turno" : "Nuovo turno"}
         onClose={() => setShowForm(false)}
       >
         <ShiftForm
-          shift={shiftToEdit}
-          defaults={formDefaults}
-          employees={hours}
-          weekDays={weekDays}
-          onSaved={handleSaved}
+          shift={shiftToEdit} // turno da modificare (null = nuovo)
+          defaults={formDefaults} // persona e giorno già scelti
+          employees={hours} // le persone, con negozio e ore
+          weekDays={weekDays} // i giorni della settimana mostrata
+          onSaved={handleSaved} // chiudo e ricarico
           onCancel={() => setShowForm(false)}
-          onDelete={askDelete}
+          onDelete={askDelete} // chiudo il modulo e chiedo conferma
         />
       </FormModal>
 
+      {/* conferma dell'eliminazione */}
       <ConfirmDialog
         show={!!shiftToDelete}
         title="Eliminare il turno?"
         message={`Il turno di ${shiftToDelete?.user.name} verrà eliminato. Non si può annullare.`}
         confirmLabel="Elimina"
-        isLoading={isDeleting}
-        onConfirm={confirmDelete}
+        isLoading={isDeleting} // spento mentre aspetto il server
+        onConfirm={confirmDelete} // elimino il turno
         onCancel={() => setShiftToDelete(null)}
       />
     </Container>

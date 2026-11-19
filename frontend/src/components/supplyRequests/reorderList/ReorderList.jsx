@@ -1,11 +1,12 @@
+// import
 import "./reorderList.css";
 import { Plus } from "lucide-react";
 
 import Button from "../../common/button/Button";
 import Panel from "../../common/panel/Panel";
 
-// "Da riordinare" del dipendente: i prodotti sotto soglia senza una richiesta in attesa.
-// "Richiedi" apre il modulo con prodotto e quantità già scelti (onRequest)
+// componente ReorderList: "Da riordinare", i prodotti sotto soglia senza richiesta in attesa.
+// props: stocks, onRequest = apre il modulo con prodotto e quantità già scelti
 const ReorderList = ({ stocks, onRequest }) => {
   return (
     <Panel
@@ -27,7 +28,7 @@ const ReorderList = ({ stocks, onRequest }) => {
             <Button
               variant="secondary"
               aria-label={`Richiedi ${stock.product.name}`}
-              onClick={() => onRequest(stock)}
+              onClick={() => onRequest(stock)} // apro il modulo già compilato
             >
               <Plus size={16} aria-hidden="true" />
               Richiedi

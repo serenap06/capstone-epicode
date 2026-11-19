@@ -1,4 +1,4 @@
-// le categorie dei prodotti senza doppioni (new Set), nell'ordine in cui compaiono
+// categorie dei prodotti senza doppioni (new Set)
 export const getCategories = (products) => [
   ...new Set(products.map((product) => product.category)),
 ];

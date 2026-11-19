@@ -1,4 +1,6 @@
+// import
 const express = require("express");
+// router di /api/stocks
 const stockRouter = express.Router();
 const stockController = require("./controller");
 
@@ -11,8 +13,10 @@ const stockBodyRules = require("../../middlewares/stock/stockBodyRules");
 const stockUpdateRules = require("../../middlewares/stock/stockUpdateRules");
 const stockQueryRules = require("../../middlewares/stock/stockQueryRules");
 
+// serve il login
 stockRouter.use(authenticate);
 
+// elenco e una giacenza (il dipendente vede solo il suo negozio)
 stockRouter.get("/", stockQueryRules, validate, stockController.findAll);
 stockRouter.get(
   "/:stockId",
@@ -21,6 +25,7 @@ stockRouter.get(
   stockController.findOne,
 );
 
+// nuova, modifica ed elimina: solo il responsabile
 stockRouter.post(
   "/",
   authorizeRoles("admin"),

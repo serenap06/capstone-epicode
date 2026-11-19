@@ -1,9 +1,9 @@
+// import
 import { Col, Row } from "react-bootstrap";
 import Message from "../message/Message";
 
-// intestazione della pagina: titolo, sottotitolo, errore e, a destra, quello tra i tag.
-// titleAside: qualcosa a destra del titolo (per esempio il "+" su telefono);
-// subtitleAside: qualcosa a destra del sottotitolo (per esempio "Filtri" su telefono)
+// componente PageHeader: titolo, sottotitolo ed errore; a destra i children.
+// props: titleAside = accanto al titolo (il "+" su telefono), subtitleAside = accanto al sottotitolo
 const PageHeader = ({
   title,
   titleAside,
@@ -13,7 +13,7 @@ const PageHeader = ({
   children,
 }) => {
   return (
-    // align-items-end: la colonna di destra si allinea in basso
+    // la colonna di destra in basso
     <Row className="align-items-end g-3 mb-4">
       <Col>
         <div className="page-title-row">
@@ -28,7 +28,7 @@ const PageHeader = ({
         )}
         {error && <Message type="error">{error}</Message>}
       </Col>
-      {/* colonna di destra solo se serve: tutta la riga su telefono, stretta da md */}
+      {/* colonna di destra solo se serve: tutta la riga su telefono */}
       {children && (
         <Col xs={12} md="auto">
           {children}

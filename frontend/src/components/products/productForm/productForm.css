@@ -7,8 +7,7 @@
   text-align: center;
 }
 
-/* riquadro 4:3 come nella card, viola chiaro con la lettera viola;
-   position relative fa da riferimento alla fotocamera */
+/* riquadro 4:3 come nella card; position relative per la fotocamera */
 .product-form-frame {
   position: relative;
   width: 160px;
@@ -34,7 +33,7 @@
   border: 1px solid var(--border);
 }
 
-/* bottone tondo magenta in alto a destra, come quello del Profilo; un po' fuori dal riquadro */
+/* fotocamera tonda magenta in alto a destra, come nel Profilo */
 .product-form-camera {
   position: absolute;
   top: -12px;
@@ -60,8 +59,7 @@
   outline-offset: 2px;
 }
 
-/* "Rimuovi foto": un link magenta, come nel Profilo. Alto 44px per toccarlo comodo;
-   i margini negativi non allontanano le righe vicine */
+/* "Rimuovi foto": link magenta alto 44px (i margini negativi non spostano le righe vicine) */
 .product-form-remove {
   min-height: 44px;
   margin: -0.5rem 0;

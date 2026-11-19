@@ -1,3 +1,4 @@
+// import
 import "./saleCard.css";
 import { useState } from "react";
 import { Undo2 } from "lucide-react";
@@ -12,21 +13,20 @@ import CancelledNote from "../cancelledNote/CancelledNote";
 import CancelledToggle from "../cancelledToggle/CancelledToggle";
 import PaymentMethod from "../paymentMethod/PaymentMethod";
 
-// card di una vendita, fino a 1366px (stesse props di SaleTable):
-// in alto ora (e negozio) e totale, sotto chi ha venduto, i pezzi e il pagamento.
-// Una vendita annullata ha il pulsante per aprire i dettagli: chiusa è alta come le altre
+// componente SaleCard: card di una vendita fino a 1366px (stesse props di SaleTable).
+// props: sale, showStore, showSeller, onCancel = "Annulla vendita" (solo il dipendente)
 const SaleCard = ({ sale, showStore, showSeller, onCancel }) => {
-  // dettagli dell'annullamento aperti o chiusi (ogni card ha il suo)
+  // dettagli dell'annullamento aperti o chiusi
   const [showDetails, setShowDetails] = useState(false);
 
-  // "3 articoli" oppure, per il responsabile, "Marta Bianchi · 3 articoli"
+  // "3 articoli", per il responsabile "Marta Bianchi · 3 articoli"
   const itemCount = countSaleItems(sale);
   const itemsLabel = `${itemCount} ${itemCount === 1 ? "articolo" : "articoli"}`;
   const detail = showSeller
     ? `${formatFullName(sale.soldBy)} · ${itemsLabel}`
     : itemsLabel;
 
-  // apre o chiude i dettagli: !prev è il contrario di com'era
+  // apro o chiudo i dettagli
   const toggleDetails = () => setShowDetails((prevShow) => !prevShow);
 
   return (
@@ -35,7 +35,7 @@ const SaleCard = ({ sale, showStore, showSeller, onCancel }) => {
       className={`app-card sale-card ${sale.cancelled ? "sale-card-off" : ""}`}
     >
       <div className="sale-card-row">
-        {/* su una riga sola: se il negozio è lungo finisce con "...", così le card sono alte uguali */}
+        {/* una riga sola: il negozio lungo finisce con "..." */}
         <h2 className="sale-card-title">
           {formatSaleTime(sale.createdAt)}
           {showStore && ` · ${sale.store.name}`}
@@ -44,19 +44,19 @@ const SaleCard = ({ sale, showStore, showSeller, onCancel }) => {
       </div>
       <div className="sale-card-row">
         <p className="sale-card-detail">{detail}</p>
-        {/* responsabile (nessun bottone sotto): il pulsante "Annullata" al posto del pagamento */}
+        {/* responsabile: "Annullata" al posto del pagamento */}
         {sale.cancelled && !onCancel ? (
           <CancelledToggle
             ariaLabel={`Dettagli della vendita annullata delle ${formatSaleTime(sale.createdAt)}`}
             isOpen={showDetails}
-            onToggle={toggleDetails}
+            onToggle={toggleDetails} // apro o chiudo i dettagli
           />
         ) : (
           <PaymentMethod method={sale.paymentMethod} />
         )}
       </div>
 
-      {/* dipendente: "Annulla vendita", oppure "Vendita annullata" se lo è già */}
+      {/* dipendente: "Annulla vendita", oppure "Vendita annullata" */}
       {onCancel && (
         <div className="sale-card-actions">
           {sale.cancelled ? (
@@ -65,13 +65,13 @@ const SaleCard = ({ sale, showStore, showSeller, onCancel }) => {
               label="Vendita annullata"
               ariaLabel={`Dettagli della vendita annullata delle ${formatSaleTime(sale.createdAt)}`}
               isOpen={showDetails}
-              onToggle={toggleDetails}
+              onToggle={toggleDetails} // apro o chiudo i dettagli
             />
           ) : (
             <Button
               variant="danger"
               aria-label={`Annulla la vendita delle ${formatSaleTime(sale.createdAt)}`}
-              onClick={() => onCancel(sale)}
+              onClick={() => onCancel(sale)} // apro il modale con il motivo
             >
               <Undo2 size={16} aria-hidden="true" />
               Annulla vendita
@@ -80,7 +80,7 @@ const SaleCard = ({ sale, showStore, showSeller, onCancel }) => {
         </div>
       )}
 
-      {/* i dettagli solo dopo il clic: la card si allunga e torna com'era richiudendo */}
+      {/* dettagli solo dopo il clic */}
       {sale.cancelled && showDetails && <CancelledNote sale={sale} />}
     </article>
   );

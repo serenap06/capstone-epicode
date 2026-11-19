@@ -1,5 +1,7 @@
+// import
 const mongoose = require("mongoose");
 
+// schema della task: una copia per ogni persona assegnata
 const taskSchema = new mongoose.Schema(
   {
     title: {
@@ -41,6 +43,7 @@ const taskSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    // stesso groupId = copie della stessa task
     groupId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -55,6 +58,7 @@ const taskSchema = new mongoose.Schema(
       enum: ["daily", "monthly"],
       default: "daily",
     },
+    // globale: assegnata a tutti i dipendenti del negozio
     isGlobal: {
       type: Boolean,
       default: false,
@@ -69,8 +73,10 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true, strict: true },
 );
 
+// indici per le ricerche più frequenti
 taskSchema.index({ groupId: 1 });
 taskSchema.index({ store: 1, dueDate: 1 });
 taskSchema.index({ assignedTo: 1, dueDate: 1 });
 
+// modello Task, collection "tasks"
 module.exports = mongoose.model("Task", taskSchema, "tasks");

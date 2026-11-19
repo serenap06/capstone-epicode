@@ -1,4 +1,6 @@
+// import
 const express = require("express");
+// router di /api/users
 const usersRouter = express.Router();
 const userController = require("./controller");
 
@@ -14,9 +16,10 @@ const passwordUpdateRules = require("../../middlewares/users/passwordUpdateRules
 const { uploadAvatar } = require("../../middlewares/upload/cloudinary");
 const paginationRules = require("../../middlewares/globals/paginationRules");
 
+// serve il login
 usersRouter.use(authenticate);
 
-// Rotte per l'employee
+// il mio profilo (tutti e due i ruoli)
 
 usersRouter.get("/me", userController.findMe);
 usersRouter.patch("/me", profileUpdateRules, validate, userController.updateMe);
@@ -33,7 +36,7 @@ usersRouter.patch(
 );
 usersRouter.delete("/me/avatar", userController.removeAvatar);
 
-// Rotte per l'admin
+// gestione delle persone: da qui in giù solo il responsabile
 
 usersRouter.use(authorizeRoles("admin"));
 

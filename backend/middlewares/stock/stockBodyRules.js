@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per creare una giacenza
 const stockBodyRules = [
   body("product").isMongoId().withMessage("Invalid product Id"),
   body("store").isMongoId().withMessage("Invalid store Id"),

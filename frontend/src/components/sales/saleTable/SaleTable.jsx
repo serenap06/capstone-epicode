@@ -1,3 +1,4 @@
+// import
 import "./saleTable.css";
 import { Fragment, useState } from "react";
 import { Undo2 } from "lucide-react";
@@ -13,9 +14,9 @@ import CancelledToggle from "../cancelledToggle/CancelledToggle";
 import PaymentMethod from "../paymentMethod/PaymentMethod";
 import SortableHeader from "../../common/sortableHeader/SortableHeader";
 
-// tabella delle vendite, da 1366px in su. showStore e showSeller: le colonne Negozio e
-// Venduto da (per il responsabile). onCancel: il bottone "Annulla vendita" (solo il dipendente).
-// sort e onSort: l'ordine scelto e cosa fare al clic su un'intestazione (ordina il server)
+// componente SaleTable: tabella delle vendite da 1366px.
+// props: sales, showStore e showSeller = colonne del responsabile, sort e onSort = l'ordine (lo fa il server),
+// onCancel = "Annulla vendita" (solo il dipendente)
 const SaleTable = ({
   sales,
   showStore,
@@ -24,22 +25,22 @@ const SaleTable = ({
   onSort,
   onCancel,
 }) => {
-  // l'id della vendita annullata con i dettagli aperti (uno alla volta), oppure null
+  // id della vendita con i dettagli aperti (una alla volta)
   const [openSaleId, setOpenSaleId] = useState(null);
 
-  // quante colonne ha la tabella: la riga dei dettagli le occupa tutte (colSpan)
+  // colonne della tabella: la riga dei dettagli le prende tutte
   const columnCount =
     4 + (showStore ? 1 : 0) + (showSeller ? 1 : 0) + (onCancel ? 1 : 0);
 
-  // apre i dettagli di una vendita, o li chiude se erano già aperti
+  // apro i dettagli, o li chiudo se erano aperti
   const toggleDetails = (saleId) =>
     setOpenSaleId((prevId) => (prevId === saleId ? null : saleId));
 
-  // props uguali per tutte le intestazioni che ordinano
+  // props uguali per le intestazioni che ordinano
   const sortProps = { sort, onSort };
 
   return (
-    // se la tabella non ci sta, scorre in orizzontale dentro il riquadro
+    // se non ci sta, scorre in orizzontale
     <div className="app-card app-table-wrap">
       <table className="app-table sale-table">
         <thead>
@@ -74,12 +75,9 @@ const SaleTable = ({
           {sales.map((sale) => {
             const isOpen = openSaleId === sale._id;
             return (
-              // Fragment: due righe per vendita (la seconda solo con i dettagli aperti);
-              // la key va sul Fragment perché è lui l'elemento del map
+              // Fragment: due righe per vendita (la seconda con i dettagli); la key va su di lui
               <Fragment key={sale._id}>
-                {/* annullata: riga grigia e il pulsante dei dettagli. Responsabile: "Annullata"
-                    accanto all'ora (non ha la colonna dei bottoni); dipendente: "Vendita annullata"
-                    al posto di "Annulla vendita" */}
+                {/* annullata: riga grigia e pulsante dei dettagli (responsabile accanto all'ora, dipendente al posto del bottone) */}
                 <tr className={sale.cancelled ? "sale-row-off" : ""}>
                   <td>
                     <div className="sale-time-cell">
@@ -88,7 +86,7 @@ const SaleTable = ({
                         <CancelledToggle
                           ariaLabel={`Dettagli della vendita annullata delle ${formatSaleTime(sale.createdAt)}`}
                           isOpen={isOpen}
-                          onToggle={() => toggleDetails(sale._id)}
+                          onToggle={() => toggleDetails(sale._id)} // apro o chiudo i dettagli
                         />
                       )}
                     </div>
@@ -106,21 +104,20 @@ const SaleTable = ({
                   </td>
                   {onCancel && (
                     <td className="text-end">
-                      {/* già annullata: al posto di "Annulla vendita", stesso posto e stessa altezza,
-                          il pulsante che apre i dettagli */}
+                      {/* già annullata: al posto del bottone, il pulsante dei dettagli */}
                       {sale.cancelled ? (
                         <CancelledToggle
                           large
                           label="Vendita annullata"
                           ariaLabel={`Dettagli della vendita annullata delle ${formatSaleTime(sale.createdAt)}`}
                           isOpen={isOpen}
-                          onToggle={() => toggleDetails(sale._id)}
+                          onToggle={() => toggleDetails(sale._id)} // apro o chiudo i dettagli
                         />
                       ) : (
                         <Button
                           variant="danger"
                           aria-label={`Annulla la vendita delle ${formatSaleTime(sale.createdAt)}`}
-                          onClick={() => onCancel(sale)}
+                          onClick={() => onCancel(sale)} // apro il modale con il motivo
                         >
                           <Undo2 size={16} aria-hidden="true" />
                           <span className="app-button-label">
@@ -131,7 +128,7 @@ const SaleTable = ({
                     </td>
                   )}
                 </tr>
-                {/* i dettagli sotto, su tutta la larghezza, solo dopo il clic */}
+                {/* dettagli su tutta la larghezza, solo dopo il clic */}
                 {sale.cancelled && isOpen && (
                   <tr className="sale-row-off sale-details-row">
                     <td colSpan={columnCount}>

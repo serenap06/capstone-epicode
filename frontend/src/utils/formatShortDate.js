@@ -1,6 +1,7 @@
+// import
 import { isSameDay } from "./dates";
 
-// giorno breve: "Oggi" se è oggi, altrimenti "16 nov"
+// "Oggi" oppure "16 nov"
 export const formatShortDate = (date) => {
   if (isSameDay(date, new Date())) return "Oggi";
   return new Date(date).toLocaleDateString("it-IT", {

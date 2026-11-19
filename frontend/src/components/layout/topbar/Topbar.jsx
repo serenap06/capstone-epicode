@@ -1,3 +1,4 @@
+// import
 import { Dropdown, DropdownItem, DropdownMenu } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
@@ -6,17 +7,18 @@ import { getHomePath } from "../../../utils/getHomePath";
 import Avatar from "../../common/avatar/Avatar";
 import "./topbar.css";
 
-// barra in alto: logo a sinistra, menu dell'utente a destra
+// componente Topbar: logo a sinistra, menu dell'utente a destra
 const Topbar = () => {
+  // utente collegato e logout
   const { user, logout } = useAuth();
   return (
     <header className="app-topbar">
-      {/* il logo riporta alla pagina iniziale */}
+      {/* il logo porta alla pagina iniziale */}
       <Link to={getHomePath(user.role)} className="app-logo">
         Store<span>Squad</span>
       </Link>
 
-      {/* align="end": il menu si apre a destra, dentro lo schermo */}
+      {/* menu dell'utente, aperto verso destra dentro lo schermo */}
       <Dropdown align="end">
         <Dropdown.Toggle variant="light" className="app-user">
           <Avatar user={user} />

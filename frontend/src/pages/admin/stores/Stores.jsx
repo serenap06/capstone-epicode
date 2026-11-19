@@ -1,3 +1,4 @@
+// import
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
@@ -14,50 +15,51 @@ import PageHeader from "../../../components/common/pageHeader/PageHeader";
 import StoreCard from "../../../components/stores/storeCard/StoreCard";
 import StoreForm from "../../../components/stores/storeForm/StoreForm";
 
-// pagina Negozi del responsabile: i punti vendita con il loro personale
+// componente Stores: i negozi con il loro personale
 const Stores = () => {
+  // negozi ed errore
   const [stores, setStores] = useState([]);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // modale del modulo: storeToEdit è il negozio da modificare (null = nuovo)
+  // modale del modulo: negozio da modificare (null = nuovo)
   const [showForm, setShowForm] = useState(false);
   const [storeToEdit, setStoreToEdit] = useState(null);
-  // conferma dell'eliminazione: il negozio da eliminare, oppure null
+  // conferma dell'eliminazione
   const [storeToDelete, setStoreToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  // aumentarlo ricarica la lista (dopo un salvataggio)
+  // aumentarlo ricarica la lista
   const [refreshCount, setRefreshCount] = useState(0);
 
-  // su telefono "Nuovo negozio" è solo il "+" accanto al titolo
+  // su telefono il "+" accanto al titolo
   const isPhone = useIsPhone();
 
-  // i negozi con il loro personale, e di nuovo quando cambia refreshCount
+  // prendo i negozi all'apertura e al refreshCount
   useEffect(() => {
     loadData("/stores", (data) => setStores(data.stores), setError).finally(
       () => setIsLoading(false),
     );
   }, [refreshCount]);
 
-  // "Nuovo negozio": modale con il modulo vuoto
+  // "Nuovo negozio": modulo vuoto
   const openNewForm = () => {
     setStoreToEdit(null);
     setShowForm(true);
   };
 
-  // matita sulla card: modale con i dati di quel negozio
+  // matita: modulo con il negozio
   const openEditForm = (store) => {
     setStoreToEdit(store);
     setShowForm(true);
   };
 
-  // dopo il salvataggio chiudo e ricarico: il server rimanda il negozio senza il personale
+  // salvato: chiudo e ricarico (il server rimanda il negozio senza personale)
   const handleSaved = () => {
     setShowForm(false);
     setRefreshCount((prevCount) => prevCount + 1);
   };
 
-  // elimino sul server e tolgo il negozio dalla lista; finally chiude sempre la conferma
+  // elimino e tolgo il negozio dalla lista; finally chiude la conferma
   const confirmDelete = async () => {
     setIsDeleting(true);
     setError("");
@@ -78,7 +80,7 @@ const Stores = () => {
   const storeCountLabel =
     stores.length === 1 ? "punto vendita" : "punti vendita";
 
-  // "Nuovo negozio": su telefono solo il "+" accanto al titolo, da tablet in su con il testo
+  // "Nuovo negozio": su telefono solo il "+"
   const addButton = (
     <AddButton label="Nuovo negozio" iconOnly={isPhone} onClick={openNewForm} />
   );
@@ -91,7 +93,7 @@ const Stores = () => {
         subtitle={`${stores.length} ${storeCountLabel}`}
         error={error}
       >
-        {/* da tablet in su il bottone va a destra dell'intestazione */}
+        {/* da tablet il bottone a destra */}
         {!isPhone && addButton}
       </PageHeader>
 
@@ -112,33 +114,35 @@ const Stores = () => {
         {stores.map((store) => (
           <Col key={store._id}>
             <StoreCard
-              store={store}
-              onEdit={openEditForm}
-              onDelete={setStoreToDelete}
+              store={store} // passo il negozio alla card
+              onEdit={openEditForm} // apro il modulo
+              onDelete={setStoreToDelete} // chiedo conferma
             />
           </Col>
         ))}
       </Row>
 
+      {/* modale del negozio */}
       <FormModal
         show={showForm}
         title={storeToEdit ? "Modifica negozio" : "Nuovo negozio"}
         onClose={() => setShowForm(false)}
       >
         <StoreForm
-          store={storeToEdit}
-          onSaved={handleSaved}
+          store={storeToEdit} // negozio da modificare (null = nuovo)
+          onSaved={handleSaved} // chiudo e ricarico
           onCancel={() => setShowForm(false)}
         />
       </FormModal>
 
+      {/* conferma dell'eliminazione */}
       <ConfirmDialog
         show={!!storeToDelete}
         title="Eliminare il negozio?"
         message={`"${storeToDelete?.name}" verrà eliminato con le sue giacenze. Non si può annullare.`}
         confirmLabel="Elimina"
-        isLoading={isDeleting}
-        onConfirm={confirmDelete}
+        isLoading={isDeleting} // spento mentre aspetto il server
+        onConfirm={confirmDelete} // elimino il negozio
         onCancel={() => setStoreToDelete(null)}
       />
     </Container>

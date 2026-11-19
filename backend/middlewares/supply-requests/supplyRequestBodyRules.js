@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per una nuova richiesta di fornitura
 const supplyRequestBodyRules = [
   body("product").isMongoId().withMessage("Invalid product id"),
   body("requestedAmount")

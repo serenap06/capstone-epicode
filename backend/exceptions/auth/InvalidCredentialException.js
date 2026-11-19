@@ -1,5 +1,7 @@
+// import
 const HttpException = require("../index");
 
+// 401: email o password sbagliate
 class InvalidCredentialException extends HttpException {
   constructor(
     message = "Invalid email or password",

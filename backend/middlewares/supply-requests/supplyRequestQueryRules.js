@@ -1,6 +1,8 @@
+// import
 const { query } = require("express-validator");
 const paginationRules = require("../globals/paginationRules");
 
+// regole della query delle Forniture: filtri, ordine e pagine
 const supplyRequestQueryRules = [
   query("store").optional().isMongoId().withMessage("Invalid store id"),
   query("product").optional().isMongoId().withMessage("Invalid product id"),

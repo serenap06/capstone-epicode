@@ -1,4 +1,4 @@
-/* cerchio viola con le iniziali, oppure la foto ritagliata senza deformarla (object-fit: cover) */
+/* cerchio viola con le iniziali, oppure la foto ritagliata (object-fit: cover) */
 .avatar {
   flex-shrink: 0;
   display: inline-flex;

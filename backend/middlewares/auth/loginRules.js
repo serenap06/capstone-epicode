@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole del login: email valida e password non vuota
 const loginRules = [
   body("email")
     .isString()

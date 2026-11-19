@@ -1,5 +1,7 @@
+// import
 const { query } = require("express-validator");
 
+// regole della query delle ore: periodo e negozio
 const shiftHoursQueryRules = [
   query("store").optional().isMongoId().withMessage("Invalid store Id"),
   query("from").isISO8601().withMessage("from must be a valid ISO date"),

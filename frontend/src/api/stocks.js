@@ -1,14 +1,15 @@
+// import
 import api from "./api";
 
-// richieste sulle giacenze (solo per il responsabile: il dipendente le legge e basta)
+// richieste delle giacenze (solo il responsabile)
 
-// nuova riga: un prodotto in un negozio, con quantità e soglia
+// nuova giacenza: prodotto, negozio, quantità e soglia
 export const createStock = async (stockData) => {
   const data = await api("/stocks", { method: "POST", body: stockData });
   return data.stock;
 };
 
-// si cambiano solo quantità e soglia
+// cambio quantità e soglia
 export const updateStock = async (stockId, stockData) => {
   const data = await api(`/stocks/${stockId}`, {
     method: "PATCH",
@@ -17,7 +18,7 @@ export const updateStock = async (stockId, stockData) => {
   return data.stock;
 };
 
-// toglie la riga dalle giacenze del negozio
+// elimino la giacenza
 export const deleteStock = async (stockId) => {
   await api(`/stocks/${stockId}`, { method: "DELETE" });
 };

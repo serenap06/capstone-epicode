@@ -41,8 +41,7 @@
   font-weight: 700;
 }
 
-/* menu a pillola. appearance: none toglie lo stile del sistema (sul Mac restava squadrato)
-   e anche la freccina, che rimetto come immagine SVG di sfondo */
+/* menu a pillola: appearance: none toglie lo stile del sistema, la freccina è un SVG di sfondo */
 .filter-select {
   appearance: none;
   min-height: 44px;
@@ -78,7 +77,7 @@
   pointer-events: none;
 }
 
-/* padding a sinistra: lo spazio per la lente; appearance: none toglie lo stile di Safari */
+/* spazio a sinistra per la lente; appearance: none toglie lo stile di Safari */
 .filter-search-input {
   appearance: none;
   width: 100%;
@@ -99,8 +98,7 @@
   outline-offset: 2px;
 }
 
-/* su telefono i pulsanti dello stato prendono tutta la riga e si dividono lo spazio;
-   anche la ricerca è larga tutta la riga */
+/* su telefono stato e ricerca prendono tutta la riga */
 @media (max-width: 575.98px) {
   .filter-search {
     flex-basis: 100%;
@@ -117,8 +115,7 @@
   }
 }
 
-/* telefoni piccoli (fino a 374px, per esempio 320px): testo e spazi più piccoli,
-   così quattro pulsanti stanno nella riga senza uscire dallo schermo */
+/* telefoni piccoli (fino a 374px): testo e spazi più piccoli, quattro pulsanti in una riga */
 @media (max-width: 374.98px) {
   .filter-chips {
     gap: 0.1rem;
@@ -130,9 +127,7 @@
   }
 }
 
-/* su telefono il bottone "Filtri" sta sulla stessa riga della ricerca (o dello stato, se la
-   pagina non ha la ricerca): la riga è larga tutta la barra, il primo filtro prende lo spazio
-   che resta e il bottone resta a destra */
+/* su telefono "Filtri" sulla stessa riga della ricerca (o dello stato): il primo filtro prende lo spazio, il bottone a destra */
 .filter-row {
   flex: 1 1 100%;
   display: flex;
@@ -146,8 +141,7 @@
   max-width: none;
 }
 
-/* accanto ai pulsanti dello stato il bottone mostra solo l'icona: con la scritta,
-   su un telefono stretto, la riga non ci starebbe */
+/* accanto allo stato solo l'icona, se no la riga non ci sta */
 .filter-row > .filter-chips ~ .filter-dropdown .filter-dropdown-label {
   display: none;
 }
@@ -205,8 +199,7 @@
   width: 100%;
 }
 
-/* nel menu i pulsanti a scelta prendono tutta la larghezza e se la dividono,
-   a qualsiasi larghezza dello schermo (con quattro pulsanti l'ultimo usciva dal riquadro) */
+/* nel menu i pulsanti si dividono tutta la larghezza */
 .filter-dropdown-content .filter-chips {
   flex: 1 1 100%;
 }
@@ -230,8 +223,7 @@
   }
 }
 
-/* tra 768 e 1199px: pulsanti e menu più piccoli, i due menu si dividono lo spazio
-   (se il testo non ci sta finisce con "…") */
+/* tra 768 e 1199px pulsanti e menu più piccoli (il testo lungo finisce con "…") */
 @media (min-width: 768px) and (max-width: 1199.98px) {
   .filter-bar .filter-chips {
     gap: 0.1rem;
@@ -260,7 +252,7 @@
   }
 }
 
-/* menu "Ordina": non più largo di 16rem, anche quando è l'unico nella riga (dipendente) */
+/* menu "Ordina" al massimo 16rem */
 .filter-bar > .sort-select {
   max-width: 16rem;
 }

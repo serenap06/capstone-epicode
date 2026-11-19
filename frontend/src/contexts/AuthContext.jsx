@@ -1,23 +1,26 @@
+// import
 import { createContext, useEffect, useState } from "react";
 import api from "../api/api";
-// contesto dell'accesso: l'utente collegato, disponibile in tutta l'app
+// contesto dell'accesso: l'utente collegato in tutta l'app
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
-// l'utente collegato, con il nome del negozio (il server lo riconosce dal token)
+// prendo il mio profilo dal server (il token dice chi sono)
 const fetchProfile = async () => {
   const data = await api("/users/me");
   return data.user;
 };
 
+// componente AuthProvider: tiene l'utente, il login e il logout
 const AuthProvider = ({ children }) => {
-  // user: l'utente collegato, oppure null
+  // utente collegato, oppure null
   const [user, setUser] = useState(null);
-  // loading: true finché non so se c'è un utente salvato
+  // true finché non so se c'è un utente salvato
   const [loading, setLoading] = useState(true);
 
-  // all'apertura: se c'è un token recupero l'utente, così ricaricando la pagina si resta dentro
+  // all'apertura: con un token salvato recupero l'utente (ricaricando si resta dentro)
   useEffect(() => {
+    // leggo il token salvato e chiedo il profilo
     const loadUser = async () => {
       // localStorage con "Ricordami", altrimenti sessionStorage
       const savedToken =
@@ -30,25 +33,25 @@ const AuthProvider = ({ children }) => {
         const profile = await fetchProfile();
         setUser(profile);
       } catch {
-        // token scaduto o non valido: lo cancello
+        // token non valido: lo cancello
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
         setUser(null);
       } finally {
-        // finally parte sempre, anche dopo un errore
+        // finally parte sempre
         setLoading(false);
       }
     };
     loadUser();
   }, []);
 
-  // login: salva il token e restituisce l'utente, così la pagina sa dove mandarlo
+  // login: salvo il token e restituisco l'utente (la pagina sa dove mandarlo)
   const login = async (email, password, remember) => {
     const data = await api("/auth/login", {
       method: "POST",
       body: { email, password },
     });
-    // "Ricordami": localStorage resta anche chiudendo il browser, sessionStorage no
+    // "Ricordami": localStorage resta anche chiudendo il browser
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem("token", data.token);
     const profile = await fetchProfile();
@@ -62,8 +65,7 @@ const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // value: quello che i componenti leggono con useAuth()
-  // (setUser serve al Profilo, per rimettere l'utente aggiornato)
+  // value: quello che si legge con useAuth()
   return (
     <AuthContext.Provider
       value={{

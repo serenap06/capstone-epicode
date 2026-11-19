@@ -1,9 +1,10 @@
+// import
 import Badge from "../../common/badge/Badge";
 import { formatFullName } from "../../../utils/formatFullName";
 import { formatHourRange } from "../../../utils/formatTime";
 
-// badge di un collega in turno: "Giulia Neri · 13 – 21".
-// Nome e orario in due pezzi nowrap: se serve va a capo tra i due, mai a metà
+// componente ColleagueBadge: "Giulia Neri · 13 – 21" (va a capo tra nome e orario, mai a metà).
+// props: shift = il turno del collega, color
 const ColleagueBadge = ({ shift, color = "secondary" }) => {
   return (
     <Badge color={color}>

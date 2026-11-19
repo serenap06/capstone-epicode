@@ -1,3 +1,4 @@
+// import
 const Store = require("./schema");
 const User = require("../users/schema");
 const Sale = require("../sales/schema");
@@ -9,10 +10,12 @@ const Task = require("../tasks/schema");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const HttpException = require("../../exceptions");
 
+// tutti i negozi con il loro personale, dalla A alla Z
 const findAll = async () => {
   return Store.find().populate("users", "name surname").sort({ name: 1 });
 };
 
+// un negozio con il personale (altrimenti 404)
 const findOne = async (storeId) => {
   const store = await Store.findById(storeId).populate("users", "name surname");
   if (!store) {
@@ -21,11 +24,13 @@ const findOne = async (storeId) => {
   return store;
 };
 
+// nuovo negozio
 const create = async (storeData) => {
   const store = new Store(storeData);
   return await store.save();
 };
 
+// modifico il negozio e restituisco quello aggiornato
 const update = async (storeId, storeData) => {
   const store = await Store.findByIdAndUpdate(storeId, storeData, {
     returnDocument: "after",
@@ -37,9 +42,8 @@ const update = async (storeId, storeData) => {
   return store;
 };
 
-// un negozio con del personale o con delle vendite non si elimina:
-// le persone resterebbero senza negozio e le vendite servono per i conti.
-// Con il negozio tolgo anche le sue giacenze, richieste, turni e task
+// elimino il negozio, ma non se ha personale o vendite (servono per i conti).
+// Con lui tolgo giacenze, richieste, turni e task
 const deleteStore = async (storeId) => {
   const [employeeCount, saleCount] = await Promise.all([
     User.countDocuments({ store: storeId }),

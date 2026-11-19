@@ -1,11 +1,12 @@
+// import
 import "./kpiCard.css";
 import { Link } from "react-router-dom";
 
-// card colorata con un numero grande (dashboard, vendite, report).
-// detail: riga sotto, facoltativa; color: primary, secondary, turquoise, orange o blue;
-// to: se c'è, la card è un link
+// componente KpiCard: card colorata con un numero grande.
+// props: label, value, detail = riga sotto, color = primary, secondary, turquoise, orange o blue,
+// to = se c'è la card è un link
 const KpiCard = ({ label, value, detail, color, to }) => {
-  // con "to" la card è un Link, altrimenti un div
+  // Link con "to", altrimenti div
   const Tag = to ? Link : "div";
   return (
     <Tag to={to} className={`kpi-card kpi-card-${color}`}>

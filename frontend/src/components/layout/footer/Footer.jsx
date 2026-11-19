@@ -1,6 +1,7 @@
+// import
 import "./footer.css";
 
-// piè di pagina. rel="noopener noreferrer": la nuova scheda non può controllare questa
+// componente Footer: piè di pagina (noopener: la nuova scheda non controlla questa)
 const Footer = () => {
   return (
     <footer className="app-footer">

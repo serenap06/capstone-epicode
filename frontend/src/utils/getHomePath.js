@@ -1,3 +1,3 @@
-// pagina iniziale del ruolo: "/admin" o "/employee"
+// pagina iniziale del ruolo
 export const getHomePath = (role) =>
   role === "admin" ? "/admin" : "/employee";

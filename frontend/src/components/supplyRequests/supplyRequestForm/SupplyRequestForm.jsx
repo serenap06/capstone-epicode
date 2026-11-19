@@ -1,3 +1,4 @@
+// import
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
@@ -7,10 +8,9 @@ import Button from "../../common/button/Button";
 import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 
-// modulo di una nuova richiesta, nel modale (solo il dipendente; il negozio lo mette il server).
-// products: i prodotti attivi; stocks: le giacenze del negozio, per far vedere quanti pezzi ci sono;
-// openProductIds: i prodotti con una richiesta già in attesa (non si possono richiedere di nuovo);
-// defaultValues: prodotto e quantità già scelti quando si arriva da "Da riordinare"
+// componente SupplyRequestForm: nuova richiesta del dipendente, nel modale.
+// props: products = gli attivi, stocks = le giacenze del negozio, openProductIds = già in attesa,
+// defaultValues = prodotto e quantità già scelti (da "Da riordinare"), onSaved, onCancel
 const SupplyRequestForm = ({
   products,
   stocks,
@@ -19,6 +19,7 @@ const SupplyRequestForm = ({
   onSaved,
   onCancel,
 }) => {
+  // errore del server
   const [serverError, setServerError] = useState("");
 
   const {
@@ -28,12 +29,13 @@ const SupplyRequestForm = ({
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues });
 
-  // il prodotto scelto e la sua giacenza nel negozio (undefined se il negozio non ce l'ha)
+  // il prodotto scelto e la sua giacenza (undefined se il negozio non ce l'ha)
   const selectedProduct = useWatch({ control, name: "product" });
   const selectedStock = stocks.find(
     (stock) => stock.product._id === selectedProduct,
   );
 
+  // invio la richiesta
   const onSubmit = async (formData) => {
     setServerError("");
     try {
@@ -60,7 +62,7 @@ const SupplyRequestForm = ({
           {...register("product", { required: "Scegli il prodotto" })}
         >
           <option value="">Scegli un prodotto</option>
-          {/* i prodotti già richiesti restano nel menu ma spenti, con il motivo */}
+          {/* quelli già richiesti restano nel menu, ma spenti */}
           {products.map((product) => (
             <option
               key={product._id}
@@ -73,7 +75,7 @@ const SupplyRequestForm = ({
           ))}
         </select>
       </FormField>
-      {/* quanti pezzi ci sono adesso, per decidere quanti chiederne */}
+      {/* quanti pezzi ci sono adesso */}
       {selectedProduct && (
         <p className="form-hint m-0">
           {selectedStock

@@ -1,10 +1,12 @@
+// import
 import "./filterBar.css";
 import { useId } from "react";
 import { Search } from "lucide-react";
 
-// campo di ricerca dei filtri: pillola bianca con la lente.
-// label: il testo per lo screen reader, usato anche come segnaposto; onChange riceve il testo scritto
+// componente FilterSearch: il campo di ricerca con la lente.
+// props: label = testo nascosto e segnaposto, value, onChange = riceve il testo scritto
 const FilterSearch = ({ label, value, onChange }) => {
+  // id per collegare etichetta e campo
   const inputId = useId();
 
   return (

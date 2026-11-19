@@ -1,4 +1,4 @@
-/* quadrato con angoli tondi; object-fit: cover ritaglia la foto senza deformarla */
+/* quadrato con angoli tondi; cover ritaglia la foto senza deformarla */
 .product-thumb {
   flex-shrink: 0;
   border-radius: 10px;
@@ -6,8 +6,7 @@
   object-fit: cover;
 }
 
-/* senza foto: l'iniziale al centro, viola su viola chiaro come il segnaposto della card
-   del Catalogo; il bordo serve solo alle foto vere */
+/* senza foto: l'iniziale viola su viola chiaro (il bordo solo per le foto) */
 .product-thumb-letter {
   display: inline-flex;
   align-items: center;

@@ -1,3 +1,4 @@
+// import
 import "./home.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -23,31 +24,32 @@ import MyShiftCard from "../../components/shifts/myShiftCard/MyShiftCard";
 import WeekShifts from "../../components/shifts/weekShifts/WeekShifts";
 import MyTaskList from "../../components/tasks/myTaskList/MyTaskList";
 
-// pagina iniziale del dipendente: turno di oggi, indicatori, task di oggi e settimana
+// componente Home: la pagina iniziale del dipendente (turno, numeri, task e settimana)
 const Home = () => {
+  // utente collegato
   const { user } = useAuth();
-  // shifts: i turni della settimana di tutto il negozio (anche dei colleghi)
+  // turni della settimana di tutto il negozio
   const [shifts, setShifts] = useState([]);
-  // hours: ore pianificate e di contratto
+  // ore pianificate e di contratto
   const [hours, setHours] = useState(null);
-  // tasks: le task di oggi del dipendente
+  // le mie task di oggi
   const [tasks, setTasks] = useState([]);
-  // sales: incasso e vendite di oggi
+  // incasso e vendite di oggi
   const [sales, setSales] = useState(null);
   const [error, setError] = useState("");
-  // true finché i dati non arrivano la prima volta: intanto gira la rotellina
+  // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
 
-  // data di oggi e nome del negozio
+  // oggi e il mio negozio
   const today = formatLongDate();
   const storeName = user.store?.name ?? "";
 
-  // all'apertura carico tutto in parallelo (si ricarica solo se cambia l'utente)
+  // prendo tutto all'apertura, in parallelo
   useEffect(() => {
     const todayQuery = toQuery(getToday());
     const weekQuery = toQuery(getWeek());
 
-    // Promise.all aspetta tutte le richieste, poi finally spegne la rotellina
+    // Promise.all aspetta tutte le richieste, poi spengo la rotellina
     Promise.all([
       loadData(
         `/shifts?${weekQuery}`,
@@ -72,7 +74,7 @@ const Home = () => {
     ]).finally(() => setIsLoading(false));
   }, [user._id]);
 
-  // spunta o toglie la spunta, poi aggiorna la task nella lista
+  // spunto o tolgo la spunta e aggiorno la task nella lista
   const toggleTask = async (task) => {
     try {
       const updatedTask = await toggleTaskStatus(task);
@@ -82,18 +84,18 @@ const Home = () => {
     }
   };
 
-  // valori calcolati dallo stato: i turni di oggi di tutti
+  // valori calcolati: i turni di oggi
   const now = new Date();
   const todayShifts = shifts.filter((shift) => isSameDay(shift.startAt, now));
   // i miei turni della settimana
   const myWeekShifts = shifts.filter((shift) => shift.user._id === user._id);
-  // il mio turno di oggi, oppure undefined se riposo
+  // il mio turno di oggi (undefined = riposo)
   const myShift = todayShifts.find((shift) => shift.user._id === user._id);
-  // i turni di oggi dei colleghi
+  // i colleghi di oggi
   const colleagueShifts = todayShifts.filter(
     (shift) => shift.user._id !== user._id,
   );
-  // task di oggi fatte e percentuale
+  // task fatte e percentuale
   const doneCount = tasks.filter((task) => task.status === "done").length;
   const percent = getPercent(doneCount, tasks.length);
 
@@ -101,7 +103,7 @@ const Home = () => {
     <Container fluid>
       <PageHeader
         title={`Ciao, ${user.name}!`}
-        // "sabato 14 novembre · Bookshop Museo": i due pezzi vanno a capo interi
+        // "sabato 14 novembre · Bookshop Museo": i pezzi vanno a capo interi
         subtitle={
           <>
             <span className="text-nowrap">
@@ -115,10 +117,11 @@ const Home = () => {
       />
       <Row>
         <Col>
-          {/* turno di oggi; finché non arriva la rotellina (altrimenti sembrerebbe riposo) */}
+          {/* turno di oggi; prima la rotellina (se no sembrerebbe riposo) */}
           {isLoading ? (
             <Loader />
           ) : (
+            // il mio turno e i colleghi di oggi
             <MyShiftCard shift={myShift} colleagues={colleagueShifts} />
           )}
         </Col>
@@ -165,7 +168,7 @@ const Home = () => {
         </Col>
       </Row>
 
-      {/* due riquadri affiancati da lg, alti uguali (h-100) */}
+      {/* due riquadri affiancati da lg, alti uguali */}
       <Row className="g-4 mt-1">
         <Col lg={6}>
           <Panel
@@ -188,6 +191,7 @@ const Home = () => {
             {!isLoading && tasks.length === 0 && !error && (
               <Message>Nessuna task per oggi</Message>
             )}
+            {/* onToggle: fatta / da fare */}
             <MyTaskList tasks={tasks} onToggle={toggleTask} />
           </Panel>
         </Col>
@@ -202,7 +206,7 @@ const Home = () => {
               </Link>
             }
           >
-            {/* striscia dei sette giorni */}
+            {/* i sette giorni con i miei turni */}
             <WeekShifts shifts={myWeekShifts} />
           </Panel>
         </Col>

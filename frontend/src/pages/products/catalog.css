@@ -1,7 +1,6 @@
 /* stili solo della pagina Catalogo */
 
-/* telefoni piccoli (fino a 374px, per esempio 320px): una card per riga,
-   perché in due non ci stanno nome, giacenze e bottoni */
+/* telefoni piccoli (fino a 374px): una card per riga */
 @media (max-width: 374.98px) {
   .catalog-grid > * {
     width: 100%;

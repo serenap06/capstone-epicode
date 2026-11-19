@@ -1,4 +1,6 @@
+// import
 const { body } = require("express-validator");
+// regole per creare un turno
 const shiftBodyRules = [
   body("user").isMongoId().withMessage("Invalid user Id"),
   body("store").isMongoId().withMessage("Invalid store Id"),

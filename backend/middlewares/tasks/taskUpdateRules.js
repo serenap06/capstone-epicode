@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per modificare una task: tutti i campi facoltativi
 const taskUpdateRules = [
   body("title")
     .optional()

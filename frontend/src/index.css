@@ -33,7 +33,7 @@
   --warning-soft: #ffebd6;
   --warning-text: #8a3f05;
 
-  /* tutto bene: pezzi sopra la soglia (verde, così non si confonde con il magenta) */
+  /* pezzi sopra la soglia: verde */
   --success-soft: #e2f4e8;
   --success-text: #1d6b3a;
 }
@@ -55,7 +55,7 @@ a:hover {
   color: var(--primary-dark);
 }
 
-/* titolo e sottotitolo della pagina; clamp: il titolo cresce con lo schermo, tra 1.6 e 2rem */
+/* titolo e sottotitolo della pagina; il titolo cresce con lo schermo */
 .page-title {
   margin: 0;
   font-size: clamp(1.6rem, 3vw, 2rem);
@@ -68,7 +68,7 @@ a:hover {
   color: var(--text-muted);
 }
 
-/* riga del titolo: titolo a sinistra e, se c'è, qualcosa a destra (per esempio il "+") */
+/* titolo a sinistra, qualcosa a destra (il "+") */
 .page-title-row {
   display: flex;
   align-items: center;
@@ -76,14 +76,12 @@ a:hover {
   gap: 0.75rem;
 }
 
-/* se a destra del titolo c'è qualcosa (il "+"), più spazio prima del sottotitolo,
-   così il "+" non si attacca a quello che sta a destra del sottotitolo ("Filtri").
-   :has(> :nth-child(2)) vuol dire "la riga del titolo ha almeno due elementi" */
+/* con il "+" accanto al titolo, più spazio prima del sottotitolo (:has = la riga ha due elementi) */
 .page-title-row:has(> :nth-child(2)) + .page-subtitle-row {
   margin-top: 0.5rem;
 }
 
-/* riga del sottotitolo: testo a sinistra, qualcosa a destra (per esempio "Filtri") */
+/* sottotitolo a sinistra, qualcosa a destra ("Filtri") */
 .page-subtitle-row {
   display: flex;
   align-items: center;
@@ -91,7 +89,7 @@ a:hover {
   gap: 0.75rem;
 }
 
-/* prima lettera maiuscola: la data arriva in minuscolo ("sabato 14 novembre") */
+/* prima lettera maiuscola (la data arriva in minuscolo) */
 .page-subtitle::first-letter {
   text-transform: uppercase;
 }
@@ -112,15 +110,14 @@ a:hover {
   color: var(--secondary);
 }
 
-/* riquadro bianco comune: card, pannelli e tabelle (ognuno aggiunge il suo padding) */
+/* riquadro bianco comune di card, pannelli e tabelle */
 .app-card {
   border-radius: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
 }
 
-/* tabelle (Utenti, Giacenze, Vendite, Forniture): il riquadro scorre in orizzontale
-   se la tabella non ci sta */
+/* tabelle: il riquadro scorre in orizzontale se non ci stanno */
 .app-table-wrap {
   overflow-x: auto;
 }
@@ -140,8 +137,7 @@ a:hover {
   white-space: nowrap;
 }
 
-/* righe con una linea sopra; testi su una riga sola (nowrap): le tabelle compaiono solo
-   quando c'è spazio (da 1366px, vedi useShowCards), così le righe restano tutte alte uguali */
+/* righe con una linea sopra e testi su una riga (le tabelle compaiono solo da 1366px) */
 .app-table td {
   padding: 0.75rem;
   border-top: 1px solid var(--border);
@@ -149,13 +145,12 @@ a:hover {
   white-space: nowrap;
 }
 
-/* le righe dei dettagli (motivo di una vendita annullata o di una richiesta respinta)
-   occupano tutte le colonne (colspan) e vanno a capo se il testo è lungo */
+/* righe dei dettagli: tutte le colonne e testo a capo */
 .app-table td[colspan] {
   white-space: normal;
 }
 
-/* menu a tendina di Bootstrap (utente e "Altro"): angoli tondi, bordo leggero e ombra */
+/* menu a tendina di Bootstrap: angoli tondi, bordo leggero e ombra */
 .dropdown-menu {
   min-width: 12rem;
   padding: 0.5rem;
@@ -182,8 +177,7 @@ a:hover {
   color: var(--primary-dark);
 }
 
-/* logo sfumato dal viola al magenta (barra in alto e Login): il gradiente si vede
-   solo dentro le lettere */
+/* logo sfumato dal viola al magenta, solo dentro le lettere */
 .app-logo,
 .app-logo:hover {
   font-weight: 800;

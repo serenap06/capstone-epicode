@@ -1,5 +1,7 @@
+// import
 const { body } = require("express-validator");
 
+// regole per creare un prodotto
 const productBodyRules = [
   body("name")
     .isString()

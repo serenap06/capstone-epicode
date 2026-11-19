@@ -1,4 +1,6 @@
+// import
 const express = require("express");
+// router di /api/tasks
 const tasksRouter = express.Router();
 const taskController = require("./controller");
 
@@ -12,8 +14,10 @@ const taskUpdateRules = require("../../middlewares/tasks/taskUpdateRules");
 const taskQueryRules = require("../../middlewares/tasks/taskQueryRules");
 const taskStatusRules = require("../../middlewares/tasks/taskStatusRules");
 
+// serve il login
 tasksRouter.use(authenticate);
 
+// task del responsabile e task del dipendente
 tasksRouter.get(
   "/",
   authorizeRole("admin"),
@@ -29,6 +33,7 @@ tasksRouter.get(
   taskController.findMine,
 );
 
+// nuova (solo il responsabile)
 tasksRouter.post(
   "/",
   authorizeRole("admin"),
@@ -37,6 +42,7 @@ tasksRouter.post(
   taskController.create,
 );
 
+// modifica di tutto il gruppo
 tasksRouter.patch(
   "/group/:groupId",
   authorizeRole("admin"),
@@ -45,6 +51,7 @@ tasksRouter.patch(
   validate,
   taskController.update,
 );
+// stato della propria copia (solo il dipendente)
 tasksRouter.patch(
   "/:taskId/status",
   authorizeRole("employee"),
@@ -54,6 +61,7 @@ tasksRouter.patch(
   taskController.updateStatus,
 );
 
+// elimina una copia o tutto il gruppo
 tasksRouter.delete(
   "/:taskId",
   authorizeRole("admin"),

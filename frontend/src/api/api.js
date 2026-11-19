@@ -1,16 +1,16 @@
+// import
 import { translateError } from "./errors";
 
-// indirizzo del backend, dal file .env
+// indirizzo del backend, dal .env
 const API_URL = import.meta.env.VITE_API_URL;
 
-// fa la fetch al backend. path: per esempio "/tasks/mine";
-// method e body solo quando servono (di base è una GET)
+// fetch al backend: path es. "/tasks/mine"; method e body solo se servono (di base GET)
 const api = async (path, { method = "GET", body } = {}) => {
-  // il token salvato al login
+  // token salvato al login
   const token =
     localStorage.getItem("token") || sessionStorage.getItem("token");
 
-  // i file viaggiano in un FormData: niente JSON, il Content-Type lo scrive il browser
+  // file in un FormData: niente JSON, il Content-Type lo scrive il browser
   const isFormData = body instanceof FormData;
 
   let res;
@@ -19,28 +19,27 @@ const api = async (path, { method = "GET", body } = {}) => {
       method,
       headers: {
         ...(!isFormData && { "Content-Type": "application/json" }),
-        // se c'è il token lo aggiungo: così il backend sa chi sono
+        // con il token il backend sa chi sono
         ...(token && { Authorization: `Bearer ${token}` }),
       },
-      // il corpo: il FormData così com'è, il resto come testo JSON
+      // body: il FormData così com'è, il resto in JSON
       body: isFormData ? body : JSON.stringify(body),
     });
   } catch {
-    // fetch fallisce senza risposta quando il server è spento o manca la connessione
+    // nessuna risposta: server spento o niente connessione
     throw new Error("Impossibile contattare il server, riprova tra poco");
   }
-  // se la risposta non è JSON (per esempio una pagina di errore) uso un oggetto vuoto
+  // risposta non JSON: oggetto vuoto
   const data = await res.json().catch(() => ({}));
 
-  // token scaduto mentre si usa l'app: lo cancello e torno al login.
-  // Al login no: lì 401 vuol dire solo email o password sbagliate
+  // token scaduto: lo cancello e torno al login (non al login stesso: lì 401 = password sbagliata)
   if (res.status === 401 && token && path !== "/auth/login") {
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
     window.location.assign("/");
   }
 
-  // errore dal server: lo traduco e lo lancio al catch di chi ha chiamato api()
+  // errore: lo traduco e lo lancio a chi ha chiamato api()
   if (!res.ok) {
     throw new Error(translateError(data.message, res.status));
   }

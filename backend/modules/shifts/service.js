@@ -1,3 +1,4 @@
+// import
 const Shift = require("./schema");
 const User = require("../users/schema");
 const checkShiftOverlap = require("../../utils/shifts/checkShiftOverlap");
@@ -6,42 +7,44 @@ const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 const assignDefinedFields = require("../../utils/assignDefinedFields");
 
-// il turno con nome della persona e del negozio, come lo vuole il frontend
+// il turno con i nomi di persona e negozio
 const findShiftWithNames = (shiftId) =>
   Shift.findById(shiftId)
     .populate("user", "name surname")
     .populate("store", "name");
 
+// turni del periodo: il responsabile può filtrare per negozio, il dipendente vede il suo
 const findAll = async ({ store: storeId, from, to }, currentUser) => {
   const isAdmin = currentUser.role === "admin";
   if (!isAdmin && !currentUser.store) {
     throw new ForbiddenException("No store assigned");
   }
-  // L'admin può filtrare per negozio; il dipendente vede solo il suo
+  // filtro del negozio
   const shiftFilter = {};
   const filterStoreId = isAdmin ? storeId : currentUser.store;
   if (filterStoreId) {
     shiftFilter.store = filterStoreId;
   }
-  // filtra per inizio e fine turno
+  // turni che iniziano tra from e to
   if (from || to) {
     shiftFilter.startAt = {};
     if (from) shiftFilter.startAt.$gte = new Date(from);
     if (to) shiftFilter.startAt.$lte = new Date(to);
   }
-  //popola utente e store
+  // con i nomi di persona e negozio
   return Shift.find(shiftFilter)
     .populate("user", "name surname")
     .populate("store", "name")
     .sort({ startAt: 1 });
 };
 
+// un turno (il dipendente solo del suo negozio)
 const findOne = async (shiftId, currentUser) => {
   const shift = await findShiftWithNames(shiftId);
   if (!shift) {
     throw new NotFoundException("Shift not found");
   }
-  // Un dipendente non può vedere i turni di un altro negozio a cui non è assegnato
+  // un dipendente non vede i turni di altri negozi
   const isAdmin = currentUser.role === "admin";
   const isSameStore =
     shift.store._id.toString() === currentUser.store?.toString();
@@ -51,14 +54,13 @@ const findOne = async (shiftId, currentUser) => {
   return shift;
 };
 
-// ore della settimana di ogni dipendente: contratto, ore pianificate e differenza.
-// Il dipendente riceve solo la sua riga
+// ore della settimana di ogni dipendente: contratto, pianificate e differenza
+// (il dipendente riceve solo la sua riga)
 const findWeeklyHours = async ({ store, from, to }, currentUser) => {
   const storeFilter = store ? { store } : {};
   const employeeFilter =
     currentUser.role === "employee" ? { _id: currentUser._id } : storeFilter;
-  // con il negozio di ognuno (serve quando il responsabile guarda tutti i negozi insieme);
-  // ordinati per negozio e nome, così le righe dello stesso negozio stanno vicine
+  // con il negozio, ordinati per negozio e nome (le righe dello stesso negozio vicine)
   const employees = await User.find({ role: "employee", ...employeeFilter })
     .populate("store", "name")
     .sort({ store: 1, name: 1 });
@@ -78,7 +80,7 @@ const findWeeklyHours = async ({ store, from, to }, currentUser) => {
     const employeeShifts = shifts.filter(
       (shift) => shift.user.toString() === employee._id.toString(),
     );
-    // la differenza tra due date è in millisecondi: 3.600.000 in un'ora
+    // differenza tra date in millisecondi: 3.600.000 in un'ora
     const scheduledHours = employeeShifts.reduce(
       (total, shift) => total + (shift.endAt - shift.startAt) / 3600000,
       0,
@@ -89,14 +91,14 @@ const findWeeklyHours = async ({ store, from, to }, currentUser) => {
       store: employee.store,
       weeklyHours: employee.weeklyHours,
       scheduledHours,
-      // senza ore di contratto la differenza è tutto il pianificato (non NaN)
+      // senza contratto la differenza è tutto il pianificato
       difference: scheduledHours - (employee.weeklyHours ?? 0),
     };
   });
   return hours;
 };
 
-// prima di salvare: la persona lavora in quel negozio e non ha già un turno in quell'orario
+// nuovo turno: la persona lavora lì e non ha già un turno in quell'orario
 const create = async (shiftData) => {
   const { user: userId, store: storeId, startAt, endAt } = shiftData;
   await checkUserBelongsToStore(userId, storeId);
@@ -108,6 +110,7 @@ const create = async (shiftData) => {
   return findShiftWithNames(newShift._id);
 };
 
+// modifico il turno con gli stessi controlli
 const update = async (shiftId, shiftData) => {
   const shift = await Shift.findById(shiftId);
   if (!shift) {
@@ -123,6 +126,7 @@ const update = async (shiftId, shiftData) => {
   return findShiftWithNames(shift._id);
 };
 
+// elimino il turno
 const deleteShift = async (shiftId) => {
   const deletedShift = await Shift.findByIdAndDelete(shiftId);
   if (!deletedShift) {

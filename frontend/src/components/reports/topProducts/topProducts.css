@@ -1,4 +1,4 @@
-/* elenco numerato: il numero lo disegno io nel cerchio, quindi tolgo quello del browser */
+/* elenco numerato: il numero lo disegno io nel cerchio */
 .top-products {
   margin: 0;
   padding: 0;
@@ -26,7 +26,7 @@
   font-weight: 800;
 }
 
-/* nome e pezzi prendono lo spazio che resta; min-width: 0 lascia stringere il nome */
+/* nome e pezzi prendono lo spazio che resta */
 .top-products-info {
   flex: 1 1 auto;
   min-width: 0;

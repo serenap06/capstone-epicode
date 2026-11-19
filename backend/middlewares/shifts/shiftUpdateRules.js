@@ -1,4 +1,6 @@
+// import
 const { body } = require("express-validator");
+// regole per modificare un turno: tutti i campi facoltativi
 const shiftUpdateRules = [
   body("user").optional().isMongoId().withMessage("Invalid user Id"),
   body("store").optional().isMongoId().withMessage("Invalid store Id"),

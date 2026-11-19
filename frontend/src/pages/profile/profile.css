@@ -15,13 +15,13 @@
   text-align: center;
 }
 
-/* contenitore del cerchio: position relative fa da riferimento al bottone della fotocamera */
+/* position relative: riferimento per la fotocamera */
 .profile-avatar {
   position: relative;
   display: flex;
 }
 
-/* bottone tondo magenta in alto a destra del cerchio; il bordo bianco lo stacca dalla foto */
+/* fotocamera tonda magenta, con il bordo bianco */
 .profile-avatar-camera {
   position: absolute;
   top: 0;
@@ -51,9 +51,7 @@
   outline-offset: 2px;
 }
 
-/* "Rimuovi foto": solo testo magenta, più scuro al passaggio del mouse.
-   transition: il colore cambia in 0,2 secondi invece che di colpo.
-   Alto 44px per toccarlo comodo; i margini negativi non allontanano le righe vicine */
+/* "Rimuovi foto": testo magenta alto 44px; transition: il colore cambia in 0,2 secondi */
 .profile-remove-photo {
   min-height: 44px;
   margin: -0.5rem 0;
@@ -87,7 +85,7 @@
   color: var(--primary-dark);
 }
 
-/* righe dell'incarico: nome del dato a sinistra, valore a destra, con una linea sopra */
+/* righe dell'incarico: dato a sinistra, valore a destra */
 .profile-info {
   margin: 0 0 0.75rem;
 }

@@ -1,9 +1,10 @@
+// import
 import { formatTime } from "../../../utils/formatTime";
 import { CATEGORY } from "../../../utils/taskLabel";
 import Badge from "../../common/badge/Badge";
 import "./myTaskList.css";
 
-// le task di oggi nella Home, con la casella per segnarle fatte
+// componente MyTaskList: le task di oggi della Home, con la casella. props: tasks, onToggle
 const MyTaskList = ({ tasks, onToggle }) => {
   return (
     <ul className="my-task-list">
@@ -11,13 +12,13 @@ const MyTaskList = ({ tasks, onToggle }) => {
         const isDone = task.status === "done";
         return (
           <li key={task._id} className="my-task-row">
-            {/* id e htmlFor collegano casella e testo: si spunta anche cliccando il testo */}
+            {/* id e htmlFor: si spunta anche cliccando il testo */}
             <input
               type="checkbox"
               id={`task-${task._id}`}
               className="my-task-check"
               checked={isDone}
-              onChange={() => onToggle(task)}
+              onChange={() => onToggle(task)} // fatta / da fare
             />
             <label
               htmlFor={`task-${task._id}`}
@@ -29,7 +30,7 @@ const MyTaskList = ({ tasks, onToggle }) => {
               </span>
               <span className="my-task-meta">
                 <span className="text-nowrap">{CATEGORY[task.category]} ·</span>{" "}
-                {/* fatta (con o senza orario), oppure la scadenza */}
+                {/* fatta (con l'orario), oppure la scadenza */}
                 <span className="text-nowrap">
                   {isDone
                     ? task.completedAt

@@ -1,5 +1,7 @@
+// import
 const { query } = require("express-validator");
 
+// regole della query delle Vendite: filtri, ordine e pagine
 const saleQueryRules = [
   query("store").optional().isMongoId().withMessage("store must be a valid id"),
   query("soldBy")

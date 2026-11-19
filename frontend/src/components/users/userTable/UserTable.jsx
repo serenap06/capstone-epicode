@@ -1,3 +1,4 @@
+// import
 import "./userTable.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { formatFullName } from "../../../utils/formatFullName";
@@ -6,8 +7,8 @@ import Avatar from "../../common/avatar/Avatar";
 import Badge from "../../common/badge/Badge";
 import Button from "../../common/button/Button";
 
-// tabella degli utenti, da tablet in su. currentUserId: chi è collegato,
-// per spegnere "Elimina" sulla sua riga (il proprio account non si elimina)
+// componente UserTable: tabella degli utenti da 1366px.
+// props: users, currentUserId = chi è collegato (non si elimina), onEdit, onDelete
 const UserTable = ({ users, currentUserId, onEdit, onDelete }) => {
   return (
     <div className="app-card app-table-wrap">
@@ -55,12 +56,12 @@ const UserTable = ({ users, currentUserId, onEdit, onDelete }) => {
                     <Button
                       variant="secondary"
                       aria-label={`Modifica ${formatFullName(user)}`}
-                      onClick={() => onEdit(user)}
+                      onClick={() => onEdit(user)} // apro il modulo con la persona
                     >
                       <Pencil size={16} aria-hidden="true" />
                       Modifica
                     </Button>
-                    {/* title: il suggerimento che compare passando con il mouse */}
+                    {/* title: il suggerimento passando con il mouse */}
                     <Button
                       variant="danger"
                       className="app-button-icon"
@@ -72,8 +73,8 @@ const UserTable = ({ users, currentUserId, onEdit, onDelete }) => {
                       title={
                         isSelf ? "Non puoi eliminare il tuo account" : undefined
                       }
-                      disabled={isSelf}
-                      onClick={() => onDelete(user)}
+                      disabled={isSelf} // il mio account non si elimina
+                      onClick={() => onDelete(user)} // chiedo conferma prima di eliminare
                     >
                       <Trash2 size={16} aria-hidden="true" />
                     </Button>

@@ -1,3 +1,4 @@
+// import
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { changePassword } from "../../../api/users";
@@ -6,9 +7,10 @@ import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 import PasswordInput from "../../common/passwordInput/PasswordInput";
 
-// cambio della propria password, nel Profilo: attuale, nuova e conferma.
-// La password attuale la controlla il server; che le due nuove coincidano lo controllo qui
+// componente PasswordForm: cambio della mia password nel Profilo (attuale, nuova e conferma).
+// L'attuale la controlla il server, che le due nuove coincidano lo controllo qui
 const PasswordForm = () => {
+  // errore del server e "Password cambiata"
   const [serverError, setServerError] = useState("");
   const [isSaved, setIsSaved] = useState(false);
 
@@ -25,7 +27,7 @@ const PasswordForm = () => {
     },
   });
 
-  // dopo il salvataggio svuoto i campi con reset
+  // salvo e svuoto i campi con reset
   const onSubmit = async (formData) => {
     setServerError("");
     setIsSaved(false);
@@ -45,7 +47,7 @@ const PasswordForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="form-stack">
       {serverError && <Message type="error">{serverError}</Message>}
 
-      {/* autoComplete aiuta il gestore delle password del browser */}
+      {/* autoComplete aiuta il gestore delle password */}
       <FormField
         label="Password attuale"
         htmlFor="current-password"
@@ -79,7 +81,7 @@ const PasswordForm = () => {
             })}
           />
         </FormField>
-        {/* validate: la conferma va bene solo se è uguale alla nuova */}
+        {/* la conferma deve essere uguale alla nuova */}
         <FormField
           label="Ripeti la nuova password"
           htmlFor="confirm-password"

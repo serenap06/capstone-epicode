@@ -12,8 +12,7 @@
   white-space: nowrap;
 }
 
-/* telefoni piccoli (fino a 374px): meno spazio tra i bottoni e testo più piccolo,
-   così a 320px "Successiva" non esce dallo schermo */
+/* telefoni piccoli (fino a 374px): bottoni più vicini, "Successiva" non esce */
 @media (max-width: 374.98px) {
   .app-pagination {
     gap: 0.5rem;

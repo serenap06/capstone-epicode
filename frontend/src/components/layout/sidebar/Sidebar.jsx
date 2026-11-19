@@ -1,3 +1,4 @@
+// import
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { MENU } from "./menu";
@@ -10,18 +11,19 @@ import {
 } from "react-bootstrap";
 import { MoreHorizontalIcon } from "lucide-react";
 
-// menu delle sezioni: a sinistra su computer, in basso su telefono e tablet
+// componente Sidebar: il menu, a sinistra su computer e in basso su telefono e tablet
 const Sidebar = () => {
+  // utente collegato
   const { user } = useAuth();
-  // l'indirizzo della pagina aperta
+  // pagina aperta
   const location = useLocation();
-  // le voci del ruolo (menu.js)
+  // voci del ruolo (menu.js)
   const links = MENU[user.role];
-  // voci che su telefono vanno in "Altro" (le desktopOnly no: su telefono non ci sono)
+  // voci che su telefono vanno in "Altro"
   const hiddenLinks = links.filter((link) => link.hideOnMobile);
-  // "Altro" solo se ha delle voci
+  // "Altro" solo se ha voci
   const showMore = hiddenLinks.length > 0;
-  // "Altro" evidenziato quando la pagina aperta è una delle sue voci
+  // "Altro" acceso se la pagina aperta è una delle sue
   const isMoreActive = hiddenLinks.some((link) =>
     location.pathname.startsWith(link.to),
   );
@@ -30,11 +32,10 @@ const Sidebar = () => {
     <aside className="app-sidebar">
       <nav className="app-nav" aria-label="Sezioni">
         {links.map((link) => {
-          // l'icona è un componente: il nome deve iniziare con la maiuscola
+          // l'icona è un componente: nome con la maiuscola
           const Icon = link.icon;
           return (
-            // NavLink mette da solo la classe "active" sulla pagina aperta.
-            // hide-mobile: sotto i 1024px va in "Altro"; hide-phone: sparisce solo su telefono
+            // NavLink mette "active" sulla pagina aperta; hide-mobile = in "Altro", hide-phone = sparisce su telefono
             <NavLink
               key={link.to}
               to={link.to}
@@ -46,7 +47,7 @@ const Sidebar = () => {
             </NavLink>
           );
         })}
-        {/* "Altro" con le voci nascoste su telefono; drop="up": si apre verso l'alto */}
+        {/* "Altro", aperto verso l'alto (drop="up") */}
         {showMore && (
           <Dropdown drop="up" align="end" className="app-more">
             <DropdownToggle

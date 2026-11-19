@@ -1,4 +1,4 @@
-/* larghezza minima: sotto, la tabella scorre dentro il riquadro (vedi .app-table in index.css) */
+/* larghezza minima: sotto la tabella scorre */
 .product-table {
   min-width: 720px;
 }
@@ -10,7 +10,7 @@
   gap: 0.75rem;
 }
 
-/* la categoria arriva in minuscolo dal database: capitalize mette la maiuscola */
+/* la categoria arriva in minuscolo: capitalize */
 .product-table-category {
   text-transform: capitalize;
 }

@@ -1,7 +1,8 @@
+// variabili del file .env
 require("dotenv").config();
-// ora italiana per le date del seed: sui server di deploy l'ora di base è UTC
-// e "oggi" (Dashboard, annullamento vendite, ore dei turni) partirebbe all'una di notte
+// ora italiana anche per le date del seed
 process.env.TZ = "Europe/Rome";
+// import
 const mongoose = require("mongoose");
 
 const Store = require("./modules/stores/schema");
@@ -13,11 +14,10 @@ const Task = require("./modules/tasks/schema");
 const SupplyRequest = require("./modules/supply-requests/schema");
 const Sale = require("./modules/sales/schema");
 
-// la password degli account demo arriva dal file .env (DEMO_PASSWORD), non è scritta qui.
-// È la stessa di VITE_DEMO_PASSWORD nel .env del frontend (i bottoni della demo nel Login)
+// password degli account demo dal .env (la stessa di VITE_DEMO_PASSWORD nel frontend)
 const DEMO_PASSWORD = process.env.DEMO_PASSWORD;
 
-// data e ora rispetto a oggi: day = 0 è oggi, 1 è domani, -1 è ieri
+// data e ora rispetto a oggi: day 0 = oggi, 1 = domani, -1 = ieri
 const at = (day, hour, minute = 0) => {
   const date = new Date();
   date.setDate(date.getDate() + day);
@@ -25,11 +25,10 @@ const at = (day, hour, minute = 0) => {
   return date;
 };
 
-// arrotonda ai centesimi
+// arrotondo ai centesimi
 const round = (value) => Math.round(value * 100) / 100;
 
-// costruisce una vendita con gli stessi calcoli del servizio delle vendite.
-// lines è un elenco di [prodotto, quantità]
+// una vendita con gli stessi calcoli del servizio; lines = [prodotto, quantità]
 const buildSale = (employee, day, hour, paymentMethod, lines) => {
   const items = lines.map(([product, quantity]) => {
     const lineTotal = product.price * quantity;
@@ -39,7 +38,7 @@ const buildSale = (employee, day, hour, paymentMethod, lines) => {
       unitPrice: product.price,
       vatRate: product.vatRate,
       quantity,
-      // il prezzo comprende l'IVA: IVA = totale - totale / (1 + aliquota)
+      // il prezzo comprende l'IVA
       vatAmount: round(lineTotal - lineTotal / (1 + product.vatRate / 100)),
     };
   });
@@ -59,8 +58,7 @@ const buildSale = (employee, day, hour, paymentMethod, lines) => {
   };
 };
 
-// una vendita annullata: la stessa vendita con i quattro campi dell'annullamento
-// (chi l'ha annullata è chi l'ha fatta, due minuti dopo)
+// una vendita annullata: chi l'ha fatta la annulla due minuti dopo
 const buildCancelledSale = (
   employee,
   day,
@@ -76,8 +74,9 @@ const buildCancelledSale = (
   cancelledAt: at(day, hour, 2),
 });
 
+// riempio il database con i dati della demo
 const seed = async () => {
-  // senza la password demo non creo gli utenti: meglio fermarsi con un messaggio chiaro
+  // senza password demo mi fermo con un messaggio
   if (!DEMO_PASSWORD) {
     console.error("Seed error: scrivi DEMO_PASSWORD nel file .env");
     process.exitCode = 1;
@@ -88,7 +87,7 @@ const seed = async () => {
     await mongoose.connect(process.env.DB_URL);
     console.log("MongoDB connected, seeding...");
 
-    // 1. Svuoto le collezioni (prima quelle che dipendono dalle altre)
+    // 1. svuoto le collezioni
     await Sale.deleteMany();
     await SupplyRequest.deleteMany();
     await Task.deleteMany();
@@ -98,13 +97,13 @@ const seed = async () => {
     await Product.deleteMany();
     await Store.deleteMany();
 
-    // 2. Punti vendita
+    // 2. negozi
     const [storeA, storeB] = await Store.create([
       { name: "Bookshop Museo", address: "Via Roma 1", city: "Napoli" },
       { name: "Shop Castello", address: "Via Milano 2", city: "Napoli" },
     ]);
 
-    // 3. Utenti (create, non insertMany: così l'hook cifra le password)
+    // 3. utenti (create e non insertMany: così lo schema cripta le password)
     const [manager, marta, luca, giulia, paolo] = await User.create([
       {
         name: "Laura",
@@ -152,10 +151,8 @@ const seed = async () => {
     ]);
     const employees = [marta, luca, giulia, paolo];
 
-    // 4. Prodotti (il catalogo è unico per tutti i punti vendita), senza foto:
-    // nell'app compare il segnaposto con l'iniziale e le foto si caricano dal Catalogo.
-    // I libri hanno l'IVA al 4%, gli altri il 22% predefinito.
-    // Il taccuino non è attivo: la responsabile lo vede grigio, il dipendente no
+    // 4. prodotti, senza foto (si caricano dal Catalogo): libri al 4%, gli altri al 22%.
+    // Il taccuino non è attivo (lo vede solo il responsabile)
     const products = await Product.create([
       {
         name: "Guida del museo",
@@ -211,15 +208,14 @@ const seed = async () => {
       { name: "T-shirt", price: 18, category: "gadget" },
       { name: "Ombrello", price: 14, category: "gadget" },
     ]);
-    // per nome, così più sotto scrivo productByName["Poster"] invece di ricordarmi la posizione
+    // prodotti per nome: productByName["Poster"]
     const productByName = Object.fromEntries(
       products.map((product) => [product.name, product]),
     );
-    // solo i prodotti attivi si vendono e si riordinano
+    // solo gli attivi si vendono e si riordinano
     const activeProducts = products.filter((product) => product.active);
 
-    // 5. Giacenze: ogni prodotto attivo in tutti e due i negozi.
-    // Qualcuna sotto soglia in ogni negozio, per vedere badge e avvisi
+    // 5. giacenze: ogni prodotto attivo in tutti e due i negozi, qualcuna sotto soglia
     const lowStock = {
       [storeA._id]: ["Poster", "Catalogo della mostra", "Tazza"],
       [storeB._id]: ["Guida del museo", "Set cartoline", "Magnete", "T-shirt"],
@@ -232,7 +228,7 @@ const seed = async () => {
         stockRows.push({
           product: product._id,
           store: store._id,
-          // sotto soglia: qualche pezzo meno della soglia (anche 0); altrimenti abbondanti
+          // sotto soglia: meno della soglia (anche 0); le altre abbondanti
           amount: isLow ? index % minThreshold : minThreshold * 4 + index,
           minThreshold,
         });
@@ -240,10 +236,8 @@ const seed = async () => {
     });
     await Stock.create(stockRows);
 
-    // 6. Turni: settimana in corso e settimana prossima, da lunedì.
-    // Ogni dipendente lavora tanti giorni quanti ne servono per il suo
-    // contratto (turni da 8 ore); offset sfalsa i giorni di riposo, così
-    // in ogni negozio i due colleghi si incrociano alcuni giorni.
+    // 6. turni da 8 ore, settimana in corso e prossima: tanti giorni quanti ne servono
+    // per il contratto; offset sfalsa i riposi, così i colleghi si incrociano
     const mondayOffset = -((new Date().getDay() + 6) % 7);
     const shiftPlan = [
       { employee: marta, workDays: 5, offset: 0, morning: true },
@@ -267,9 +261,7 @@ const seed = async () => {
     });
     await Shift.create(shifts);
 
-    // 7. Task
-    // Ogni task ha il suo groupId e il suo store. Per le task di un solo
-    // dipendente il groupId è nuovo ogni volta (base() lo genera a ogni chiamata)
+    // 7. task: ognuna con il suo groupId e il suo negozio (base() crea un groupId nuovo ogni volta)
     const base = (employee) => ({
       createdBy: manager._id,
       assignedTo: employee._id,
@@ -285,8 +277,7 @@ const seed = async () => {
 
     const tasks = [];
 
-    // task di oggi: una per negozio, con una copia per ogni dipendente
-    // di quel negozio, tutte con lo stesso groupId
+    // task di oggi: una per negozio, una copia per dipendente (stesso groupId)
     const dailyTasks = [
       {
         title: "Apertura cassa",
@@ -332,7 +323,7 @@ const seed = async () => {
       });
     });
 
-    // task mensili, in scadenza l'ultimo giorno del mese alle 18
+    // task mensili: scadono l'ultimo giorno del mese alle 18
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 18);
     tasks.push(
@@ -356,8 +347,7 @@ const seed = async () => {
       },
     );
 
-    // task globale di domani: una per punto vendita, una copia per ogni dipendente
-    // di quel negozio, tutte con lo stesso groupId
+    // task globale di domani: una per negozio, una copia per dipendente
     [storeA, storeB].forEach((store) => {
       const groupId = new mongoose.Types.ObjectId();
       getStoreEmployees(store).forEach((employee) => {
@@ -379,8 +369,7 @@ const seed = async () => {
 
     await Task.create(tasks);
 
-    // 8. Richieste di fornitura: in attesa, accolte e respinte (con il motivo),
-    // in tutti e due i negozi, così sia Marta sia Luca ne vedono di ogni tipo
+    // 8. richieste di fornitura: in attesa, accolte e respinte, in tutti e due i negozi
     await SupplyRequest.create([
       {
         product: productByName["Poster"]._id,
@@ -456,11 +445,9 @@ const seed = async () => {
       },
     ]);
 
-    // 9. Vendite: tante, per provare la divisione in pagine (10 per pagina).
-    // - oggi: Marta 24 (così anche la sua pagina ha due pagine), Giulia 10, Luca 12, Paolo 8
-    // - i 60 giorni prima: 8 vendite al giorno nel Bookshop e 6 nello Shop Castello
-    // Circa una su quindici è annullata, con il motivo. Le vendite del seed non scalano le giacenze.
-    // I numeri "a caso" vengono da una formula fissa: rilanciando il seed i dati sono gli stessi
+    // 9. vendite: oggi (Marta 24, Giulia 10, Luca 12, Paolo 8) e nei 60 giorni prima.
+    // Circa una su quindici è annullata; non scalano le giacenze.
+    // I numeri "a caso" vengono da una formula fissa: rilanciando il seed i dati sono uguali
     let randomSeed = 7;
     const random = (max) => {
       randomSeed = (randomSeed * 9301 + 49297) % 233280;
@@ -474,13 +461,13 @@ const seed = async () => {
       "Prezzo sbagliato, vendita rifatta",
     ];
 
-    // una vendita a caso di un dipendente: da 1 a 3 prodotti diversi, da 1 a 3 pezzi ciascuno
+    // una vendita a caso: da 1 a 3 prodotti diversi, da 1 a 3 pezzi l'uno
     const buildRandomSale = (employee, day, hour) => {
       const lineCount = 1 + random(3);
       const lines = [];
       while (lines.length < lineCount) {
         const product = activeProducts[random(activeProducts.length)];
-        // lo stesso prodotto una volta sola, come nella Cassa
+        // stesso prodotto una volta sola, come nella Cassa
         if (!lines.some(([lineProduct]) => lineProduct === product)) {
           lines.push([product, 1 + random(3)]);
         }
@@ -498,7 +485,7 @@ const seed = async () => {
         : buildSale(employee, day, hour, paymentMethod, lines);
     };
 
-    // count vendite di un dipendente in un giorno, distribuite tra le 9 e le 19
+    // count vendite in un giorno, tra le 9 e le 19
     const addSales = (employee, day, count) => {
       for (let saleIndex = 0; saleIndex < count; saleIndex++) {
         const hour = 9 + Math.floor((saleIndex * 10) / count);
@@ -512,7 +499,7 @@ const seed = async () => {
     addSales(luca, 0, 12);
     addSales(paolo, 0, 8);
     for (let day = 1; day <= 60; day++) {
-      // ogni giorno i colleghi si dividono le vendite del negozio
+      // ogni giorno i colleghi si dividono le vendite
       addSales(day % 2 === 0 ? marta : giulia, -day, 5);
       addSales(day % 2 === 0 ? giulia : marta, -day, 3);
       addSales(day % 2 === 0 ? luca : paolo, -day, 4);
@@ -521,7 +508,7 @@ const seed = async () => {
     await Sale.create(sales);
     console.log(`${products.length} prodotti, ${sales.length} vendite`);
 
-    // la password non la stampo: è nel file .env
+    // la password non la stampo
     console.log("Seed completed");
     console.log("Login Responsabile: responsabile@demo.it");
     console.log("Login Dipendente:   marta@demo.it");

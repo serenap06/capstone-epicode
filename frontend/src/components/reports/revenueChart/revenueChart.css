@@ -1,10 +1,9 @@
-/* il grafico non deve allargare il riquadro: min-width 0 lo lascia stringere */
+/* min-width 0: il grafico non allarga il riquadro */
 .revenue-chart {
   min-width: 0;
 }
 
-/* i colori del grafico: Recharts dà una classe a ogni pezzo (barre, assi, griglia).
-   In SVG il colore di riempimento è fill e quello delle linee è stroke */
+/* colori sulle classi che Recharts dà a ogni pezzo (fill = riempimento, stroke = linee) */
 
 /* le barre arancio, come le vendite */
 .revenue-chart .recharts-bar-rectangle path {
@@ -45,14 +44,12 @@
   color: var(--text);
 }
 
-/* "lunedì 9 novembre" → "Lunedì 9 novembre": maiuscola solo sulla prima lettera */
+/* maiuscola solo sulla prima lettera */
 .revenue-chart-tooltip strong::first-letter {
   text-transform: uppercase;
 }
 
-/* Recharts si può usare anche da tastiera: cliccando il grafico prende il focus e il browser
-   disegna il contorno blu. Lo tolgo solo quando il focus arriva dal mouse (:not(:focus-visible));
-   con la tastiera resta, come in tutta l'app */
+/* niente contorno blu al clic del mouse sul grafico; con la tastiera resta (:focus-visible) */
 .revenue-chart *:focus:not(:focus-visible) {
   outline: none;
 }

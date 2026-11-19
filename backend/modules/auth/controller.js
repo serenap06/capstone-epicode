@@ -1,5 +1,7 @@
+// import
 const authService = require("./service");
 
+// POST /api/auth/login: controllo email e password, rispondo con token e utente
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -15,6 +17,7 @@ const login = async (req, res, next) => {
   }
 };
 
+// GET /api/auth/me: l'utente del token
 const me = (req, res) => {
   res.status(200).send(req.user);
 };

@@ -1,5 +1,7 @@
+// import
 const reportService = require("./service");
 
+// GET /api/reports/revenue: incassi del periodo per il Report (solo il responsabile)
 const findRevenue = async (req, res, next) => {
   try {
     const { from, to, groupBy, store } = req.query;

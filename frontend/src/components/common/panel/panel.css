@@ -1,4 +1,4 @@
-/* riquadro bianco in colonna (il footer va in fondo); min-width: 0 non lo fa allargare */
+/* riquadro bianco in colonna (footer in fondo); min-width: 0 non lo fa allargare */
 .panel {
   display: flex;
   flex-direction: column;

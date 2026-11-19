@@ -1,3 +1,4 @@
+// import
 import "./productForm.css";
 import { useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -12,26 +13,27 @@ import Button from "../../common/button/Button";
 import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 
-// aliquote IVA che il backend accetta
+// aliquote IVA accettate dal backend
 const VAT_RATES = [4, 5, 10, 22];
 
-// peso massimo della foto, come nel backend: 2 MB
+// peso massimo della foto, come nel backend
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 
-// modulo del prodotto, nel modale. product: quello da modificare, oppure null per uno nuovo.
-// categories: le categorie che esistono già, suggerite mentre si scrive
+// componente ProductForm: modulo del prodotto, nel modale.
+// props: product = da modificare (null = nuovo), categories = suggerite mentre scrivo, onSaved, onCancel
 const ProductForm = ({ product, categories, onSaved, onCancel }) => {
+  // errore del server
   const [serverError, setServerError] = useState("");
-  // la foto scelta e il suo indirizzo temporaneo per l'anteprima (null = nessuna scelta)
+  // foto scelta e il suo indirizzo per l'anteprima
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  // true dopo "Rimuovi foto": la foto salvata si toglie solo quando si preme Salva
+  // true dopo "Rimuovi foto" (sul server la tolgo solo con Salva)
   const [isImageRemoved, setIsImageRemoved] = useState(false);
-  // aggancio all'input del file, che è nascosto: lo apre il bottone della fotocamera
+  // l'input del file è nascosto: lo apre la fotocamera
   const fileInputRef = useRef(null);
   const isEditing = Boolean(product);
 
-  // con un prodotto nuovo product è null: ?. e ?? fanno partire i campi vuoti
+  // campi vuoti per un prodotto nuovo
   const {
     register,
     handleSubmit,
@@ -49,21 +51,19 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
     },
   });
 
-  // il nome mentre si scrive: senza foto il riquadro mostra la sua iniziale
+  // il nome mentre scrivo: senza foto mostro l'iniziale
   const name = useWatch({ control, name: "name" });
 
-  // nel riquadro: la foto appena scelta, altrimenti quella salvata (se non l'ho rimossa)
+  // foto da mostrare: quella scelta, altrimenti quella salvata
   const photoUrl = previewUrl ?? (isImageRemoved ? null : product?.image);
 
-  // apre la finestra per scegliere il file (l'input vero è nascosto)
+  // apro la scelta del file
   const openFilePicker = () => fileInputRef.current.click();
 
-  // scelta la foto: controllo il peso e preparo l'anteprima.
-  // URL.createObjectURL crea un indirizzo temporaneo per vedere il file prima di caricarlo;
-  // revokeObjectURL libera quello vecchio
+  // scelgo la foto: controllo il peso e creo l'anteprima (createObjectURL; revoke libera la vecchia)
   const chooseImage = (event) => {
     const file = event.target.files[0];
-    // svuoto l'input, così si può scegliere di nuovo lo stesso file
+    // svuoto l'input: così posso scegliere di nuovo lo stesso file
     event.target.value = "";
     if (!file) return;
     if (file.size > MAX_IMAGE_SIZE) {
@@ -76,8 +76,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
     setPreviewUrl(URL.createObjectURL(file));
   };
 
-  // "Rimuovi foto": tolgo l'anteprima della foto scelta e segno da togliere quella salvata.
-  // Sul server non cambia niente finché non si preme Salva (Annulla lascia tutto com'era)
+  // "Rimuovi foto": tolgo l'anteprima e segno da togliere quella salvata (vale solo con Salva)
   const removeImage = () => {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setImageFile(null);
@@ -85,8 +84,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
     setIsImageRemoved(true);
   };
 
-  // due richieste: prima i dati (JSON), poi la foto (FormData), solo se ne è stata scelta una.
-  // La foto ha bisogno dell'_id del prodotto, per questo viene dopo
+  // salvo: prima i dati (JSON), poi la foto (FormData), che ha bisogno dell'_id
   const onSubmit = async (formData) => {
     setServerError("");
     const productData = {
@@ -95,7 +93,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
       category: formData.category,
       vatRate: formData.vatRate,
       active: formData.active,
-      // marca e descrizione anche vuote: così in modifica si possono cancellare
+      // anche vuote: così in modifica si cancellano
       brand: formData.brand,
       description: formData.description,
     };
@@ -104,7 +102,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
       const savedProduct = isEditing
         ? await updateProduct(product._id, productData)
         : await createProduct(productData);
-      // poi la foto: la nuova sostituisce la vecchia; se l'ho solo rimossa la tolgo
+      // poi la foto: la carico, oppure la tolgo
       if (imageFile) {
         await uploadProductImage(savedProduct._id, imageFile);
       } else if (isImageRemoved && product?.image) {
@@ -122,7 +120,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="form-stack">
       {serverError && <Message type="error">{serverError}</Message>}
 
-      {/* la foto come nel Profilo: riquadro con la fotocamera magenta in alto a destra */}
+      {/* foto: riquadro con la fotocamera in alto a destra */}
       <div className="product-form-photo">
         <div className="product-form-frame">
           {photoUrl ? (
@@ -144,7 +142,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
             ? `Foto scelta: ${imageFile.name}`
             : "png, jpg o webp · massimo 2 MB"}
         </p>
-        {/* "Rimuovi foto" solo se nel riquadro c'è una foto: un link discreto, come nel Profilo */}
+        {/* "Rimuovi foto" solo se c'è una foto */}
         {photoUrl && (
           <button
             type="button"
@@ -154,7 +152,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
             Rimuovi foto
           </button>
         )}
-        {/* input nascosto: accept mostra solo i formati che il backend accetta */}
+        {/* input nascosto con i formati accettati */}
         <input
           ref={fileInputRef}
           type="file"
@@ -178,8 +176,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
         />
       </FormField>
 
-      {/* prezzo (IVA compresa) e IVA sulla stessa riga; valueAsNumber trasforma il testo in numero.
-          Etichetta corta: su telefono "Prezzo (€, IVA compresa)" andava su due righe */}
+      {/* prezzo (IVA compresa) e IVA sulla stessa riga; valueAsNumber = numero */}
       <div className="form-row">
         <FormField
           label="Prezzo (€)"
@@ -197,7 +194,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
             {...register("price", {
               valueAsNumber: true,
               required: "Scrivi il prezzo",
-              // campo vuoto = NaN: Number.isNaN lo riconosce
+              // campo vuoto = NaN
               validate: (value) =>
                 (!Number.isNaN(value) && value >= 0) ||
                 "Scrivi un prezzo da 0 in su",
@@ -226,8 +223,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
           htmlFor="product-category"
           error={errors.category?.message}
         >
-          {/* list collega il campo al datalist: il browser suggerisce le categorie che esistono,
-              ma se ne può scrivere una nuova */}
+          {/* datalist: suggerisce le categorie che esistono, ma se ne può scrivere una nuova */}
           <input
             id="product-category"
             type="text"
@@ -261,7 +257,7 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
         />
       </FormField>
 
-      {/* un prodotto non attivo resta nel catalogo del responsabile ma il dipendente non lo vede */}
+      {/* non attivo: il dipendente non lo vede */}
       <label className="form-check-row">
         <input type="checkbox" {...register("active")} />
         Prodotto attivo (visibile ai dipendenti)

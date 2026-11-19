@@ -1,18 +1,16 @@
+// import
 import api from "./api";
 
-// richieste sulle vendite
+// richieste delle vendite
 
-// registra una vendita dalla Cassa (solo il dipendente, nel suo negozio).
-// saleData: { items: [{ product, quantity }], paymentMethod: "cash" | "card" }.
-// Il server scala i pezzi dalle giacenze e risponde con la vendita
-// e con i prodotti rimasti sotto la soglia (lowStock)
+// registro una vendita dalla Cassa: { items: [{ product, quantity }], paymentMethod }.
+// Risponde con la vendita e i prodotti finiti sotto soglia (lowStock)
 export const createSale = async (saleData) => {
   const data = await api("/sales", { method: "POST", body: saleData });
   return { sale: data.sale, lowStock: data.lowStock };
 };
 
-// annulla una vendita di oggi (solo chi l'ha fatta) con il motivo obbligatorio.
-// Il server la segna come annullata e rimette i pezzi nel negozio
+// annullo una vendita di oggi con il motivo (i pezzi tornano nel negozio)
 export const cancelSale = async (saleId, reason) => {
   const data = await api(`/sales/${saleId}/cancel`, {
     method: "PATCH",

@@ -1,4 +1,4 @@
-/* il bottone sembra il testo dell'intestazione: stesso colore e stessa grandezza */
+/* il bottone sembra il testo dell'intestazione */
 .sortable-header {
   display: inline-flex;
   align-items: center;

@@ -1,6 +1,6 @@
-// funzioni sulle date: intervalli da chiedere al server, confronti tra giorni e valori per i campi
+// funzioni sulle date: intervalli per il server, confronti tra giorni, valori per i campi
 
-// { from, to } nel formato ISO che il backend accetta come filtro
+// { from, to } in ISO, come li vuole il backend
 const toRange = (start, end) => ({
   from: start.toISOString(),
   to: end.toISOString(),
@@ -24,26 +24,26 @@ export const getTomorrow = () => {
   return toRange(start, end);
 };
 
-// da lunedì a domenica della settimana che contiene "date" (se manca, oggi)
+// da lunedì a domenica della settimana di "date" (di base oggi)
 export const getWeek = (date = new Date()) => {
   const start = new Date(date);
-  // getDay() parte da domenica (0): così lunedì = 0, martedì = 1... domenica = 6
+  // getDay() parte da domenica (0): così lunedì = 0... domenica = 6
   const daysFromMonday = (start.getDay() + 6) % 7;
-  // torno a lunedì, a mezzanotte
+  // torno a lunedì a mezzanotte
   start.setDate(start.getDate() - daysFromMonday);
   start.setHours(0, 0, 0, 0);
 
-  // fine: domenica alle 23:59
+  // domenica alle 23:59
   const end = new Date(start);
   end.setDate(start.getDate() + 6);
   end.setHours(23, 59, 59, 999);
   return toRange(start, end);
 };
 
-// i 7 giorni (da lunedì) della settimana di "date"
+// i 7 giorni della settimana di "date", da lunedì
 export const getWeekDays = (date = new Date()) => {
   const monday = new Date(getWeek(date).from);
-  // 7 date: lunedì + 0, + 1... + 6 giorni ("_" è il valore che non mi serve)
+  // lunedì + 0, + 1... + 6 ("_" è il valore che non uso)
   return Array.from({ length: 7 }, (_, index) => {
     const day = new Date(monday);
     day.setDate(monday.getDate() + index);
@@ -51,18 +51,18 @@ export const getWeekDays = (date = new Date()) => {
   });
 };
 
-// true se è lo stesso giorno, l'ora non conta (toDateString scrive solo il giorno)
+// true se è lo stesso giorno (l'ora non conta)
 export const isSameDay = (firstDate, secondDate) =>
   new Date(firstDate).toDateString() === new Date(secondDate).toDateString();
 
-// nuova data spostata di "days" giorni (negativo = indietro), senza toccare l'originale
+// nuova data spostata di "days" giorni (negativo = indietro)
 export const addDays = (date, days) => {
   const newDate = new Date(date);
   newDate.setDate(newDate.getDate() + days);
   return newDate;
 };
 
-// data per i campi <input type="date">: "2026-11-16", con il giorno di qui (non quello UTC)
+// data per <input type="date">: "2026-11-16" con il giorno di qui
 export const toDateInputValue = (date) => {
   const day = new Date(date);
   const month = String(day.getMonth() + 1).padStart(2, "0");
@@ -70,7 +70,7 @@ export const toDateInputValue = (date) => {
   return `${day.getFullYear()}-${month}-${dayNumber}`;
 };
 
-// orario per i campi <input type="time">: "09:00"
+// orario per <input type="time">: "09:00"
 export const toTimeInputValue = (date) => {
   const time = new Date(date);
   const hours = String(time.getHours()).padStart(2, "0");

@@ -1,4 +1,4 @@
-// errore con il codice HTTP: lo lancio nei service e l'errorHandler lo trasforma in risposta
+// errore con codice HTTP: lo lancio nei service, l'errorHandler risponde
 class HttpException extends Error {
   constructor(message, statusCode, error) {
     super(message);

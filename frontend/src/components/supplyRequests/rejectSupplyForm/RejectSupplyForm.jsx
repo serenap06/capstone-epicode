@@ -1,3 +1,4 @@
+// import
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -10,10 +11,10 @@ import Message from "../../common/message/Message";
 // lunghezza massima del motivo, come nel backend
 const MAX_REASON_LENGTH = 200;
 
-// modulo "Respingi richiesta", nel modale (solo il responsabile): il motivo è obbligatorio,
-// così il dipendente sa perché la fornitura non arriverà.
-// request: la richiesta da respingere; onSaved: dopo il salvataggio; onCancel: chiude senza fare niente
+// componente RejectSupplyForm: modulo "Respingi" con il motivo obbligatorio (il dipendente lo legge).
+// props: request = la richiesta, onSaved, onCancel
 const RejectSupplyForm = ({ request, onSaved, onCancel }) => {
+  // errore del server
   const [serverError, setServerError] = useState("");
 
   const {
@@ -22,7 +23,7 @@ const RejectSupplyForm = ({ request, onSaved, onCancel }) => {
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues: { reason: "" } });
 
-  // trim: un motivo fatto solo di spazi non vale
+  // respingo la richiesta (trim: solo spazi non vale)
   const onSubmit = async ({ reason }) => {
     setServerError("");
     try {
@@ -37,7 +38,7 @@ const RejectSupplyForm = ({ request, onSaved, onCancel }) => {
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="form-stack">
       {serverError && <Message type="error">{serverError}</Message>}
 
-      {/* quale richiesta sto respingendo, per non sbagliare riga */}
+      {/* quale richiesta sto respingendo */}
       <p className="m-0">
         <strong>
           {request.requestedAmount} pz di {request.product.name}

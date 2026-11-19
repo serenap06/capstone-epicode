@@ -1,4 +1,4 @@
-/* forma comune: alti almeno 44px (comodi da toccare), icona e testo affiancati */
+/* forma comune: alti almeno 44px, icona e testo affiancati */
 .app-button {
   min-height: 44px;
   display: inline-flex;
@@ -34,7 +34,7 @@
   background: var(--bg);
 }
 
-/* eliminare: bianco con testo arancio, per non confonderlo con l'azione principale */
+/* eliminare: bianco con testo arancio */
 .app-button-danger {
   background: var(--surface);
   border-color: var(--warning-soft);
@@ -45,15 +45,14 @@
   background: var(--warning-soft);
 }
 
-/* solo icona: quadrato 44x44 (l'aria-label dice allo screen reader cosa fa) */
+/* solo icona: quadrato 44x44 */
 .app-button-icon {
   flex: 0 0 44px;
   width: 44px;
   padding: 0;
 }
 
-/* il testo accanto all'icona (per esempio "Modifica"): su telefono sparisce e resta l'icona.
-   L'aria-label del bottone dice comunque cosa fa */
+/* testo accanto all'icona: su telefono sparisce (resta l'aria-label) */
 @media (max-width: 767.98px) {
   .app-button-label {
     display: none;

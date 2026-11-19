@@ -1,5 +1,7 @@
+// import
 const HttpException = require("../index");
 
+// 404: elemento non trovato
 class NotFoundException extends HttpException {
   constructor(
     message = "Not Found",

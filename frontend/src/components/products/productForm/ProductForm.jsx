@@ -95,9 +95,9 @@ const ProductForm = ({ product, categories, onSaved, onCancel }) => {
       category: formData.category,
       vatRate: formData.vatRate,
       active: formData.active,
-      // marca e descrizione vuote non le mando: il database non accetta testo vuoto
-      brand: formData.brand || undefined,
-      description: formData.description || undefined,
+      // marca e descrizione anche vuote: così in modifica si possono cancellare
+      brand: formData.brand,
+      description: formData.description,
     };
 
     try {

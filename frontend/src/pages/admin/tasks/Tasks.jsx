@@ -105,6 +105,8 @@ const Tasks = () => {
   }, []);
 
   useEffect(() => {
+    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
     // una pagina di task: tutti i filtri li applica il server (toQuery salta i vuoti).
     // Lo stato vale per la task intera: "Fatte" = l'hanno finita tutti.
     // Si ricarica a ogni cambio di filtri o pagina e quando cambia refreshCount
@@ -119,6 +121,7 @@ const Tasks = () => {
     loadData(
       `/tasks?${query}`,
       (data) => {
+        if (ignore) return;
         setTasks(data.tasks);
         setOpenCount(data.totals.openCount);
         setTotalPages(data.pagination.totalPages);
@@ -132,6 +135,10 @@ const Tasks = () => {
       },
       setError,
     ).finally(() => setIsLoading(false));
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
   }, [filters, page, refreshCount]);
 
   // cambia un filtro: copio gli altri e sovrascrivo quello ([name] usa il valore come chiave).

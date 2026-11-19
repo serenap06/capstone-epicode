@@ -111,6 +111,8 @@ const Catalog = () => {
   // una pagina di prodotti: a ogni cambio di filtri o pagina, e dopo ogni salvataggio.
   // Lo stato diventa active=true/false (solo il responsabile); toQuery salta i valori vuoti
   useEffect(() => {
+    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
     const query = toQuery({
       search: filters.search,
       category: filters.category,
@@ -123,6 +125,7 @@ const Catalog = () => {
     loadData(
       `/products?${query}`,
       (data) => {
+        if (ignore) return;
         setProducts(data.products);
         setTotals(data.totals);
         setCategories(data.categories);
@@ -137,6 +140,10 @@ const Catalog = () => {
       },
       setError,
     ).finally(() => setIsLoading(false));
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
   }, [filters, sort, page, refreshCount]);
 
   // le giacenze, e di nuovo dopo ogni salvataggio: i pezzi stanno nelle giacenze,

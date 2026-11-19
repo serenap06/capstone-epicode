@@ -117,6 +117,8 @@ const Sales = () => {
   // le vendite: i filtri li applica il server (sono divise in pagine da PAGE_SIZE).
   // Il dipendente vede sempre oggi e solo le sue (soldBy); toQuery salta i valori vuoti
   useEffect(() => {
+    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
     const query = toQuery({
       from,
       to,
@@ -131,12 +133,17 @@ const Sales = () => {
     loadData(
       `/sales?${query}`,
       (data) => {
+        if (ignore) return;
         setSales(data.sales);
         setTotals(data.totals);
         setTotalPages(data.pagination.totalPages);
       },
       setError,
     ).finally(() => setIsLoading(false));
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
   }, [from, to, filters, sort, page, refreshCount, isAdmin, user._id]);
 
   // i negozi una volta sola, solo per il responsabile

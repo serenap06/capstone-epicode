@@ -92,6 +92,8 @@ const Stocks = () => {
   // una pagina di giacenze: a ogni cambio di filtri, ordine o pagina, e dopo un salvataggio.
   // toQuery salta i valori vuoti
   useEffect(() => {
+    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
     const query = toQuery({
       search: filters.search,
       store: filters.store,
@@ -104,6 +106,7 @@ const Stocks = () => {
     loadData(
       `/stocks?${query}`,
       (data) => {
+        if (ignore) return;
         setStocks(data.stocks);
         setTotals(data.totals);
         setTotalPages(data.pagination.totalPages);
@@ -117,6 +120,10 @@ const Stocks = () => {
       },
       setError,
     ).finally(() => setIsLoading(false));
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
   }, [filters, sort, page, refreshCount]);
 
   // solo per il responsabile: tutte le giacenze per il modulo, anche dopo ogni salvataggio

@@ -69,16 +69,30 @@ const Shifts = () => {
   // turni e ore della settimana. Con "Tutti" store è "" e toQuery non lo manda:
   // il server restituisce tutti i negozi
   useEffect(() => {
+    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
     const query = toQuery({ store: selectedStore, ...getWeek(referenceDate) });
     // Promise.all aspetta tutte e due le richieste, poi finally spegne la rotellina
     Promise.all([
-      loadData(`/shifts?${query}`, (data) => setShifts(data.shifts), setError),
+      loadData(
+        `/shifts?${query}`,
+        (data) => {
+          if (!ignore) setShifts(data.shifts);
+        },
+        setError,
+      ),
       loadData(
         `/shifts/hours?${query}`,
-        (data) => setHours(data.hours),
+        (data) => {
+          if (!ignore) setHours(data.hours);
+        },
         setError,
       ),
     ]).finally(() => setIsLoading(false));
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
   }, [selectedStore, referenceDate, refreshCount]);
 
   // nuovo turno: dal bottone (senza persona e giorno) o dal clic su "Riposo" (con tutti e due)

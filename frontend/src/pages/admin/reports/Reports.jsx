@@ -55,12 +55,20 @@ const Reports = () => {
   const from = range.start.toISOString();
   const to = range.end.toISOString();
   useEffect(() => {
+    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
     const query = toQuery({ from, to, groupBy: range.groupBy, store });
     loadData(
       `/reports/revenue?${query}`,
-      (data) => setReport(data.report),
+      (data) => {
+        if (!ignore) setReport(data.report);
+      },
       setError,
     ).finally(() => setIsLoading(false));
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
   }, [from, to, range.groupBy, store]);
 
   // i negozi una volta sola, per il filtro

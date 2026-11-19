@@ -29,21 +29,31 @@ const MyShifts = () => {
 
   // ricarico turni e ore a ogni cambio di settimana
   useEffect(() => {
+    // ignore: diventa true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
     const weekQuery = toQuery(getWeek(referenceDate));
 
     // Promise.all aspetta tutte e due le richieste, poi finally spegne la rotellina
     Promise.all([
       loadData(
         `/shifts?${weekQuery}`,
-        (data) => setShifts(data.shifts),
+        (data) => {
+          if (!ignore) setShifts(data.shifts);
+        },
         setError,
       ),
       loadData(
         `/shifts/hours?${weekQuery}`,
-        (data) => setHours(data.hours[0]),
+        (data) => {
+          if (!ignore) setHours(data.hours[0]);
+        },
         setError,
       ),
     ]).finally(() => setIsLoading(false));
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
   }, [referenceDate]);
 
   // i 7 giorni

@@ -135,7 +135,7 @@ const Stores = () => {
       <ConfirmDialog
         show={!!storeToDelete}
         title="Eliminare il negozio?"
-        message={`"${storeToDelete?.name}" verrà eliminato. Non si può annullare.`}
+        message={`"${storeToDelete?.name}" verrà eliminato con le sue giacenze. Non si può annullare.`}
         confirmLabel="Elimina"
         isLoading={isDeleting}
         onConfirm={confirmDelete}

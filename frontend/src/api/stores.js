@@ -17,7 +17,7 @@ export const updateStore = async (storeId, storeData) => {
   return data.store;
 };
 
-// il server rifiuta se il negozio ha ancora personale
+// il server rifiuta se il negozio ha ancora personale o delle vendite
 export const deleteStore = async (storeId) => {
   await api(`/stores/${storeId}`, { method: "DELETE" });
 };

@@ -34,6 +34,8 @@ const MESSAGES = {
     "Si possono annullare solo le vendite di oggi",
   "Store has employees":
     "Il negozio ha ancora del personale: spostalo prima in un altro negozio",
+  "Store has sales":
+    "Il negozio ha delle vendite registrate: non si può eliminare",
 };
 
 // messaggi di riserva in base al codice, se il messaggio non è nell'elenco sopra

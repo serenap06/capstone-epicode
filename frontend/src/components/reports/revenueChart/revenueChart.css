@@ -1,0 +1,58 @@
+/* il grafico non deve allargare il riquadro: min-width 0 lo lascia stringere */
+.revenue-chart {
+  min-width: 0;
+}
+
+/* i colori del grafico: Recharts dà una classe a ogni pezzo (barre, assi, griglia).
+   In SVG il colore di riempimento è fill e quello delle linee è stroke */
+
+/* le barre arancio, come le vendite */
+.revenue-chart .recharts-bar-rectangle path {
+  fill: var(--orange);
+}
+
+/* il testo sotto le barre e a sinistra: grigio e piccolo */
+.revenue-chart .recharts-cartesian-axis-tick-value {
+  fill: var(--text-muted);
+  font-size: 12px;
+}
+
+/* le linee orizzontali della griglia, leggere */
+.revenue-chart .recharts-cartesian-grid line {
+  stroke: var(--border);
+}
+
+/* la colonna colorata dietro la barra sotto il mouse */
+.revenue-chart .recharts-tooltip-cursor {
+  fill: var(--primary-soft);
+}
+
+/* il riquadro sopra la barra: bianco, con bordo e ombra come i menu */
+.revenue-chart-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgba(30, 36, 64, 0.12);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.revenue-chart-tooltip strong {
+  color: var(--text);
+}
+
+/* "lunedì 9 novembre" → "Lunedì 9 novembre": maiuscola solo sulla prima lettera */
+.revenue-chart-tooltip strong::first-letter {
+  text-transform: uppercase;
+}
+
+/* Recharts si può usare anche da tastiera: cliccando il grafico prende il focus e il browser
+   disegna il contorno blu. Lo tolgo solo quando il focus arriva dal mouse (:not(:focus-visible));
+   con la tastiera resta, come in tutta l'app */
+.revenue-chart *:focus:not(:focus-visible) {
+  outline: none;
+}

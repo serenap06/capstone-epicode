@@ -4,15 +4,24 @@ import Button from "../button/Button";
 
 // sotto un elenco diviso in pagine: Precedente, "Pagina 1 di 3", Successiva.
 // Compare solo se le pagine sono più di una; i bottoni si spengono agli estremi.
-// label: il nome per gli screen reader ("Pagine delle vendite"); onChange(numero): nuova pagina
-const Pagination = ({ page, totalPages, label, onChange }) => {
+// label: il nome per gli screen reader ("Pagine delle vendite"); onChange(numero): nuova pagina.
+// scrollTarget (facoltativo): un ref all'inizio dell'elenco, quando l'elenco non è in cima
+// alla pagina (per esempio "Prodotti venduti" nel Report)
+const Pagination = ({ page, totalPages, label, onChange, scrollTarget }) => {
   if (totalPages <= 1) return null;
 
-  // cambio pagina e torno in cima: i bottoni sono in fondo alla lista,
-  // e la pagina nuova si legge dall'inizio
+  // cambio pagina e torno all'inizio dell'elenco: i bottoni sono in fondo alla lista,
+  // e la pagina nuova si legge dall'inizio. Senza scrollTarget l'elenco è in cima alla pagina
   const goToPage = (newPage) => {
     onChange(newPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (scrollTarget?.current) {
+      scrollTarget.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (

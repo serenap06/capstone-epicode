@@ -2,16 +2,12 @@ const mongoose = require("mongoose");
 const Sale = require("../sales/schema");
 const round = require("../../utils/round");
 
-const PERIOD_FORMATS = {
-  day: "%Y-%m-%d",
-  week: "%G-W%V",
-  month: "%Y-%m",
-};
-
 const findRevenue = async ({ from, to, groupBy = "day", store }) => {
-  // 1. Filtro: vendite tra from e to, non annullate, eventualmente di un solo negozio
+  // 1. Filtro: vendite tra from e to, non annullate, eventualmente di un solo negozio.
+  // Se "to" è solo un giorno ("2026-11-30") arrivo alla fine di quel giorno;
+  // se ha già l'ora (il frontend manda le 23:59 italiane) la uso così com'è
   const toDate = new Date(to);
-  toDate.setHours(23, 59, 59, 999);
+  if (to.length === 10) toDate.setHours(23, 59, 59, 999);
 
   const match = {
     createdAt: { $gte: new Date(from), $lte: toDate },
@@ -19,16 +15,19 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
   };
   if (store) match.store = new mongoose.Types.ObjectId(store);
 
-  // 2. Incassi per periodo (giorno, settimana o mese)
+  // 2. Incassi per periodo: $dateTrunc porta ogni vendita all'inizio del suo giorno,
+  // della sua settimana (dal lunedì) o del suo mese, con l'ora italiana.
+  // Il risultato è una data: il frontend ci scrive l'etichetta ("17 nov", "nov")
   const series = await Sale.aggregate([
     { $match: match },
     {
       $group: {
         _id: {
-          $dateToString: {
-            format: PERIOD_FORMATS[groupBy],
+          $dateTrunc: {
             date: "$createdAt",
+            unit: groupBy,
             timezone: "Europe/Rome",
+            startOfWeek: "monday",
           },
         },
         revenue: { $sum: "$total" },
@@ -69,7 +68,8 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
     { $sort: { _id: 1 } },
   ]);
 
-  // 5. I cinque prodotti più venduti
+  // 5. Tutti i prodotti venduti nel periodo, dal più venduto: pezzi, incasso e categoria.
+  // La vendita salva il nome ma non la categoria: la prendo dal prodotto ($lookup)
   const products = await Sale.aggregate([
     { $match: match },
     { $unwind: "$items" },
@@ -83,9 +83,25 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
         },
       },
     },
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id",
+        foreignField: "_id",
+        as: "productData",
+        pipeline: [{ $project: { category: 1 } }],
+      },
+    },
     { $sort: { quantity: -1, revenue: -1 } },
-    { $limit: 5 },
   ]);
+  const soldProducts = products.map((row) => ({
+    product: row._id,
+    name: row.name,
+    // productData è vuoto se il prodotto è stato eliminato dal catalogo
+    category: row.productData[0]?.category ?? "",
+    quantity: row.quantity,
+    revenue: round(row.revenue),
+  }));
 
   // 6. Totali dell'intervallo, sommando le righe della serie
   const totals = {
@@ -120,12 +136,9 @@ const findRevenue = async ({ from, to, groupBy = "day", store }) => {
         vat,
       };
     }),
-    topProducts: products.map((row) => ({
-      product: row._id,
-      name: row.name,
-      quantity: row.quantity,
-      revenue: round(row.revenue),
-    })),
+    // i cinque più venduti sono i primi dell'elenco completo
+    topProducts: soldProducts.slice(0, 5),
+    soldProducts,
   };
 };
 

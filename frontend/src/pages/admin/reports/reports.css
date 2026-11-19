@@ -1,0 +1,45 @@
+/* stili solo della pagina Report */
+
+/* su telefono: i cinque periodi su tutta la riga e il negozio sotto, anche lui largo tutto
+   (lo stesso per ricerca e categoria dei prodotti venduti) */
+@media (max-width: 575.98px) {
+  .reports-page .filter-bar > div {
+    flex: 1 1 100%;
+  }
+
+  .reports-page .filter-bar .filter-select {
+    width: 100%;
+  }
+
+  /* i cinque periodi non stanno in una riga: vanno a capo dentro il riquadro
+     (angoli meno tondi, così le due righe stanno bene) */
+  .reports-page .filter-chips {
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: 22px;
+  }
+}
+
+/* le card dei totali: container-type fa sì che la card misuri sé stessa;
+   il numero è il 14% della sua larghezza (14cqi), tra 0.9rem e 2.25rem.
+   Così "131.560,00 €" sta anche in una card stretta, due per riga su telefono */
+.reports-page .kpi-card {
+  container-type: inline-size;
+}
+
+.reports-page .kpi-card-value {
+  font-size: clamp(0.9rem, 14cqi, 2.25rem);
+}
+
+/* telefoni piccoli (fino a 374px): meno spazio dentro la card, più spazio per il numero */
+@media (max-width: 374.98px) {
+  .reports-page .kpi-card {
+    padding: 1rem 0.85rem;
+  }
+}
+
+/* "16 prodotti" a destra del titolo del riquadro */
+.reports-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

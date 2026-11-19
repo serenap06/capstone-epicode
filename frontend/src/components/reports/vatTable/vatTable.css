@@ -1,0 +1,41 @@
+/* la tabella sta dentro un riquadro: niente spazio ai lati della prima e dell'ultima colonna */
+.vat-table th:first-child,
+.vat-table td:first-child {
+  padding-left: 0;
+}
+
+.vat-table th:last-child,
+.vat-table td:last-child {
+  padding-right: 0;
+}
+
+/* la riga dei totali in grassetto, con la linea sopra */
+.vat-table tfoot th,
+.vat-table tfoot td {
+  padding: 0.75rem;
+  border-top: 2px solid var(--border);
+  font-weight: 800;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+/* su telefono quattro colonne di importi non ci stanno: nascondo il Netto
+   (si legge già nella card in alto) */
+@media (max-width: 575.98px) {
+  .vat-table .vat-table-net {
+    display: none;
+  }
+}
+
+/* telefoni piccoli (fino a 374px): celle più strette e testo più piccolo,
+   così anche a 320px si legge la colonna Totale */
+@media (max-width: 374.98px) {
+  .vat-table th,
+  .vat-table td,
+  .vat-table tfoot th,
+  .vat-table tfoot td {
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+    font-size: 0.85rem;
+  }
+}

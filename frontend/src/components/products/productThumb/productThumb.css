@@ -17,3 +17,19 @@
   color: var(--secondary);
   font-weight: 800;
 }
+
+/* le grandezze (la prop size): tabelle, card, Cassa */
+.product-thumb-44 {
+  width: 44px;
+  height: 44px;
+}
+
+.product-thumb-48 {
+  width: 48px;
+  height: 48px;
+}
+
+.product-thumb-56 {
+  width: 56px;
+  height: 56px;
+}

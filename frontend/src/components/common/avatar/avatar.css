@@ -10,3 +10,28 @@
   font-weight: 700;
   object-fit: cover;
 }
+
+/* le grandezze (la prop size); il testo è circa un terzo del cerchio */
+.avatar-36 {
+  width: 36px;
+  height: 36px;
+  font-size: 0.8rem;
+}
+
+.avatar-40 {
+  width: 40px;
+  height: 40px;
+  font-size: 0.875rem;
+}
+
+.avatar-44 {
+  width: 44px;
+  height: 44px;
+  font-size: 0.95rem;
+}
+
+.avatar-120 {
+  width: 120px;
+  height: 120px;
+  font-size: 2.6rem;
+}

@@ -194,3 +194,17 @@ a:hover {
 .app-logo span {
   color: inherit;
 }
+
+/* iPhone: Safari ingrandisce la pagina quando tocchi un campo con il testo sotto i 16px,
+   e poi la pagina resta ingrandita e si sposta. Sui telefoni i campi hanno 16px
+   (input., select. ... per vincere sulle regole dei componenti, caricate dopo) */
+@media (pointer: coarse) and (max-width: 1023.98px) {
+  input.form-input,
+  select.form-input,
+  textarea.form-input,
+  input.filter-search-input,
+  select.filter-select,
+  .filter-bar select.filter-select {
+    font-size: 16px;
+  }
+}

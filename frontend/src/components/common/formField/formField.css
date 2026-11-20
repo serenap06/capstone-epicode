@@ -38,6 +38,25 @@
   font-size: 0.95rem;
 }
 
+/* data e ora: su iPhone Safari li disegna a modo suo, più larghi del modulo, col testo
+   al centro e più bassi se vuoti. appearance: none e min-width: 0 li riportano larghi
+   quanto il contenitore; height fissa perché lì min-height non basta */
+input.form-input[type="date"],
+input.form-input[type="time"],
+input.form-input[type="datetime-local"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  min-width: 0;
+  height: 44px;
+  line-height: 44px;
+}
+
+/* il valore scritto a sinistra, come negli altri campi */
+.form-input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
 /* textarea: spazio sopra e sotto, si allunga solo in verticale */
 textarea.form-input {
   padding: 0.6rem 0.9rem;

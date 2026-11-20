@@ -1,0 +1,72 @@
+/* card di una chiusura di cassa */
+.cash-closing {
+  height: 100%;
+  padding: 1rem 1.25rem;
+}
+
+/* da controllare: bordo arancio per metterla in evidenza */
+.cash-closing-problem {
+  border-color: var(--orange);
+}
+
+/* giorno a sinistra, stato a destra; se non ci stanno va sotto */
+.cash-closing-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.cash-closing-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* righe: nome a sinistra, importo a destra, separate da una linea */
+.cash-closing-rows {
+  margin: 0;
+}
+
+.cash-closing-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.cash-closing-row:first-child {
+  border-top: 0;
+}
+
+.cash-closing-row dt {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* la nota sotto il nome, più piccola */
+.cash-closing-row small {
+  display: block;
+  font-size: 0.8rem;
+}
+
+.cash-closing-row dd {
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* la riga che non torna, in arancio scuro */
+.cash-closing-alert dt,
+.cash-closing-alert dd {
+  color: var(--warning-text);
+}
+
+.cash-closing-footer {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

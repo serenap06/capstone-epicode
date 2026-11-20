@@ -5,8 +5,18 @@ import { Link } from "react-router-dom";
 // componente KpiCard: card colorata con un numero grande, delle righe o delle colonne.
 // props: label, value, detail = riga sotto, color = primary, secondary, turquoise, orange o blue,
 // to = se c'è la card è un link, rows = righe { label, note, value }, columns = colonne { label, value, detail },
-// aside = accanto al titolo (es. un badge)
-const KpiCard = ({ label, value, detail, color, to, rows, columns, aside }) => {
+// aside = accanto al titolo (es. un badge), compactRows = valori delle righe piccoli come i nomi
+const KpiCard = ({
+  label,
+  value,
+  detail,
+  color,
+  to,
+  rows,
+  columns,
+  aside,
+  compactRows = false,
+}) => {
   // Link con "to", altrimenti div
   const Tag = to ? Link : "div";
   return (
@@ -19,7 +29,9 @@ const KpiCard = ({ label, value, detail, color, to, rows, columns, aside }) => {
       {value !== undefined && <p className="kpi-card-value">{value}</p>}
       {/* righe: nome (con la nota sotto) a sinistra, importo a destra */}
       {rows?.length > 0 && (
-        <ul className="kpi-card-rows">
+        <ul
+          className={`kpi-card-rows ${compactRows ? "kpi-card-rows-compact" : ""}`}
+        >
           {rows.map((row) => (
             <li key={row.key ?? row.label} className="kpi-card-row">
               <span className="kpi-card-row-name">

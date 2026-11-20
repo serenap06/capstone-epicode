@@ -1,0 +1,49 @@
+/* intestazioni su due righe se servono ("Incasso / contanti"): colonne più strette */
+.app-table.cash-closing-table th {
+  white-space: normal;
+  vertical-align: bottom;
+}
+
+/* meno spazio tra le colonne: dieci colonne stanno nella pagina da 1366px */
+.app-table.cash-closing-table th,
+.app-table.cash-closing-table td {
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+}
+
+/* il bottone che ordina va a capo anche lui; nelle colonne dei numeri resta a destra */
+.cash-closing-table .sortable-header {
+  white-space: normal;
+  text-align: left;
+}
+
+.cash-closing-table .text-end .sortable-header {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* il negozio può andare a capo ("Bookshop / Museo"): dieci colonne a 1366px */
+.app-table.cash-closing-table .cash-closing-store {
+  white-space: normal;
+}
+
+/* la nota sotto il valore, più piccola (può andare a capo) */
+.cash-closing-table small {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  white-space: normal;
+}
+
+/* la riga da controllare, con lo sfondo arancio chiaro */
+.cash-closing-row-problem td {
+  background: color-mix(in srgb, var(--warning-soft) 45%, transparent);
+}
+
+/* la cella che non torna, in arancio scuro */
+.cash-closing-table .cash-closing-alert,
+.cash-closing-table .cash-closing-alert small {
+  color: var(--warning-text);
+  font-weight: 700;
+}

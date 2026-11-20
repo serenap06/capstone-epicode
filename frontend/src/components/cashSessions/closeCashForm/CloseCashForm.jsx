@@ -11,7 +11,7 @@ import Button from "../../common/button/Button";
 import FormField from "../../common/formField/FormField";
 import Message from "../../common/message/Message";
 
-// regola dei due importi: da 0 in su (campo vuoto = NaN)
+// regola degli importi: da 0 in su (campo vuoto = NaN)
 const amountRules = {
   valueAsNumber: true,
   validate: (value) =>
@@ -21,7 +21,7 @@ const amountRules = {
 // importo scritto → numero (campo vuoto = NaN)
 const toAmount = (value) => (value === "" ? NaN : Number(value));
 
-// componente CloseCashForm: modulo "Chiudi la cassa" con imbustato, fondo di chiusura e differenza.
+// componente CloseCashForm: modulo "Chiudi la cassa" con imbustato, fondo di chiusura, chiusura del POS e differenze.
 // props: cashSession, cashSales e cardSales = incasso contanti e POS di oggi, onSaved, onCancel
 const CloseCashForm = ({
   cashSession,
@@ -33,7 +33,7 @@ const CloseCashForm = ({
   // errore del server
   const [serverError, setServerError] = useState("");
 
-  // il fondo di chiusura parte uguale a quello di oggi; l'imbustato lo conto io
+  // il fondo di chiusura parte uguale a quello di oggi; imbustato e POS li scrivo io
   const {
     register,
     handleSubmit,
@@ -43,13 +43,14 @@ const CloseCashForm = ({
     defaultValues: {
       closingFloat: cashSession.openingFloat,
       envelopeAmount: "",
+      posAmount: "",
     },
   });
 
-  // i due importi mentre scrivo, per la differenza
-  const [closingFloat, envelopeAmount] = useWatch({
+  // gli importi mentre scrivo, per le differenze
+  const [closingFloat, envelopeAmount, posAmount] = useWatch({
     control,
-    name: ["closingFloat", "envelopeAmount"],
+    name: ["closingFloat", "envelopeAmount", "posAmount"],
   });
 
   // totale contanti = fondo di apertura + incasso contanti; contati = imbustato + fondo di chiusura
@@ -59,6 +60,10 @@ const CloseCashForm = ({
   const difference = Number.isNaN(countedCash)
     ? null
     : Math.round((countedCash - expectedCash) * 100) / 100 || 0;
+  // POS: scontrino del terminale meno vendite con carta (null finché manca)
+  const posDifference = Number.isNaN(toAmount(posAmount))
+    ? null
+    : Math.round((toAmount(posAmount) - cardSales) * 100) / 100 || 0;
 
   // chiudo la cassa (il server ricalcola tutto)
   const onSubmit = async (formData) => {
@@ -67,6 +72,7 @@ const CloseCashForm = ({
       await closeCashSession({
         closingFloat: formData.closingFloat,
         envelopeAmount: formData.envelopeAmount,
+        posAmount: formData.posAmount,
       });
       onSaved();
     } catch (e) {
@@ -134,16 +140,40 @@ const CloseCashForm = ({
         </FormField>
       </div>
 
-      {/* contati e differenza, mentre scrivo */}
+      {/* il totale dello scontrino di chiusura del POS, da confrontare con le vendite con carta */}
+      <FormField
+        label="Chiusura POS (€)"
+        htmlFor="pos-amount"
+        error={errors.posAmount?.message}
+      >
+        <input
+          id="pos-amount"
+          type="number"
+          min="0"
+          step="0.01"
+          inputMode="decimal"
+          className="form-input"
+          aria-invalid={errors.posAmount ? "true" : "false"}
+          {...register("posAmount", amountRules)}
+        />
+      </FormField>
+
+      {/* contati e le due differenze, mentre scrivo */}
       <dl className="cash-summary">
         <div className="cash-summary-row">
           <dt>Contanti contati</dt>
           <dd>{difference === null ? "—" : formatEuro(countedCash)}</dd>
         </div>
         <div className="cash-summary-row cash-summary-total">
-          <dt>Differenza</dt>
+          <dt>Differenza contanti</dt>
           <dd>
             {difference === null ? "—" : formatCashDifference(difference)}
+          </dd>
+        </div>
+        <div className="cash-summary-row cash-summary-total">
+          <dt>Differenza POS</dt>
+          <dd>
+            {posDifference === null ? "—" : formatCashDifference(posDifference)}
           </dd>
         </div>
       </dl>

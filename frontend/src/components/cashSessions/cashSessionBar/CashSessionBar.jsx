@@ -2,9 +2,9 @@
 import "./cashSessionBar.css";
 import { Lock, LockOpen } from "lucide-react";
 
-import { formatCashDifference } from "../../../utils/formatCashDifference";
 import { formatEuro } from "../../../utils/formatEuro";
 import { formatFullName } from "../../../utils/formatFullName";
+import { formatNamedDifference } from "../../../utils/formatNamedDifference";
 import { formatTime } from "../../../utils/formatTime";
 
 import Badge from "../../common/badge/Badge";
@@ -28,7 +28,8 @@ const CashSessionBar = ({ cashSession, cashSales, onOpen, onClose }) => {
       `Incasso contanti ${formatEuro(cashSales)}`,
     ];
   }
-  // chiusa: chi e quando, imbustato e fondo di chiusura
+  // chiusa: chi e quando, imbustato, fondo di chiusura e POS
+  let differences = [];
   if (isClosed) {
     status = { label: "Chiusa", color: "neutral" };
     details = [
@@ -36,6 +37,12 @@ const CashSessionBar = ({ cashSession, cashSales, onOpen, onClose }) => {
       `Imbustato ${formatEuro(cashSession.envelopeAmount)}`,
       `Fondo di chiusura ${formatEuro(cashSession.closingFloat)}`,
     ];
+    // le due differenze (il POS solo se c'è)
+    differences = [{ name: "Contanti", value: cashSession.difference }];
+    if (cashSession.posDifference !== undefined) {
+      details.push(`Chiusura POS ${formatEuro(cashSession.posAmount)}`);
+      differences.push({ name: "POS", value: cashSession.posDifference });
+    }
   }
 
   return (
@@ -47,12 +54,15 @@ const CashSessionBar = ({ cashSession, cashSales, onOpen, onClose }) => {
             <li key={detail}>{detail}</li>
           ))}
         </ul>
-        {/* chiusa: la differenza, verde se tutto torna */}
-        {isClosed && (
-          <Badge color={cashSession.difference === 0 ? "success" : "warning"}>
-            {formatCashDifference(cashSession.difference)}
+        {/* chiusa: contanti e POS, verdi se tutto torna */}
+        {differences.map((difference) => (
+          <Badge
+            key={difference.name}
+            color={difference.value === 0 ? "success" : "warning"}
+          >
+            {formatNamedDifference(difference.name, difference.value)}
           </Badge>
-        )}
+        ))}
       </div>
 
       {/* il bottone: apri se da aprire, chiudi se aperta, niente se chiusa */}

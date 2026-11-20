@@ -6,6 +6,23 @@
   gap: 0.75rem;
 }
 
+/* con i filtri accanto (Chiusure di cassa, Elenco vendite): chip a destra del titolo,
+   sotto se non ci stanno; stesso margine in alto per titolo e chip, così restano allineati */
+.section-header-filters {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.section-header-filters .section-title {
+  margin-bottom: 0;
+}
+
+.section-header-filters > :not(.section-title) {
+  margin-top: 1rem;
+}
+
 /* link "Vedi tutti" */
 .section-link {
   font-size: 0.9rem;

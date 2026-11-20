@@ -156,6 +156,12 @@
   white-space: nowrap;
 }
 
+/* righe compatte: valori piccoli come i nomi e non in grassetto (es. la card Cassa) */
+.kpi-card-rows-compact .kpi-card-row-value {
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
 /* colori dalla prop color: magenta turni, viola task, arancio vendite, blu ore e forniture, turchese sotto scorta */
 .kpi-card-primary {
   background: var(--primary);

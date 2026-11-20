@@ -1,0 +1,34 @@
+/* riepilogo dei contanti: nome a sinistra, importo a destra */
+.cash-summary {
+  margin: 0;
+}
+
+/* righe separate da una linea */
+.cash-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.cash-summary-row:first-child {
+  border-top: 0;
+}
+
+.cash-summary dt {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.cash-summary dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+/* la riga del totale in grassetto */
+.cash-summary-total dt,
+.cash-summary-total dd {
+  font-weight: 800;
+  color: var(--text);
+}

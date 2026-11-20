@@ -1,0 +1,29 @@
+/* stato e informazioni a sinistra, bottone a destra; se non ci sta il bottone va sotto */
+.cash-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+}
+
+/* badge e informazioni in riga, vanno a capo se serve */
+.cash-bar-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+/* informazioni in riga, senza pallini */
+.cash-bar-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-muted);
+}

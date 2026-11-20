@@ -36,6 +36,9 @@ const MESSAGES = {
     "Il negozio ha ancora del personale: spostalo prima in un altro negozio",
   "Store has sales":
     "Il negozio ha delle vendite registrate: non si può eliminare",
+  "Cash register not opened today": "La cassa di oggi non è ancora aperta",
+  "Cash register already opened today": "La cassa di oggi è già aperta",
+  "Cash register already closed": "La cassa di oggi è già chiusa",
 };
 
 // messaggi di riserva per codice

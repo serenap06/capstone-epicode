@@ -18,6 +18,19 @@
   margin: 0;
 }
 
+/* titolo a sinistra, aside (es. un badge) a destra */
+.kpi-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* il badge accanto al titolo non fa crescere la riga */
+.kpi-card-top .app-badge {
+  margin: -0.2rem 0;
+}
+
 .kpi-card-label {
   font-size: 0.9rem;
   font-weight: 700;
@@ -66,6 +79,69 @@
   font-size: 0.8rem;
   font-weight: 400;
   white-space: nowrap;
+}
+
+/* colonne affiancate (es. totale e negozi); la linea tra loro non tocca i bordi della card */
+.kpi-card-columns {
+  display: flex;
+  margin-top: 0.75rem;
+}
+
+/* il nome prende lo spazio in più: i numeri restano allineati anche con un nome su due righe */
+.kpi-card-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 1.5rem;
+}
+
+.kpi-card-column:first-child {
+  padding-left: 0;
+}
+
+.kpi-card-column:last-child {
+  padding-right: 0;
+}
+
+/* la linea sottile: il bordo sinistro dalla seconda colonna */
+.kpi-card-column + .kpi-card-column {
+  border-left: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.kpi-card-column-label {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* il numero più vicino al nome */
+.kpi-card-column .kpi-card-value {
+  margin-top: 0.25rem;
+}
+
+/* su telefono restano in riga: meno spazio e numeri più piccoli */
+@media (max-width: 575.98px) {
+  .kpi-card-column {
+    padding: 0 0.75rem;
+  }
+
+  /* il numero cresce con lo schermo, così sta sempre nella sua colonna */
+  .kpi-card-column .kpi-card-value {
+    font-size: clamp(0.8rem, 3.8vw, 1.1rem);
+  }
+
+  .kpi-card-column-label,
+  .kpi-card-column .kpi-card-detail {
+    font-size: 0.75rem;
+  }
+}
+
+/* telefoni piccoli (fino a 374px): ancora meno spazio tra le colonne */
+@media (max-width: 374.98px) {
+  .kpi-card-column {
+    padding: 0 0.5rem;
+  }
 }
 
 /* spazio tra le righe e la riga sotto */

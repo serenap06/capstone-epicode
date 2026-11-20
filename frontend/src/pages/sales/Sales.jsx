@@ -7,6 +7,7 @@ import { useIsPhone } from "../../hooks/useIsPhone";
 import { useShowCards } from "../../hooks/useShowCards";
 import { loadData } from "../../api/loadData";
 import { formatEuro } from "../../utils/formatEuro";
+import { formatSalesCount } from "../../utils/formatSalesCount";
 import { isSameDay } from "../../utils/dates";
 import { getNextSort } from "../../utils/getNextSort";
 import { PAGE_SIZE } from "../../utils/pageSize";
@@ -30,6 +31,7 @@ import Message from "../../components/common/message/Message";
 import PageHeader from "../../components/common/pageHeader/PageHeader";
 import WeekNav from "../../components/common/weekNav/WeekNav";
 import Pagination from "../../components/common/pagination/Pagination";
+import CashKpiCard from "../../components/cashSessions/cashKpiCard/CashKpiCard";
 import CancelSaleForm from "../../components/sales/cancelSaleForm/CancelSaleForm";
 import SaleCard from "../../components/sales/saleCard/SaleCard";
 import SaleTable from "../../components/sales/saleTable/SaleTable";
@@ -95,6 +97,8 @@ const Sales = () => {
   const [saleToCancel, setSaleToCancel] = useState(null);
   // un giorno del periodo mostrato (le frecce lo spostano)
   const [referenceDate, setReferenceDate] = useState(new Date());
+  // casse del periodo, per la card "Cassa" (e per non annullare a cassa chiusa)
+  const [cashSessions, setCashSessions] = useState([]);
 
   // inizio e fine del periodo (il dipendente un giorno alla volta); from e to come testo per l'effetto
   const period = isAdmin ? filters.period : "day";
@@ -132,6 +136,24 @@ const Sales = () => {
       ignore = true;
     };
   }, [from, to, filters, sort, page, refreshCount]);
+
+  // prendo le casse al cambio di periodo e negozio
+  useEffect(() => {
+    // ignore: true se parte una richiesta più nuova (la risposta vecchia la scarto)
+    let ignore = false;
+    const query = toQuery({ from, to, store: filters.store });
+    loadData(
+      `/cash-sessions?${query}`,
+      (data) => {
+        if (!ignore) setCashSessions(data.cashSessions);
+      },
+      setError,
+    );
+    // pulizia: React la chiama prima di rifare l'effetto
+    return () => {
+      ignore = true;
+    };
+  }, [from, to, filters.store]);
 
   // prendo i negozi una volta sola (solo il responsabile)
   useEffect(() => {
@@ -207,11 +229,12 @@ const Sales = () => {
       ? `Nessuna vendita annullata ${emptyWhen}`
       : `Nessuna vendita ${emptyWhen}`;
 
-  // true se la vendita è del dipendente collegato ed è di oggi (il server lo ricontrolla)
+  // true se la vendita è sua, è di oggi e la cassa non è ancora chiusa (il server lo ricontrolla)
   const canCancel = (sale) =>
     !isAdmin &&
     sale.soldBy?._id === user._id &&
-    isSameDay(sale.createdAt, new Date());
+    isSameDay(sale.createdAt, new Date()) &&
+    !cashSessions[0]?.closedAt;
 
   // props uguali per tabella e card ("Annulla vendita" solo il dipendente)
   const listProps = {
@@ -318,22 +341,24 @@ const Sales = () => {
       </FilterBar>
 
       {/* totali per tutti e due i ruoli (solo vendite valide): arancio, blu, magenta, viola.
-          Quattro in riga da 1400px; su telefono pagamenti e aliquote prendono tutta la riga */}
+          Quattro in riga da 1400px, due per riga da 576px, una sotto l'altra su telefono */}
       <Row className="g-3 mb-4">
-        <Col xs={6} xxl={3}>
+        {/* incasso e vendite in una card, come nella Dashboard */}
+        <Col xs={12} sm={6} xxl={3}>
           <KpiCard
             color="orange"
             label="Incasso"
             value={formatEuro(totals?.revenue ?? 0)}
-            detail="IVA compresa"
+            detail={`${formatSalesCount(totals?.count ?? 0)} · IVA compresa`}
           />
         </Col>
-        <Col xs={6} xxl={3}>
-          <KpiCard
-            color="blue"
-            label="Vendite"
-            value={totals?.count ?? 0}
-            detail="scontrini"
+        {/* la cassa: fondi del giorno, stato dei negozi o giorni da controllare */}
+        <Col xs={12} sm={6} xxl={3}>
+          <CashKpiCard
+            cashSessions={cashSessions} // le casse del periodo
+            period={period}
+            day={range.start} // il giorno mostrato
+            stores={isAdmin && !filters.store ? stores : null} // tutti i negozi: uno per riga
           />
         </Col>
         {/* contanti e carta in una card: per far tornare cassa e POS a fine giornata */}

@@ -1,29 +1,39 @@
-/* sotto la lista: Precedente, "Pagina 1 di 3", Successiva */
+/* sotto la lista: Prima, Precedente, "Pagina 1 di 3", Successiva, Ultima */
 .app-pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.5rem;
   margin-top: 1.5rem;
 }
 
 .app-pagination-label {
+  margin: 0 0.5rem;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-/* telefoni piccoli (fino a 374px): bottoni più vicini, "Successiva" non esce */
-@media (max-width: 374.98px) {
-  .app-pagination {
-    gap: 0.5rem;
+/* telefono e tablet piccolo: restano icone quadrate 44x44 e "12 di 84" */
+@media (max-width: 767.98px) {
+  .app-pagination .app-button {
+    flex: 0 0 44px;
+    width: 44px;
+    padding: 0;
   }
 
-  .app-pagination .app-button {
-    padding-left: 0.7rem;
-    padding-right: 0.7rem;
+  .app-pagination-word {
+    display: none;
+  }
+}
+
+/* telefoni piccoli (fino a 374px): tutto più vicino, la riga non esce */
+@media (max-width: 374.98px) {
+  .app-pagination {
+    gap: 0.25rem;
   }
 
   .app-pagination-label {
+    margin: 0 0.1rem;
     font-size: 0.85rem;
   }
 }

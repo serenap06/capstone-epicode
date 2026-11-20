@@ -1,6 +1,6 @@
 // import
 import "./soldProducts.css";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import { formatEuro } from "../../../utils/formatEuro";
 import { getCategories } from "../../../utils/getCategories";
@@ -35,8 +35,6 @@ const SoldProducts = ({ products, totalRevenue }) => {
   // si parte dal più venduto
   const [sort, setSort] = useState({ field: "quantity", direction: "desc" });
   const [page, setPage] = useState(1);
-  // inizio del riquadro: cambiando pagina torno qui
-  const listStartRef = useRef(null);
 
   // prodotti nuovi (altro periodo o negozio): torno alla pagina 1 (prevProducts = l'elenco di prima)
   const [prevProducts, setPrevProducts] = useState(products);
@@ -88,7 +86,7 @@ const SoldProducts = ({ products, totalRevenue }) => {
   const sortProps = { sort, onSort: sortByColumn };
 
   return (
-    <div ref={listStartRef} className="sold-products">
+    <div className="sold-products">
       <FilterBar>
         <FilterSearch
           label="Cerca un prodotto"
@@ -163,7 +161,6 @@ const SoldProducts = ({ products, totalRevenue }) => {
         totalPages={totalPages}
         label="Pagine dei prodotti venduti"
         onChange={setPage}
-        scrollTarget={listStartRef} // cambiando pagina torno all'inizio del riquadro
       />
     </div>
   );

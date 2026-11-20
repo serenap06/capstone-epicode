@@ -21,6 +21,8 @@ const Sidebar = () => {
   const links = MENU[user.role];
   // voci che su telefono vanno in "Altro"
   const hiddenLinks = links.filter((link) => link.hideOnMobile);
+  // voci che su telefono non si aprono (la Cassa): in "Altro" solo come avviso
+  const desktopOnlyLinks = links.filter((link) => link.desktopOnly);
   // "Altro" solo se ha voci
   const showMore = hiddenLinks.length > 0;
   // "Altro" acceso se la pagina aperta è una delle sue
@@ -61,6 +63,18 @@ const Sidebar = () => {
               {hiddenLinks.map((link) => (
                 <DropdownItem key={link.to} as={NavLink} to={link.to}>
                   {link.label}
+                </DropdownItem>
+              ))}
+              {/* solo su telefono: la voce spenta con il perché */}
+              {desktopOnlyLinks.map((link) => (
+                <DropdownItem
+                  key={link.to}
+                  as="span"
+                  disabled
+                  className="app-more-note"
+                >
+                  {link.label}
+                  <span className="app-more-note-text">Da tablet o PC</span>
                 </DropdownItem>
               ))}
             </DropdownMenu>

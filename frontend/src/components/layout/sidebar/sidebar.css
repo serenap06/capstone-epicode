@@ -119,3 +119,21 @@
     display: none;
   }
 }
+
+/* in "Altro" la Cassa spenta con "Da tablet o PC": solo su telefono */
+.dropdown-item.app-more-note {
+  display: none;
+  color: var(--text-muted);
+}
+
+.app-more-note-text {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+@media (max-width: 767.98px) {
+  .dropdown-item.app-more-note {
+    display: block;
+  }
+}

@@ -1,5 +1,5 @@
 // voci del menu per ruolo: to = indirizzo, label, icon (lucide-react), end = solo l'indirizzo esatto,
-// hideOnMobile = su telefono in "Altro", desktopOnly = su telefono non c'è (la Cassa)
+// hideOnMobile = su telefono in "Altro", desktopOnly = su telefono non si apre (la Cassa: in "Altro" spenta, con "Da tablet o PC")
 // import
 import {
   Home,

@@ -17,16 +17,17 @@
 /* frecce quadrate (44x44) con l'icona centrata */
 .week-nav-arrow {
   flex: 0 0 44px;
+  width: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--text);
 }
 
-/* il bottone centrale prende lo spazio che resta (min-width: 0 = si stringe e va a capo) */
+/* il bottone centrale largo quanto la sua scritta
+   (Safari altrimenti lo schiaccia e "Oggi" esce dal bordo) */
 .week-nav-today {
-  flex: 1 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
   padding: 0 1.1rem;
   color: var(--primary-dark);
   font-size: 0.9rem;
@@ -43,6 +44,22 @@
 /* "Questa settimana" grigio quando ci sei già */
 .week-nav-today:disabled {
   color: var(--text-muted);
+}
+
+/* da tablet la barra non si stringe accanto ad altri bottoni (es. "Nuova task") */
+@media (min-width: 768px) {
+  .week-nav {
+    flex-shrink: 0;
+  }
+}
+
+/* su telefono la barra è larga tutta la riga: il bottone prende lo spazio che resta,
+   si può stringere e andare a capo */
+@media (max-width: 767.98px) {
+  .week-nav-today {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 }
 
 /* telefoni piccoli (fino a 374px): "Questa settimana" su due righe ci sta */

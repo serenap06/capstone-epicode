@@ -1,6 +1,7 @@
 /* il bottone sta in riga con le frecce di WeekNav (stessa forma 44x44) */
 .calendar-menu {
   flex: 0 0 44px;
+  width: 44px;
   display: flex;
 }
 

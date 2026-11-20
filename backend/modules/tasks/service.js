@@ -12,12 +12,24 @@ const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const HttpException = require("../../exceptions");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 
+// colonne ordinabili: nome nella query → campo (priorityRank, doneShare e storeName li creo nella pipeline)
+const SORT_FIELDS = {
+  time: "dueDate",
+  title: "title",
+  store: "storeName",
+  category: "category",
+  priority: "priorityRank",
+  progress: "doneShare",
+};
+
 // task del responsabile, raggruppate (una task con tutte le persone).
-// Con page: una pagina in ordine di scadenza; lo stato vale per il gruppo
+// Con page: una pagina in ordine di giorno e poi della colonna scelta; lo stato vale per il gruppo
 const findAll = async ({
   store,
   assignedTo,
   status,
+  sortBy = "time",
+  order = "asc",
   page,
   limit = 10,
   ...filters
@@ -40,6 +52,13 @@ const findAll = async ({
   if (assignedTo) {
     taskFilter.assignedTo = new mongoose.Types.ObjectId(String(assignedTo));
   }
+
+  // ordine: prima il giorno (le sezioni dei giorni restano intere), poi la colonna, a parità l'ora
+  const direction = order === "desc" ? -1 : 1;
+  const sortField = SORT_FIELDS[sortBy];
+  const sortStage = { day: 1, [sortField]: direction };
+  if (sortField !== "dueDate") sortStage.dueDate = 1;
+  sortStage._id = 1;
 
   // stato del gruppo, dopo $group
   const statusMatch = [];
@@ -70,10 +89,35 @@ const findAll = async ({
         },
       },
     },
-    // isDone: true se nessuna copia è da fare
+    // isDone: true se nessuna copia è da fare; poi i campi per ordinare:
+    // day = il giorno (ora italiana), priorityRank = alta 0, media 1, bassa 2,
+    // doneShare = quota di persone che l'hanno finita (0 = nessuna, 1 = tutte)
     {
       $addFields: {
         isDone: { $not: [{ $in: ["pending", "$assignees.status"] }] },
+        day: {
+          $dateTrunc: {
+            date: "$dueDate",
+            unit: "day",
+            timezone: "Europe/Rome",
+          },
+        },
+        priorityRank: {
+          $indexOfArray: [["high", "medium", "low"], "$priority"],
+        },
+        doneShare: {
+          $divide: [
+            {
+              $size: {
+                $filter: {
+                  input: "$assignees",
+                  cond: { $eq: ["$$this.status", "done"] },
+                },
+              },
+            },
+            { $size: "$assignees" },
+          ],
+        },
       },
     },
     // $facet: la pagina, quante passano lo stato (per le pagine) e quante in corso
@@ -81,9 +125,30 @@ const findAll = async ({
       $facet: {
         tasks: [
           ...statusMatch,
-          { $sort: { dueDate: 1, _id: 1 } },
+          // il nome del negozio, per ordinare
+          {
+            $lookup: {
+              from: "stores",
+              localField: "store",
+              foreignField: "_id",
+              as: "storeInfo",
+              pipeline: [{ $project: { name: 1 } }],
+            },
+          },
+          { $addFields: { storeName: { $first: "$storeInfo.name" } } },
+          { $sort: sortStage },
           { $skip: (pageNumber - 1) * limitNumber },
           { $limit: limitNumber },
+          // tolgo i campi che servivano solo per ordinare
+          {
+            $unset: [
+              "day",
+              "priorityRank",
+              "doneShare",
+              "storeInfo",
+              "storeName",
+            ],
+          },
         ],
         total: [...statusMatch, { $count: "count" }],
         open: [{ $match: { isDone: false } }, { $count: "count" }],

@@ -28,6 +28,16 @@ const taskQueryRules = [
     .isISO8601()
     .withMessage("from must be a valid ISO date"),
   query("to").optional().isISO8601().withMessage("to must be a valid ISO date"),
+  query("sortBy")
+    .optional()
+    .isIn(["time", "title", "store", "category", "priority", "progress"])
+    .withMessage(
+      "sortBy must be time, title, store, category, priority or progress",
+    ),
+  query("order")
+    .optional()
+    .isIn(["asc", "desc"])
+    .withMessage("order must be asc or desc"),
   ...paginationRules,
 ];
 

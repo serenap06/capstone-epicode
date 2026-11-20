@@ -13,6 +13,8 @@ const findAll = async (req, res, next) => {
       isGlobal,
       from,
       to,
+      sortBy,
+      order,
       page,
       limit,
     } = req.query;
@@ -25,6 +27,8 @@ const findAll = async (req, res, next) => {
       isGlobal,
       from,
       to,
+      sortBy,
+      order,
       page,
       limit,
     });

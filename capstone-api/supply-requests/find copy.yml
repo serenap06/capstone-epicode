@@ -11,7 +11,7 @@ http:
     data: '{ "state": "handled" }'
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBjY2IxMzYzZmMwZWQ4ODZkMGFjZCIsImlhdCI6MTc5NDE2NjQyNiwiZXhwIjoxNzk0MjUyODI2fQ.mAW7TLUQX41qyb_4Mv7UNnsRHShpnl2_IXywtxeuS6M
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

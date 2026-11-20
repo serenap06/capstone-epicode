@@ -11,7 +11,7 @@ http:
     data: '{ "status": "done" }'
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBiYzczZDhkNmFiMzA3MTYwZTkwNSIsImlhdCI6MTc5NDE2MTk1OSwiZXhwIjoxNzk0MjQ4MzU5fQ.CTLBCd9QBkoX7zR6Lakejp-Wt4fR6f0EpiugRMay8gg
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

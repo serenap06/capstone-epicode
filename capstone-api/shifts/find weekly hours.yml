@@ -15,7 +15,7 @@ http:
       type: query
   auth:
     type: bearer
-    token: ""
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

@@ -8,7 +8,7 @@ http:
   url: http://localhost:9092/api/supply-requests/6af0ccb3363fc0ed886d0b1c
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBjY2IxMzYzZmMwZWQ4ODZkMGFjZSIsImlhdCI6MTc5NDE2NzAwNCwiZXhwIjoxNzk0MjUzNDA0fQ.wtbP2q1JbDXFwRiRop6HMfVAn3b-f15A_F5EY6WfYlU
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

@@ -11,7 +11,7 @@ http:
     data: '{ "active": false }'
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBiYzczZDhkNmFiMzA3MTYwZTkwNCIsImlhdCI6MTc5NDE2MTk1MywiZXhwIjoxNzk0MjQ4MzUzfQ.7KozZEOyMw3yiZMyK8wuyvQCBju6S8TaYGZtxPGwNtU
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

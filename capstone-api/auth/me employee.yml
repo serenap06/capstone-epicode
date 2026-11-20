@@ -8,7 +8,7 @@ http:
   url: http://localhost:9092/api/auth/me
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZTM5YjI5YTQ4MTRkNWEwMGU4OTBmNiIsImlhdCI6MTc5MzMwMTMxMSwiZXhwIjoxNzkzMzg3NzExfQ.zpf7gTjI7B79nYm2S6DlTHTPA2DYmij1ADW6dsyyVS4
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

@@ -8,7 +8,7 @@ http:
   url: http://localhost:9092/api/tasks/group/6af0c3c8f455fa9f20c26c05
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjBiYzczZDhkNmFiMzA3MTYwZTkwNCIsImlhdCI6MTc5NDE2MTk1MywiZXhwIjoxNzk0MjQ4MzUzfQ.7KozZEOyMw3yiZMyK8wuyvQCBju6S8TaYGZtxPGwNtU
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

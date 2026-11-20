@@ -76,8 +76,8 @@ const Login = () => {
       <p className="app-logo login-logo">
         Store<span>Squad</span>
       </p>
-      {/* slogan: "StoreSquad... è un gioco di squadra" */}
-      <p className="login-tagline">è un gioco di squadra</p>
+      {/* slogan sotto il logo */}
+      <p className="login-tagline">Gestire un negozio è un lavoro di squadra</p>
       <h1 className="login-title">Accedi</h1>
 
       {/* errore del server */}

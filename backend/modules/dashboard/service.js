@@ -5,6 +5,7 @@ const SupplyRequest = require("../supply-requests/schema");
 const Stock = require("../stock/schema");
 const Shift = require("../shifts/schema");
 const Sale = require("../sales/schema");
+const Store = require("../stores/schema");
 const round = require("../../utils/round");
 
 // numeri delle card della Dashboard di oggi (con store solo di quel negozio)
@@ -18,13 +19,14 @@ const getKpis = async (filters) => {
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
-  // le cinque query partono insieme: aspetto solo la più lenta
+  // le query partono insieme: aspetto solo la più lenta
   const [
     taskGroups,
     pendingRequests,
     lowStockItems,
     employeesOnShift,
     todaySales,
+    stores,
   ] = await Promise.all([
     // task di oggi contate una per gruppo; pendingCount = copie ancora da fare.
     // In aggregate l'id del negozio lo converto io in ObjectId
@@ -62,11 +64,27 @@ const getKpis = async (filters) => {
       cancelled: { $ne: true },
       ...storeFilter,
     })
-      .select("total")
+      .select("total store")
+      .lean(),
+    // negozi in ordine di nome, per dividere le vendite
+    Store.find(store ? { _id: store } : {})
+      .select("name")
+      .sort({ name: 1 })
       .lean(),
   ]);
 
   const revenueToday = todaySales.reduce((sum, sale) => sum + sale.total, 0);
+  // per ogni negozio: incasso e vendite di oggi
+  const byStore = stores.map((storeItem) => {
+    const storeSales = todaySales.filter(
+      (sale) => String(sale.store) === String(storeItem._id),
+    );
+    return {
+      store: storeItem,
+      revenue: round(storeSales.reduce((sum, sale) => sum + sale.total, 0)),
+      count: storeSales.length,
+    };
+  });
   // gruppo fatto = nessuna copia da fare
   const tasksDone = taskGroups.filter(
     (group) => group.pendingCount === 0,
@@ -80,6 +98,7 @@ const getKpis = async (filters) => {
     salesToday: {
       count: todaySales.length,
       revenue: round(revenueToday),
+      byStore,
     },
   };
 };

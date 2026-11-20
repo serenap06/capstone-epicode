@@ -8,6 +8,7 @@ import { loadData } from "../../../api/loadData";
 import { getToday } from "../../../utils/dates";
 import { formatEuro } from "../../../utils/formatEuro";
 import { formatLongDate } from "../../../utils/formatLongDate";
+import { formatSalesCount } from "../../../utils/formatSalesCount";
 import { toQuery } from "../../../utils/toQuery";
 
 import KpiCard from "../../../components/common/kpiCard/KpiCard";
@@ -61,11 +62,28 @@ const Dashboard = () => {
     ]).finally(() => setIsLoading(false));
   }, []);
 
+  // colonne della card delle vendite: il totale, poi ogni negozio
+  const salesColumns = kpis
+    ? [
+        {
+          label: "Totale",
+          value: formatEuro(kpis.salesToday.revenue),
+          detail: formatSalesCount(kpis.salesToday.count),
+        },
+        ...kpis.salesToday.byStore.map((row) => ({
+          key: row.store._id,
+          label: row.store.name,
+          value: formatEuro(row.revenue),
+          detail: formatSalesCount(row.count),
+        })),
+      ]
+    : [];
+
   return (
     <Container fluid>
       <PageHeader title="Dashboard" subtitle={today} error={error} />
       {/* card dei numeri, ognuna porta alla sua pagina ("–" finché non arrivano).
-          Le vendite su tutta la riga: l'incasso può essere lungo */}
+          Le vendite su tutta la riga: il totale e ogni negozio, con una linea tra loro */}
       <section aria-label="Indicatori">
         <Row className="g-3 mb-3">
           <Col xs={12}>
@@ -73,8 +91,8 @@ const Dashboard = () => {
               to="/admin/sales" // la card porta alle Vendite
               color="orange"
               label="Vendite di oggi"
-              value={kpis ? formatEuro(kpis.salesToday.revenue) : "–"}
-              detail={`${kpis?.salesToday.count ?? "–"} vendite`}
+              value={kpis ? undefined : "–"} // finché non arrivano
+              columns={salesColumns} // totale e negozi
             />
           </Col>
         </Row>

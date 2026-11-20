@@ -12,6 +12,7 @@ import {
   deleteSupplyRequest,
 } from "../../api/supplyRequests";
 import { getNextSort } from "../../utils/getNextSort";
+import { getOptionParam } from "../../utils/getOptionParam";
 import { getSuggestedAmount } from "../../utils/getSuggestedAmount";
 import { isLowStock } from "../../utils/isLowStock";
 import { PAGE_SIZE } from "../../utils/pageSize";
@@ -87,14 +88,11 @@ const SupplyRequests = () => {
   const [isLoading, setIsLoading] = useState(true);
   // filtro di partenza dall'indirizzo: dalla Dashboard "?state=open" apre quelle in attesa
   const [searchParams] = useSearchParams();
-  const stateParam = searchParams.get("state");
-  // filtri ("" = nessuno; lo stato solo se è uno di quelli del menu)
+  // filtri ("" = nessuno)
   const [filters, setFilters] = useState({
     search: "",
     store: "",
-    state: STATE_OPTIONS.some((option) => option.value === stateParam)
-      ? stateParam
-      : "",
+    state: getOptionParam(searchParams, "state", STATE_OPTIONS),
   });
   // ordine scelto
   const [sort, setSort] = useState(DEFAULT_SORT);

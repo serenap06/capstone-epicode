@@ -1,12 +1,14 @@
 // import
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 
 import { useIsPhone } from "../../../hooks/useIsPhone";
 import { loadData } from "../../../api/loadData";
 import { deleteTaskGroup } from "../../../api/tasks";
 import { getToday, getTomorrow, isSameDay } from "../../../utils/dates";
 import { formatDayLabel } from "../../../utils/formatDayLabel";
+import { getOptionParam } from "../../../utils/getOptionParam";
 import { PAGE_SIZE } from "../../../utils/pageSize";
 import { toQuery } from "../../../utils/toQuery";
 import { toStoreOptions } from "../../../utils/toStoreOptions";
@@ -73,9 +75,11 @@ const Tasks = () => {
   const [refreshCount, setRefreshCount] = useState(0);
 
   // filtri ("" = nessuno)
+  // filtri di partenza dall'indirizzo: dalla Dashboard "?due=today&status=pending" apre quelle di oggi da fare
+  const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState({
-    due: "",
-    status: "",
+    due: getOptionParam(searchParams, "due", DUE_OPTIONS),
+    status: getOptionParam(searchParams, "status", STATUS_OPTIONS),
     store: "",
     type: "",
   });

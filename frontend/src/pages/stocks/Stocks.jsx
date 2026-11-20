@@ -9,6 +9,7 @@ import { useShowCards } from "../../hooks/useShowCards";
 import { loadData } from "../../api/loadData";
 import { deleteStock } from "../../api/stocks";
 import { getNextSort } from "../../utils/getNextSort";
+import { getOptionParam } from "../../utils/getOptionParam";
 import { PAGE_SIZE } from "../../utils/pageSize";
 import { toQuery } from "../../utils/toQuery";
 import { toStoreOptions } from "../../utils/toStoreOptions";
@@ -77,7 +78,7 @@ const Stocks = () => {
   const [filters, setFilters] = useState({
     search: "",
     store: "",
-    level: searchParams.get("level") === "low" ? "low" : "",
+    level: getOptionParam(searchParams, "level", LEVEL_OPTIONS),
   });
   // ordine scelto
   const [sort, setSort] = useState(DEFAULT_SORT);

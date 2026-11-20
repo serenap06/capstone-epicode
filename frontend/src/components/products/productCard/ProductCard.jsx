@@ -15,26 +15,32 @@ const ProductCard = ({ product, stocks, showStore, onEdit, onDelete }) => {
     <article
       className={`app-card product-card ${product.active ? "" : "product-card-off"}`}
     >
-      {/* foto intera (contain), oppure l'iniziale */}
+      {/* foto intera (contain), oppure l'iniziale; "Non attivo" sopra la foto,
+          così non sposta i testi rispetto alle card accanto */}
       <div className="product-card-photo">
         {product.image ? (
           <img src={product.image} alt="" />
         ) : (
           <span aria-hidden="true">{product.name[0]}</span>
         )}
+        {!product.active && (
+          <div className="product-card-off-badge">
+            <Badge color="neutral">Non attivo</Badge>
+          </div>
+        )}
       </div>
 
       <div className="product-card-body">
         <h2 className="product-card-name">{product.name}</h2>
         <p className="product-card-price">{formatEuro(product.price)}</p>
+        {/* categoria e IVA: in riga, su telefono una sotto l'altra */}
         <p className="product-card-meta">
-          {product.category} · IVA {product.vatRate}%
+          <span>{product.category}</span>
+          <span className="product-card-meta-dot" aria-hidden="true">
+            {" · "}
+          </span>
+          <span>IVA {product.vatRate}%</span>
         </p>
-        {!product.active && (
-          <div>
-            <Badge color="neutral">Non attivo</Badge>
-          </div>
-        )}
         {/* i pezzi, una riga per negozio: verde se ok, arancio sotto soglia */}
         {stocks && (
           <ul className="product-card-stock">

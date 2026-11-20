@@ -14,6 +14,7 @@
 
 /* foto 4:3; senza foto la lettera viola su viola chiaro */
 .product-card-photo {
+  position: relative;
   aspect-ratio: 4 / 3;
   border-radius: 14px;
   background: var(--secondary-soft);
@@ -37,6 +38,15 @@
   border-radius: inherit;
 }
 
+/* "Non attivo" nell'angolo in alto a sinistra della foto
+   (font-size: la foto ha la lettera grande, qui torno alla misura normale) */
+.product-card-off-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  font-size: 1rem;
+}
+
 .product-card-off .product-card-photo {
   background: var(--border);
   color: var(--text-muted);
@@ -55,10 +65,19 @@
   margin: 0;
 }
 
+/* il nome occupa sempre due righe (se è più lungo finisce con "…"):
+   così prezzo e dettagli partono alla stessa altezza nelle card vicine */
 .product-card-name {
   margin: 0;
+  min-height: 2.2em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
   font-size: 1rem;
   font-weight: 700;
+  line-height: 1.25;
 }
 
 .product-card-price {
@@ -112,6 +131,16 @@
 }
 
 @media (max-width: 767.98px) {
+  /* su telefono categoria e IVA una sotto l'altra: sempre due righe, in ogni card */
+  .product-card-meta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-card-meta-dot {
+    display: none;
+  }
+
   /* badge dei pezzi più stretto, così lascia più spazio al nome */
   .product-card-stock .app-badge {
     padding: 0.2rem 0.5rem;

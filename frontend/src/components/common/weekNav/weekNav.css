@@ -23,13 +23,15 @@
   color: var(--text);
 }
 
-/* il bottone centrale prende lo spazio che resta */
+/* il bottone centrale prende lo spazio che resta (min-width: 0 = si stringe e va a capo) */
 .week-nav-today {
   flex: 1 1 auto;
+  min-width: 0;
   padding: 0 1.1rem;
   color: var(--primary-dark);
   font-size: 0.9rem;
   font-weight: 700;
+  line-height: 1.15;
 }
 
 /* magenta chiaro al passaggio del mouse (non sul bottone disattivato) */
@@ -41,4 +43,11 @@
 /* "Questa settimana" grigio quando ci sei già */
 .week-nav-today:disabled {
   color: var(--text-muted);
+}
+
+/* telefoni piccoli (fino a 374px): "Questa settimana" su due righe ci sta */
+@media (max-width: 374.98px) {
+  .week-nav-today {
+    padding: 0 0.5rem;
+  }
 }

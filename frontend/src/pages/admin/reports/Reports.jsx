@@ -140,6 +140,9 @@ const Reports = () => {
           previousLabel={previousLabel} // le scritte del periodo scelto
           nextLabel={nextLabel}
           todayLabel={todayLabel}
+          onPickDate={setReferenceDate} // giorno dal calendario: il suo periodo
+          selectedDate={referenceDate}
+          period={period}
         />
       </PageHeader>
 

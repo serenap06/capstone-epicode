@@ -1,0 +1,105 @@
+/* il bottone sta in riga con le frecce di WeekNav (stessa forma 44x44) */
+.calendar-menu {
+  flex: 0 0 44px;
+  display: flex;
+}
+
+.calendar-menu-toggle {
+  width: 44px;
+}
+
+/* niente triangolino di Bootstrap */
+.calendar-menu-toggle::after {
+  display: none;
+}
+
+/* il menu: largo quanto il mese, mai più dello schermo */
+.dropdown-menu.calendar-menu-panel {
+  width: min(19rem, calc(100vw - 2rem));
+  padding: 0.75rem;
+}
+
+/* mese al centro, frecce ai lati */
+.calendar-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-menu-month {
+  margin: 0;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.calendar-menu-arrow {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+}
+
+.calendar-menu-arrow:hover {
+  background: var(--primary-soft);
+}
+
+/* 7 colonne uguali */
+.calendar-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.15rem;
+}
+
+/* iniziali dei giorni, piccole e grigie */
+.calendar-menu-weekday {
+  padding-bottom: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* un giorno: quadrato con il numero al centro */
+.calendar-menu-day {
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.calendar-menu-day:hover {
+  background: var(--bg);
+}
+
+/* giorni del mese prima o dopo: grigi */
+.calendar-menu-day-other {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* il periodo mostrato nella pagina: magenta chiaro */
+.calendar-menu-day.calendar-menu-day-selected {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+/* oggi: cerchio magenta */
+.calendar-menu-day-today {
+  box-shadow: inset 0 0 0 2px var(--primary);
+  font-weight: 700;
+}
+
+.calendar-menu-arrow:focus-visible,
+.calendar-menu-day:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

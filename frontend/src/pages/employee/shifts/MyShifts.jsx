@@ -89,6 +89,8 @@ const MyShifts = () => {
           onNext={() => setReferenceDate(addDays(referenceDate, 7))}
           onToday={() => setReferenceDate(new Date())}
           isCurrentWeek={isCurrentWeek}
+          onPickDate={setReferenceDate} // giorno dal calendario: la sua settimana
+          selectedDate={referenceDate}
         />
       </PageHeader>
 

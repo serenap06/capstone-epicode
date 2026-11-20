@@ -2,8 +2,11 @@
 import "./weekNav.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-// componente WeekNav: frecce e bottone "in corso" (Turni, Vendite, Report).
-// props: onPrevious, onNext, onToday, isCurrentWeek = spegne il bottone, le tre scritte (di base la settimana)
+import CalendarMenu from "../calendarMenu/CalendarMenu";
+
+// componente WeekNav: frecce, bottone "in corso" e calendario (Turni, Vendite, Report, Task).
+// props: onPrevious, onNext, onToday, isCurrentWeek = spegne il bottone, le tre scritte (di base la settimana),
+// onPickDate(giorno) = se c'è, il calendario; selectedDate e period = il periodo mostrato (colorato nel calendario)
 const WeekNav = ({
   onPrevious,
   onNext,
@@ -12,6 +15,9 @@ const WeekNav = ({
   previousLabel = "Settimana precedente",
   nextLabel = "Settimana successiva",
   todayLabel = "Questa settimana",
+  onPickDate,
+  selectedDate,
+  period = "week",
 }) => {
   return (
     <div className="week-nav">
@@ -40,6 +46,14 @@ const WeekNav = ({
       >
         <ChevronRight size={20} aria-hidden="true" />
       </button>
+      {/* calendario: salto a un giorno qualsiasi */}
+      {onPickDate && (
+        <CalendarMenu
+          selectedDate={selectedDate}
+          period={period}
+          onSelect={onPickDate}
+        />
+      )}
     </div>
   );
 };

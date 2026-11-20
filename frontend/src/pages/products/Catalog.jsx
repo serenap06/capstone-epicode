@@ -18,7 +18,6 @@ import FilterBar from "../../components/common/filterBar/FilterBar";
 import FilterChips from "../../components/common/filterBar/FilterChips";
 import FilterSearch from "../../components/common/filterBar/FilterSearch";
 import FilterSelect from "../../components/common/filterBar/FilterSelect";
-import SortSelect from "../../components/common/filterBar/SortSelect";
 import FormModal from "../../components/common/formModal/FormModal";
 import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
@@ -40,30 +39,6 @@ const CATALOG_PAGE_SIZE = 12;
 
 // ordine di partenza: nome A→Z
 const DEFAULT_SORT = { field: "name", direction: "asc" };
-
-// voci del menu "Ordina" delle card (lo stato solo per il responsabile)
-const SORT_OPTIONS = [
-  { field: "name", direction: "asc", label: "Nome A→Z" },
-  { field: "name", direction: "desc", label: "Nome Z→A" },
-  { field: "category", direction: "asc", label: "Categoria A→Z" },
-  { field: "category", direction: "desc", label: "Categoria Z→A" },
-  { field: "price", direction: "asc", label: "Prezzo crescente" },
-  { field: "price", direction: "desc", label: "Prezzo decrescente" },
-  { field: "vatRate", direction: "asc", label: "IVA crescente" },
-  { field: "vatRate", direction: "desc", label: "IVA decrescente" },
-  {
-    field: "state",
-    direction: "asc",
-    label: "Prima gli attivi",
-    adminOnly: true,
-  },
-  {
-    field: "state",
-    direction: "desc",
-    label: "Prima i non attivi",
-    adminOnly: true,
-  },
-];
 
 // componente Catalog: il catalogo per i due ruoli (il responsabile vede tutto e gestisce,
 // il dipendente solo gli attivi). Ricerca, filtri, ordine e pagine li fa il server
@@ -153,7 +128,7 @@ const Catalog = () => {
     setPage(1);
   };
 
-  // nuovo ordine dal menu "Ordina": pagina 1
+  // nuovo ordine: pagina 1
   const changeSort = (newSort) => {
     setSort(newSort);
     setPage(1);
@@ -220,7 +195,7 @@ const Catalog = () => {
     ? `${totalCount} prodotti · ${inactiveCount} ${inactiveLabel}`
     : `${user.store?.name} · ${totalCount} prodotti disponibili`;
 
-  // filtri: ricerca e stato sempre in vista; categoria e "Ordina" nel menu con le card
+  // filtri: ricerca e stato sempre in vista; su telefono la categoria nel menu
   const searchFilter = (
     <FilterSearch
       label="Cerca un prodotto"
@@ -248,21 +223,10 @@ const Catalog = () => {
     />
   );
 
-  // menu "Ordina", solo con le card
-  const sortSelect = showCards && (
-    <SortSelect
-      options={SORT_OPTIONS.filter((option) => isAdmin || !option.adminOnly)}
-      sort={sort}
-      defaultSort={DEFAULT_SORT}
-      onChange={changeSort} // nuovo ordine: pagina 1
-    />
-  );
-
-  // bottone "Filtri" con categoria e "Ordina"
+  // bottone "Filtri" (solo su telefono) con la categoria
   const filtersMenu = (
     <FilterBar compact activeCount={menuFilterCount}>
       {categoryFilter}
-      {sortSelect}
     </FilterBar>
   );
 
@@ -287,9 +251,9 @@ const Catalog = () => {
         {isAdmin && !isPhone && addButton}
       </PageHeader>
 
-      {/* ricerca e stato sempre in vista; con le card categoria e "Ordina" nel bottone "Filtri" */}
+      {/* ricerca e stato sempre in vista; su telefono la categoria nel bottone "Filtri" */}
       <FilterBar>
-        {showCards && isPhone ? (
+        {isPhone ? (
           <div className="filter-row">
             {searchFilter}
             {filtersMenu}
@@ -297,9 +261,8 @@ const Catalog = () => {
         ) : (
           searchFilter
         )}
-        {!showCards && categoryFilter}
+        {!isPhone && categoryFilter}
         {stateFilter}
-        {showCards && !isPhone && filtersMenu}
       </FilterBar>
 
       {/* rotellina, poi il messaggio se nessun prodotto passa i filtri */}

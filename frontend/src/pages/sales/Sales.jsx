@@ -24,7 +24,6 @@ import { toStoreOptions } from "../../utils/toStoreOptions";
 import FilterBar from "../../components/common/filterBar/FilterBar";
 import FilterChips from "../../components/common/filterBar/FilterChips";
 import FilterSelect from "../../components/common/filterBar/FilterSelect";
-import SortSelect from "../../components/common/filterBar/SortSelect";
 import FormModal from "../../components/common/formModal/FormModal";
 import KpiCard from "../../components/common/kpiCard/KpiCard";
 import Loader from "../../components/common/loader/Loader";
@@ -41,24 +40,6 @@ import SaleTable from "../../components/sales/saleTable/SaleTable";
 
 // ordine di partenza: le più recenti
 const DEFAULT_SORT = { field: "date", direction: "desc" };
-
-// voci del menu "Ordina" delle card (adminOnly: il negozio solo per il responsabile)
-const SORT_OPTIONS = [
-  { field: "date", direction: "desc", label: "Più recenti" },
-  { field: "date", direction: "asc", label: "Meno recenti" },
-  { field: "store", direction: "asc", label: "Negozio A→Z", adminOnly: true },
-  { field: "store", direction: "desc", label: "Negozio Z→A", adminOnly: true },
-  { field: "seller", direction: "asc", label: "Venditore A→Z" },
-  { field: "seller", direction: "desc", label: "Venditore Z→A" },
-  { field: "items", direction: "asc", label: "Meno articoli" },
-  { field: "items", direction: "desc", label: "Più articoli" },
-  { field: "payment", direction: "asc", label: "Prima la carta" },
-  { field: "payment", direction: "desc", label: "Prima i contanti" },
-  { field: "total", direction: "asc", label: "Totale crescente" },
-  { field: "total", direction: "desc", label: "Totale decrescente" },
-  { field: "status", direction: "asc", label: "Prima le annullate" },
-  { field: "status", direction: "desc", label: "Prima le valide" },
-];
 
 // componente Sales: le vendite per i due ruoli. Il responsabile vede tutti i negozi e sceglie
 // il periodo, il dipendente vede il suo negozio giorno per giorno e annulla le sue vendite di oggi
@@ -165,7 +146,7 @@ const Sales = () => {
     setPage(1);
   };
 
-  // nuovo ordine dal menu "Ordina": pagina 1
+  // nuovo ordine: pagina 1
   const changeSort = (newSort) => {
     setSort(newSort);
     setPage(1);
@@ -274,16 +255,6 @@ const Sales = () => {
       : stores;
   }
 
-  // menu "Ordina", solo con le card
-  const sortSelect = showCards && (
-    <SortSelect
-      options={SORT_OPTIONS.filter((option) => isAdmin || !option.adminOnly)}
-      sort={sort}
-      defaultSort={DEFAULT_SORT}
-      onChange={changeSort} // nuovo ordine: pagina 1
-    />
-  );
-
   // periodo a pulsanti, sempre in vista
   const periodFilter = isAdmin && (
     <FilterChips
@@ -313,11 +284,10 @@ const Sales = () => {
     />
   );
 
-  // bottone "Filtri" con negozio e "Ordina"
+  // bottone "Filtri" (solo su telefono) con il negozio
   const filtersMenu = (
     <FilterBar compact activeCount={menuFilterCount}>
       {storeFilter}
-      {sortSelect}
     </FilterBar>
   );
 
@@ -339,11 +309,10 @@ const Sales = () => {
         />
       </PageHeader>
 
-      {/* periodo sempre in vista (responsabile); con le card negozio e "Ordina" nel bottone "Filtri",
-          su telefono accanto al periodo. Il dipendente con la tabella qui non ha filtri */}
-      {(isAdmin || showCards) && (
+      {/* solo il responsabile: periodo e negozio; su telefono il negozio nel bottone "Filtri" */}
+      {isAdmin && (
         <FilterBar>
-          {showCards && isPhone && isAdmin ? (
+          {isPhone ? (
             <div className="filter-row">
               {periodFilter}
               {filtersMenu}
@@ -351,8 +320,7 @@ const Sales = () => {
           ) : (
             <>
               {periodFilter}
-              {!showCards && storeFilter}
-              {showCards && filtersMenu}
+              {storeFilter}
             </>
           )}
         </FilterBar>

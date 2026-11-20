@@ -236,9 +236,9 @@
     font-size: 0.8rem;
   }
 
-  /* il div che contiene ogni menu (in FilterSelect) */
+  /* il div che contiene ogni menu (in FilterSelect): largo quanto la sua scritta, si stringe se serve */
   .filter-bar > div:not(.filter-chips) {
-    flex: 1 1 0;
+    flex: 0 1 auto;
     min-width: 0;
   }
 
@@ -250,9 +250,4 @@
     font-size: 0.8rem;
     text-overflow: ellipsis;
   }
-}
-
-/* menu "Ordina" al massimo 16rem */
-.filter-bar > .sort-select {
-  max-width: 16rem;
 }

@@ -26,7 +26,6 @@ import FilterBar from "../../components/common/filterBar/FilterBar";
 import FilterChips from "../../components/common/filterBar/FilterChips";
 import FilterSearch from "../../components/common/filterBar/FilterSearch";
 import FilterSelect from "../../components/common/filterBar/FilterSelect";
-import SortSelect from "../../components/common/filterBar/SortSelect";
 import FormModal from "../../components/common/formModal/FormModal";
 import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
@@ -48,22 +47,6 @@ const STATE_OPTIONS = [
 
 // ordine di partenza: prima quelle in attesa
 const DEFAULT_SORT = { field: "state", direction: "asc" };
-
-// voci del menu "Ordina" delle card (il negozio solo per il responsabile)
-const SORT_OPTIONS = [
-  { field: "state", direction: "asc", label: "Prima in attesa" },
-  { field: "state", direction: "desc", label: "Prima le respinte" },
-  { field: "date", direction: "desc", label: "Più recenti" },
-  { field: "date", direction: "asc", label: "Meno recenti" },
-  { field: "product", direction: "asc", label: "Prodotto A→Z" },
-  { field: "product", direction: "desc", label: "Prodotto Z→A" },
-  { field: "store", direction: "asc", label: "Negozio A→Z", adminOnly: true },
-  { field: "store", direction: "desc", label: "Negozio Z→A", adminOnly: true },
-  { field: "amount", direction: "asc", label: "Quantità crescente" },
-  { field: "amount", direction: "desc", label: "Quantità decrescente" },
-  { field: "requestedBy", direction: "asc", label: "Richiesta da A→Z" },
-  { field: "requestedBy", direction: "desc", label: "Richiesta da Z→A" },
-];
 
 // componente SupplyRequests: le forniture per i due ruoli. Il dipendente chiede e annulla le sue
 // in attesa; il responsabile le accoglie o le respinge con un motivo (non le elimina).
@@ -173,7 +156,7 @@ const SupplyRequests = () => {
     setPage(1);
   };
 
-  // nuovo ordine dal menu "Ordina": pagina 1
+  // nuovo ordine: pagina 1
   const changeSort = (newSort) => {
     setSort(newSort);
     setPage(1);
@@ -284,7 +267,7 @@ const SupplyRequests = () => {
     />
   );
 
-  // filtri: negozio e "Ordina" nel menu con le card; stato e ricerca sempre in vista
+  // filtri: stato e ricerca sempre in vista; su telefono il negozio nel menu
   const storeFilter = isAdmin && (
     <FilterSelect
       label="Negozio"
@@ -303,14 +286,6 @@ const SupplyRequests = () => {
       onChange={(value) => changeFilter("state", value)} // nuovo stato: pagina 1
     />
   );
-  const sortSelect = showCards && (
-    <SortSelect
-      options={SORT_OPTIONS.filter((option) => isAdmin || !option.adminOnly)}
-      sort={sort}
-      defaultSort={DEFAULT_SORT}
-      onChange={changeSort} // nuovo ordine: pagina 1
-    />
-  );
 
   // ricerca nel nome del prodotto
   const searchFilter = (
@@ -321,11 +296,10 @@ const SupplyRequests = () => {
     />
   );
 
-  // bottone "Filtri" con negozio e "Ordina"
+  // bottone "Filtri" (solo su telefono, solo il responsabile) con il negozio
   const filtersMenu = (
     <FilterBar compact activeCount={menuFilterCount}>
       {storeFilter}
-      {sortSelect}
     </FilterBar>
   );
 
@@ -346,10 +320,10 @@ const SupplyRequests = () => {
         <ReorderList stocks={reorderStocks} onRequest={openReorderForm} />
       )}
 
-      {/* ricerca e stato sempre in vista; con le card negozio e "Ordina" nel bottone "Filtri" */}
+      {/* ricerca e stato sempre in vista; su telefono il negozio nel bottone "Filtri" */}
       <FilterBar>
         {/* su telefono ricerca e "Filtri" sulla stessa riga */}
-        {showCards && isPhone ? (
+        {isPhone && isAdmin ? (
           <div className="filter-row">
             {searchFilter}
             {filtersMenu}
@@ -357,10 +331,8 @@ const SupplyRequests = () => {
         ) : (
           searchFilter
         )}
-        {!showCards && storeFilter}
+        {!isPhone && storeFilter}
         {stateFilter}
-        {/* da tablet a 1366px "Filtri" dopo lo stato */}
-        {showCards && !isPhone && filtersMenu}
       </FilterBar>
 
       {/* rotellina, poi il messaggio se non c'è niente */}

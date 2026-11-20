@@ -20,7 +20,6 @@ import FilterBar from "../../components/common/filterBar/FilterBar";
 import FilterChips from "../../components/common/filterBar/FilterChips";
 import FilterSearch from "../../components/common/filterBar/FilterSearch";
 import FilterSelect from "../../components/common/filterBar/FilterSelect";
-import SortSelect from "../../components/common/filterBar/SortSelect";
 import FormModal from "../../components/common/formModal/FormModal";
 import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
@@ -38,20 +37,6 @@ const LEVEL_OPTIONS = [
 
 // ordine di partenza: prodotto A→Z
 const DEFAULT_SORT = { field: "product", direction: "asc" };
-
-// voci del menu "Ordina" delle card
-const SORT_OPTIONS = [
-  { field: "product", direction: "asc", label: "Prodotto A→Z" },
-  { field: "product", direction: "desc", label: "Prodotto Z→A" },
-  { field: "store", direction: "asc", label: "Negozio A→Z" },
-  { field: "store", direction: "desc", label: "Negozio Z→A" },
-  { field: "amount", direction: "asc", label: "Quantità crescente" },
-  { field: "amount", direction: "desc", label: "Quantità decrescente" },
-  { field: "minThreshold", direction: "asc", label: "Soglia crescente" },
-  { field: "minThreshold", direction: "desc", label: "Soglia decrescente" },
-  { field: "status", direction: "asc", label: "Prima gli OK" },
-  { field: "status", direction: "desc", label: "Prima i sotto soglia" },
-];
 
 // componente Stocks: le giacenze per i due ruoli (il responsabile vede tutti i negozi e modifica,
 // il dipendente solo il suo). Ricerca, filtri, ordine e pagine li fa il server
@@ -151,7 +136,7 @@ const Stocks = () => {
     setPage(1);
   };
 
-  // nuovo ordine dal menu "Ordina": pagina 1
+  // nuovo ordine: pagina 1
   const changeSort = (newSort) => {
     setSort(newSort);
     setPage(1);
@@ -245,26 +230,13 @@ const Stocks = () => {
     />
   );
 
-  // menu "Ordina", solo con le card (il dipendente non ha le voci del negozio)
-  const sortSelect = showCards && (
-    <SortSelect
-      options={SORT_OPTIONS.filter(
-        (option) => isAdmin || option.field !== "store",
-      )}
-      sort={sort}
-      defaultSort={DEFAULT_SORT}
-      onChange={changeSort} // nuovo ordine: pagina 1
-    />
-  );
-
   // filtri attivi nel menu, per il pallino
   const menuFilterCount = filters.store ? 1 : 0;
 
-  // bottone "Filtri" con negozio e "Ordina"
+  // bottone "Filtri" (solo su telefono, solo il responsabile) con il negozio
   const filtersMenu = (
     <FilterBar compact activeCount={menuFilterCount}>
       {storeFilter}
-      {sortSelect}
     </FilterBar>
   );
 
@@ -287,9 +259,9 @@ const Stocks = () => {
         {isAdmin && !isPhone && addButton}
       </PageHeader>
 
-      {/* ricerca e stato sempre in vista; con le card negozio e "Ordina" nel bottone "Filtri" */}
+      {/* ricerca e stato sempre in vista; su telefono il negozio nel bottone "Filtri" */}
       <FilterBar>
-        {showCards && isPhone ? (
+        {isPhone && isAdmin ? (
           <div className="filter-row">
             {searchFilter}
             {filtersMenu}
@@ -297,9 +269,8 @@ const Stocks = () => {
         ) : (
           searchFilter
         )}
-        {!showCards && storeFilter}
+        {!isPhone && storeFilter}
         {levelFilter}
-        {showCards && !isPhone && filtersMenu}
       </FilterBar>
 
       {/* rotellina, poi il messaggio se nessuna riga passa i filtri */}

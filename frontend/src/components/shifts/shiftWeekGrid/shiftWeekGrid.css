@@ -32,9 +32,14 @@
   text-transform: none;
 }
 
-/* il giorno di oggi in magenta, come nel resto dell'app */
-.shift-grid thead th.shift-grid-today {
-  color: var(--primary-dark);
+/* il giorno di oggi: pillola magenta piena con il testo bianco */
+.shift-grid-today {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  white-space: nowrap;
 }
 
 /* prima colonna: nome e contratto */

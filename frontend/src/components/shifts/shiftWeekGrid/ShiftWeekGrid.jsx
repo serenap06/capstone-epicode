@@ -23,13 +23,17 @@ const ShiftWeekGrid = ({ days, shifts, hours, onShiftClick, onEmptyClick }) => {
         <thead>
           <tr>
             <th scope="col">Dipendente</th>
+            {/* oggi: il giorno in una pillola magenta */}
             {days.map((day) => (
-              <th
-                key={day.toDateString()}
-                scope="col"
-                className={isSameDay(day, today) ? "shift-grid-today" : ""}
-              >
-                {formatDayName(day)} {day.getDate()}
+              <th key={day.toDateString()} scope="col">
+                {isSameDay(day, today) ? (
+                  <span className="shift-grid-today">
+                    {formatDayName(day)} {day.getDate()}
+                    <span className="visually-hidden">, oggi</span>
+                  </span>
+                ) : (
+                  `${formatDayName(day)} ${day.getDate()}`
+                )}
               </th>
             ))}
             <th scope="col">Ore settimana</th>

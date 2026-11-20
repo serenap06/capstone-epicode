@@ -13,6 +13,7 @@ import { toQuery } from "../../../utils/toQuery";
 import { toStoreOptions } from "../../../utils/toStoreOptions";
 
 import AddButton from "../../../components/common/addButton/AddButton";
+import Badge from "../../../components/common/badge/Badge";
 import ConfirmDialog from "../../../components/common/confirmDialog/ConfirmDialog";
 import FilterBar from "../../../components/common/filterBar/FilterBar";
 import FilterChips from "../../../components/common/filterBar/FilterChips";
@@ -133,6 +134,12 @@ const Shifts = () => {
     }
   };
 
+  // giorno scelto dal calendario: la sua settimana e, su telefono, proprio quel giorno
+  const pickDate = (date) => {
+    setReferenceDate(date);
+    setSelectedDayIndex((date.getDay() + 6) % 7);
+  };
+
   // valori calcolati
   const weekDays = getWeekDays(referenceDate);
   // il giorno scelto su telefono (cambiando settimana resta lo stesso giorno)
@@ -147,10 +154,20 @@ const Shifts = () => {
     ...toStoreOptions(stores),
   ];
 
+  // "Nuovo turno": su telefono solo il "+" accanto al titolo
+  const addButton = (
+    <AddButton
+      label="Nuovo turno"
+      iconOnly={isPhone}
+      onClick={() => openNewForm()} // modulo vuoto
+    />
+  );
+
   return (
     <Container fluid>
       <PageHeader
         title="Turni"
+        titleAside={isPhone && addButton}
         subtitle={
           <>
             {storeName && <span className="text-nowrap">{storeName} ·</span>}{" "}
@@ -161,19 +178,17 @@ const Shifts = () => {
         }
         error={error}
       >
-        {/* frecce e "Nuovo turno" sulla stessa riga (su telefono solo "+") */}
+        {/* frecce e calendario; da tablet "Nuovo turno" sulla stessa riga */}
         <div className="shifts-header-actions">
           <WeekNav
             onPrevious={() => setReferenceDate(addDays(referenceDate, -7))}
             onNext={() => setReferenceDate(addDays(referenceDate, 7))}
             onToday={() => setReferenceDate(new Date())}
             isCurrentWeek={isCurrentWeek}
+            onPickDate={pickDate} // giorno dal calendario
+            selectedDate={referenceDate}
           />
-          <AddButton
-            label="Nuovo turno"
-            iconOnly={isPhone}
-            onClick={() => openNewForm()} // modulo vuoto
-          />
+          {!isPhone && addButton}
         </div>
       </PageHeader>
 
@@ -206,6 +221,11 @@ const Shifts = () => {
             <div className="d-flex flex-column gap-4">
               <Panel
                 title={formatLongDate(selectedDay)}
+                aside={
+                  isSameDay(selectedDay, new Date()) && (
+                    <Badge color="primary">Oggi</Badge>
+                  )
+                } // il badge "Oggi" se il giorno scelto è oggi
                 className="shifts-day-panel"
               >
                 <DayStaffList

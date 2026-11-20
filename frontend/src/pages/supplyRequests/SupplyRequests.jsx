@@ -1,6 +1,7 @@
 // import
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useIsPhone } from "../../hooks/useIsPhone";
@@ -84,8 +85,17 @@ const SupplyRequests = () => {
   const [error, setError] = useState("");
   // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
-  // filtri ("" = nessuno)
-  const [filters, setFilters] = useState({ search: "", store: "", state: "" });
+  // filtro di partenza dall'indirizzo: dalla Dashboard "?state=open" apre quelle in attesa
+  const [searchParams] = useSearchParams();
+  const stateParam = searchParams.get("state");
+  // filtri ("" = nessuno; lo stato solo se è uno di quelli del menu)
+  const [filters, setFilters] = useState({
+    search: "",
+    store: "",
+    state: STATE_OPTIONS.some((option) => option.value === stateParam)
+      ? stateParam
+      : "",
+  });
   // ordine scelto
   const [sort, setSort] = useState(DEFAULT_SORT);
   // aumentarlo ricarica le richieste

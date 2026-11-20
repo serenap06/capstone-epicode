@@ -1,6 +1,7 @@
 // import
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useIsPhone } from "../../hooks/useIsPhone";
@@ -70,8 +71,14 @@ const Stocks = () => {
   const [error, setError] = useState("");
   // true fino ai primi dati: gira la rotellina
   const [isLoading, setIsLoading] = useState(true);
+  // filtro di partenza dall'indirizzo: dalla Dashboard "?level=low" apre i sotto soglia
+  const [searchParams] = useSearchParams();
   // filtri ("" = nessuno)
-  const [filters, setFilters] = useState({ search: "", store: "", level: "" });
+  const [filters, setFilters] = useState({
+    search: "",
+    store: "",
+    level: searchParams.get("level") === "low" ? "low" : "",
+  });
   // ordine scelto
   const [sort, setSort] = useState(DEFAULT_SORT);
   // aumentarlo ricarica le giacenze

@@ -122,7 +122,7 @@ const Dashboard = () => {
           </Col>
           <Col>
             <KpiCard
-              to="/admin/stock"
+              to="/admin/stock?level=low" // le giacenze già filtrate: solo sotto soglia
               color="turquoise"
               label="Sotto scorta"
               value={kpis?.lowStockItems ?? "–"}
@@ -131,7 +131,7 @@ const Dashboard = () => {
           </Col>
           <Col>
             <KpiCard
-              to="/admin/supply-requests"
+              to="/admin/supply-requests?state=open" // solo le richieste in attesa
               color="blue"
               label="Richieste di fornitura"
               value={kpis?.pendingSupplyRequests ?? "–"}
@@ -188,7 +188,7 @@ const Dashboard = () => {
           <Panel
             title="Sotto scorta"
             aside={
-              <Link to="/admin/stock" className="section-link">
+              <Link to="/admin/stock?level=low" className="section-link">
                 Vedi tutti
               </Link>
             }

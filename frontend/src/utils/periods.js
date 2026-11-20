@@ -4,6 +4,13 @@ import { formatWeekRange } from "./formatWeekRange";
 
 // periodi con le frecce, per Vendite (giorno, settimana, mese) e Report (da settimana ad anno)
 
+// periodi di Vendite e Task, per i pulsanti
+export const PERIOD_OPTIONS = [
+  { value: "day", label: "Giorno" },
+  { value: "week", label: "Settimana" },
+  { value: "month", label: "Mese" },
+];
+
 // periodi del Report, per i pulsanti
 export const REPORT_PERIOD_OPTIONS = [
   { value: "week", label: "Settimana" },

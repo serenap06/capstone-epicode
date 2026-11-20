@@ -16,6 +16,7 @@ import {
   getPeriodRange,
   movePeriodDate,
   PERIOD_NAV_LABELS,
+  PERIOD_OPTIONS,
 } from "../../utils/periods";
 import { toQuery } from "../../utils/toQuery";
 import { toStoreOptions } from "../../utils/toStoreOptions";
@@ -29,19 +30,14 @@ import KpiCard from "../../components/common/kpiCard/KpiCard";
 import Loader from "../../components/common/loader/Loader";
 import Message from "../../components/common/message/Message";
 import PageHeader from "../../components/common/pageHeader/PageHeader";
+import SectionHeader from "../../components/common/sectionHeader/SectionHeader";
 import WeekNav from "../../components/common/weekNav/WeekNav";
 import Pagination from "../../components/common/pagination/Pagination";
 import CashKpiCard from "../../components/cashSessions/cashKpiCard/CashKpiCard";
+import CashClosingList from "../../components/cashSessions/cashClosingList/CashClosingList";
 import CancelSaleForm from "../../components/sales/cancelSaleForm/CancelSaleForm";
 import SaleCard from "../../components/sales/saleCard/SaleCard";
 import SaleTable from "../../components/sales/saleTable/SaleTable";
-
-// periodi del responsabile (i calcoli sono in utils/periods.js)
-const PERIOD_OPTIONS = [
-  { value: "day", label: "Giorno" },
-  { value: "week", label: "Settimana" },
-  { value: "month", label: "Mese" },
-];
 
 // ordine di partenza: le più recenti
 const DEFAULT_SORT = { field: "date", direction: "desc" };
@@ -60,6 +56,8 @@ const SORT_OPTIONS = [
   { field: "payment", direction: "desc", label: "Prima i contanti" },
   { field: "total", direction: "asc", label: "Totale crescente" },
   { field: "total", direction: "desc", label: "Totale decrescente" },
+  { field: "status", direction: "asc", label: "Prima le annullate" },
+  { field: "status", direction: "desc", label: "Prima le valide" },
 ];
 
 // componente Sales: le vendite per i due ruoli. Il responsabile vede tutti i negozi e sceglie
@@ -68,7 +66,7 @@ const Sales = () => {
   // utente collegato e ruolo
   const { user } = useAuth();
   const isAdmin = user.role === "admin";
-  // su telefono "Filtri" accanto allo stato
+  // su telefono "Filtri" accanto al periodo
   const isPhone = useIsPhone();
   // fino a 1366px le card (negozio e "Ordina" nel bottone "Filtri"), sopra la tabella
   const showCards = useShowCards();
@@ -205,6 +203,11 @@ const Sales = () => {
     setReferenceDate(new Date());
     setPage(1);
   };
+  // giorno scelto dal calendario: vado al suo periodo
+  const pickDate = (date) => {
+    setReferenceDate(date);
+    setPage(1);
+  };
   // true se è il periodo in corso (spegne "Oggi", "Questa settimana"...)
   const isCurrentPeriod =
     getPeriodRange(period, new Date()).start.getTime() ===
@@ -263,6 +266,14 @@ const Sales = () => {
     value: formatEuro(row.revenue),
   }));
 
+  // negozi della card "Cassa": tutti o quello scelto (responsabile), il suo (dipendente)
+  let cashStores = user.store ? [user.store] : [];
+  if (isAdmin) {
+    cashStores = filters.store
+      ? stores.filter((store) => store._id === filters.store)
+      : stores;
+  }
+
   // menu "Ordina", solo con le card
   const sortSelect = showCards && (
     <SortSelect
@@ -282,7 +293,7 @@ const Sales = () => {
       onChange={(value) => changeFilter("period", value)} // nuovo periodo: pagina 1
     />
   );
-  // stato a pulsanti, per tutti e due i ruoli
+  // stato a pulsanti, per tutti e due i ruoli: accanto al titolo dell'elenco (vale solo per lui)
   const statusFilter = (
     <FilterChips
       label="Stato"
@@ -322,23 +333,30 @@ const Sales = () => {
           previousLabel={previousLabel}
           nextLabel={nextLabel}
           todayLabel={todayLabel}
+          onPickDate={pickDate} // giorno dal calendario
+          selectedDate={referenceDate}
+          period={period}
         />
       </PageHeader>
 
-      {/* periodo e stato sempre in vista; con le card negozio e "Ordina" nel bottone "Filtri" */}
-      <FilterBar>
-        {periodFilter}
-        {!showCards && storeFilter}
-        {showCards && isPhone ? (
-          <div className="filter-row">
-            {statusFilter}
-            {filtersMenu}
-          </div>
-        ) : (
-          statusFilter
-        )}
-        {showCards && !isPhone && filtersMenu}
-      </FilterBar>
+      {/* periodo sempre in vista (responsabile); con le card negozio e "Ordina" nel bottone "Filtri",
+          su telefono accanto al periodo. Il dipendente con la tabella qui non ha filtri */}
+      {(isAdmin || showCards) && (
+        <FilterBar>
+          {showCards && isPhone && isAdmin ? (
+            <div className="filter-row">
+              {periodFilter}
+              {filtersMenu}
+            </div>
+          ) : (
+            <>
+              {periodFilter}
+              {!showCards && storeFilter}
+              {showCards && filtersMenu}
+            </>
+          )}
+        </FilterBar>
+      )}
 
       {/* totali per tutti e due i ruoli (solo vendite valide): arancio, blu, magenta, viola.
           Quattro in riga da 1400px, due per riga da 576px, una sotto l'altra su telefono */}
@@ -352,13 +370,11 @@ const Sales = () => {
             detail={`${formatSalesCount(totals?.count ?? 0)} · IVA compresa`}
           />
         </Col>
-        {/* la cassa: fondi del giorno, stato dei negozi o giorni da controllare */}
+        {/* la cassa: quante chiusure da controllare per negozio */}
         <Col xs={12} sm={6} xxl={3}>
           <CashKpiCard
             cashSessions={cashSessions} // le casse del periodo
-            period={period}
-            day={range.start} // il giorno mostrato
-            stores={isAdmin && !filters.store ? stores : null} // tutti i negozi: uno per riga
+            stores={cashStores} // un negozio per riga
           />
         </Col>
         {/* contanti e carta in una card: per far tornare cassa e POS a fine giornata */}
@@ -375,6 +391,25 @@ const Sales = () => {
           />
         </Col>
       </Row>
+
+      {/* le chiusure di cassa del periodo, quelle che non tornano in evidenza */}
+      <CashClosingList
+        cashSessions={cashSessions} // le casse del periodo
+        showStore={isAdmin && !filters.store} // il negozio solo se li guardo tutti
+        showCards={showCards} // card o tabella, come le vendite
+        emptyMessage={
+          period === "day" && isCurrentPeriod
+            ? "Nessuna cassa aperta oggi"
+            : "Nessuna cassa in questo periodo"
+        }
+      />
+
+      {/* titolo dell'elenco delle vendite e, accanto, lo stato (come nelle chiusure) */}
+      <SectionHeader
+        title="Elenco vendite"
+        className="section-header-filters"
+        aside={statusFilter}
+      />
 
       {/* rotellina, poi il messaggio se non ci sono vendite */}
       {isLoading && <Loader />}
@@ -399,6 +434,7 @@ const Sales = () => {
             sales={sales}
             sort={sort}
             onSort={sortByColumn} // clic su un'intestazione
+            timeLabel={period === "day" ? "Ora" : "Giorno"} // su settimana e mese c'è anche il giorno
             {...listProps} // negozio, venditore e "Annulla vendita"
           />
         ))}

@@ -16,14 +16,6 @@
   text-decoration: line-through;
 }
 
-/* ora e, se annullata, il pulsante "Annullata": sulla stessa riga */
-.sale-time-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  white-space: nowrap;
-}
-
 /* riga dei dettagli: sembra la continuazione della vendita */
 .sale-details-row td {
   padding-top: 0;

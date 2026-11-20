@@ -8,6 +8,7 @@ import { formatEuro } from "../../../utils/formatEuro";
 import { formatFullName } from "../../../utils/formatFullName";
 import { formatSaleTime } from "../../../utils/formatSaleTime";
 
+import Badge from "../../common/badge/Badge";
 import Button from "../../common/button/Button";
 import CancelledNote from "../cancelledNote/CancelledNote";
 import CancelledToggle from "../cancelledToggle/CancelledToggle";
@@ -16,7 +17,8 @@ import SortableHeader from "../../common/sortableHeader/SortableHeader";
 
 // componente SaleTable: tabella delle vendite da 1366px.
 // props: sales, showStore e showSeller = colonne del responsabile, sort e onSort = l'ordine (lo fa il server),
-// onCancel = "Annulla vendita" (solo il dipendente), canCancel = true se quella vendita si può annullare
+// onCancel = "Annulla vendita" (solo il dipendente), canCancel = true se quella vendita si può annullare,
+// timeLabel = intestazione della prima colonna ("Ora", oppure "Giorno" su settimana e mese)
 const SaleTable = ({
   sales,
   showStore,
@@ -25,13 +27,14 @@ const SaleTable = ({
   onSort,
   onCancel,
   canCancel,
+  timeLabel = "Ora",
 }) => {
   // id della vendita con i dettagli aperti (una alla volta)
   const [openSaleId, setOpenSaleId] = useState(null);
 
   // colonne della tabella: la riga dei dettagli le prende tutte
   const columnCount =
-    4 + (showStore ? 1 : 0) + (showSeller ? 1 : 0) + (onCancel ? 1 : 0);
+    5 + (showStore ? 1 : 0) + (showSeller ? 1 : 0) + (onCancel ? 1 : 0);
 
   // apro i dettagli, o li chiudo se erano aperti
   const toggleDetails = (saleId) =>
@@ -46,10 +49,11 @@ const SaleTable = ({
       <table className="app-table sale-table">
         <thead>
           <tr>
-            <SortableHeader label="Ora" field="date" {...sortProps} />
+            <SortableHeader label={timeLabel} field="date" {...sortProps} />
             {showStore && (
               <SortableHeader label="Negozio" field="store" {...sortProps} />
             )}
+            <SortableHeader label="Stato" field="status" {...sortProps} />
             {showSeller && (
               <SortableHeader
                 label="Venduto da"
@@ -78,21 +82,23 @@ const SaleTable = ({
             return (
               // Fragment: due righe per vendita (la seconda con i dettagli); la key va su di lui
               <Fragment key={sale._id}>
-                {/* annullata: riga grigia e pulsante dei dettagli (responsabile accanto all'ora, dipendente al posto del bottone) */}
+                {/* annullata: riga grigia e, nello stato, il pulsante dei dettagli */}
                 <tr className={sale.cancelled ? "sale-row-off" : ""}>
                   <td>
-                    <div className="sale-time-cell">
-                      <strong>{formatSaleTime(sale.createdAt)}</strong>
-                      {sale.cancelled && !onCancel && (
-                        <CancelledToggle
-                          ariaLabel={`Dettagli della vendita annullata delle ${formatSaleTime(sale.createdAt)}`}
-                          isOpen={isOpen}
-                          onToggle={() => toggleDetails(sale._id)} // apro o chiudo i dettagli
-                        />
-                      )}
-                    </div>
+                    <strong>{formatSaleTime(sale.createdAt)}</strong>
                   </td>
                   {showStore && <td>{sale.store.name}</td>}
+                  <td>
+                    {sale.cancelled ? (
+                      <CancelledToggle
+                        ariaLabel={`Dettagli della vendita annullata delle ${formatSaleTime(sale.createdAt)}`}
+                        isOpen={isOpen}
+                        onToggle={() => toggleDetails(sale._id)} // apro o chiudo i dettagli
+                      />
+                    ) : (
+                      <Badge color="success">Valida</Badge>
+                    )}
+                  </td>
                   {showSeller && <td>{formatFullName(sale.soldBy)}</td>}
                   <td>{countSaleItems(sale)}</td>
                   <td>
@@ -105,28 +111,18 @@ const SaleTable = ({
                   </td>
                   {onCancel && (
                     <td className="text-end">
-                      {/* già annullata: il pulsante dei dettagli; "Annulla vendita" solo sulle sue di oggi */}
-                      {sale.cancelled ? (
-                        <CancelledToggle
-                          large
-                          label="Vendita annullata"
-                          ariaLabel={`Dettagli della vendita annullata delle ${formatSaleTime(sale.createdAt)}`}
-                          isOpen={isOpen}
-                          onToggle={() => toggleDetails(sale._id)} // apro o chiudo i dettagli
-                        />
-                      ) : (
-                        canCancel(sale) && (
-                          <Button
-                            variant="danger"
-                            aria-label={`Annulla la vendita delle ${formatSaleTime(sale.createdAt)}`}
-                            onClick={() => onCancel(sale)} // apro il modale con il motivo
-                          >
-                            <Undo2 size={16} aria-hidden="true" />
-                            <span className="app-button-label">
-                              Annulla vendita
-                            </span>
-                          </Button>
-                        )
+                      {/* "Annulla vendita" solo sulle sue di oggi ancora valide */}
+                      {!sale.cancelled && canCancel(sale) && (
+                        <Button
+                          variant="danger"
+                          aria-label={`Annulla la vendita delle ${formatSaleTime(sale.createdAt)}`}
+                          onClick={() => onCancel(sale)} // apro il modale con il motivo
+                        >
+                          <Undo2 size={16} aria-hidden="true" />
+                          <span className="app-button-label">
+                            Annulla vendita
+                          </span>
+                        </Button>
                       )}
                     </td>
                   )}

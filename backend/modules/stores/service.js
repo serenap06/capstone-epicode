@@ -6,6 +6,7 @@ const Stock = require("../stock/schema");
 const SupplyRequest = require("../supply-requests/schema");
 const Shift = require("../shifts/schema");
 const Task = require("../tasks/schema");
+const CashSession = require("../cash-sessions/schema");
 
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const HttpException = require("../../exceptions");
@@ -43,7 +44,7 @@ const update = async (storeId, storeData) => {
 };
 
 // elimino il negozio, ma non se ha personale o vendite (servono per i conti).
-// Con lui tolgo giacenze, richieste, turni e task
+// Con lui tolgo giacenze, richieste, turni, task e casse
 const deleteStore = async (storeId) => {
   const [employeeCount, saleCount] = await Promise.all([
     User.countDocuments({ store: storeId }),
@@ -64,6 +65,7 @@ const deleteStore = async (storeId) => {
     SupplyRequest.deleteMany({ store: storeId }),
     Shift.deleteMany({ store: storeId }),
     Task.deleteMany({ store: storeId }),
+    CashSession.deleteMany({ store: storeId }),
   ]);
 };
 

@@ -13,6 +13,7 @@ const Shift = require("./modules/shifts/schema");
 const Task = require("./modules/tasks/schema");
 const SupplyRequest = require("./modules/supply-requests/schema");
 const Sale = require("./modules/sales/schema");
+const CashSession = require("./modules/cash-sessions/schema");
 
 // password degli account demo dal .env (la stessa di VITE_DEMO_PASSWORD nel frontend)
 const DEMO_PASSWORD = process.env.DEMO_PASSWORD;
@@ -88,6 +89,7 @@ const seed = async () => {
     console.log("MongoDB connected, seeding...");
 
     // 1. svuoto le collezioni
+    await CashSession.deleteMany();
     await Sale.deleteMany();
     await SupplyRequest.deleteMany();
     await Task.deleteMany();
@@ -507,6 +509,43 @@ const seed = async () => {
     }
     await Sale.create(sales);
     console.log(`${products.length} prodotti, ${sales.length} vendite`);
+
+    // 10. casse di ieri chiuse: fondo di 100 € e contanti nella busta (oggi la Cassa propone 100 €)
+    const yesterday = at(-1, 0);
+    const today = at(0, 0);
+    const cashSessions = [
+      [storeA, marta, giulia],
+      [storeB, luca, paolo],
+    ].map(([store, openedBy, closedBy]) => {
+      // contanti delle vendite valide di ieri in quel negozio
+      const cashSales = round(
+        sales
+          .filter(
+            (sale) =>
+              sale.store.equals(store._id) &&
+              sale.paymentMethod === "cash" &&
+              !sale.cancelled &&
+              sale.createdAt >= yesterday &&
+              sale.createdAt < today,
+          )
+          .reduce((sum, sale) => sum + sale.total, 0),
+      );
+      return {
+        store: store._id,
+        day: yesterday,
+        openingFloat: 100,
+        openedBy: openedBy._id,
+        closingFloat: 100,
+        envelopeAmount: cashSales,
+        cashSales,
+        expectedCash: round(100 + cashSales),
+        difference: 0,
+        closedBy: closedBy._id,
+        closedAt: at(-1, 19, 30),
+        createdAt: at(-1, 8, 55),
+      };
+    });
+    await CashSession.create(cashSessions);
 
     // la password non la stampo
     console.log("Seed completed");

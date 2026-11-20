@@ -7,6 +7,7 @@ const HttpException = require("../../exceptions/index");
 const NotFoundException = require("../../exceptions/auth/NotFoundException");
 const round = require("../../utils/round");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
+const cashSessionService = require("../cash-sessions/service");
 
 // colonne ordinabili: nome nella query → campo (storeName, sellerName e itemCount li creo nella pipeline)
 const SORT_FIELDS = {
@@ -108,7 +109,7 @@ const findAll = async (
     Sale.countDocuments({ ...baseFilter, cancelled: true }),
   ]);
 
-  // incasso e IVA per aliquota delle valide, come nel Report (per i corrispettivi)
+  // totale venduto per aliquota IVA (4%, 22%...), solo vendite non annullate: per i corrispettivi
   const vatRates = await Sale.aggregate([
     { $match: { ...baseFilter, cancelled: { $ne: true } } },
     { $unwind: "$items" },
@@ -167,6 +168,9 @@ const findAll = async (
 // nuova vendita: controllo prodotti e pezzi, calcolo totali e IVA, scalo le giacenze
 // e restituisco i prodotti finiti sotto soglia
 const create = async ({ items, paymentMethod }, currentUser) => {
+  // si vende solo con la cassa di oggi aperta
+  await cashSessionService.checkIsOpen(currentUser.store);
+
   const productIds = items.map((item) => item.product);
   const products = await Product.find({
     _id: { $in: productIds },
@@ -255,7 +259,7 @@ const create = async ({ items, paymentMethod }, currentUser) => {
   return { sale, lowStock };
 };
 
-// annullo una vendita: solo chi l'ha fatta, solo di oggi, una volta sola.
+// annullo una vendita: solo chi l'ha fatta, solo di oggi, a cassa aperta, una volta sola.
 // La vendita resta (con il motivo) e i pezzi tornano nel negozio
 const cancel = async (saleId, reason, currentUser) => {
   const sale = await Sale.findById(saleId);
@@ -276,6 +280,8 @@ const cancel = async (saleId, reason, currentUser) => {
   if (sale.createdAt < startOfToday) {
     throw new HttpException("Only today's sales can be cancelled", 400);
   }
+  // dopo la chiusura i contanti sono contati: niente annullamenti
+  await cashSessionService.checkIsOpen(sale.store);
 
   // rimetto i pezzi nelle giacenze
   await Promise.all(

@@ -9,7 +9,7 @@ const round = require("../../utils/round");
 const ForbiddenException = require("../../exceptions/auth/ForbiddenException");
 const cashSessionService = require("../cash-sessions/service");
 
-// colonne ordinabili: nome nella query → campo (storeName, sellerName e itemCount li creo nella pipeline)
+// colonne ordinabili: nome nella query → campo (storeName, sellerName, itemCount e saleStatus li creo nella pipeline)
 const SORT_FIELDS = {
   date: "createdAt",
   store: "storeName",
@@ -17,6 +17,7 @@ const SORT_FIELDS = {
   items: "itemCount",
   payment: "paymentMethod",
   total: "total",
+  status: "saleStatus",
 };
 
 // in aggregate gli id li converto io in ObjectId
@@ -88,12 +89,16 @@ const findAll = async (
       ...lookupOne("stores", "store", { name: 1 }),
       ...lookupOne("users", "soldBy", { name: 1, surname: 1 }),
       ...lookupOne("users", "cancelledBy", { name: 1, surname: 1 }),
-      // campi per ordinare: negozio, venditore (cognome e nome) e pezzi
+      // campi per ordinare: negozio, venditore (cognome e nome), pezzi e stato
+      // (in ordine crescente "cancelled" viene prima di "valid": prima le annullate)
       {
         $addFields: {
           storeName: "$store.name",
           sellerName: { $concat: ["$soldBy.surname", " ", "$soldBy.name"] },
           itemCount: { $sum: "$items.quantity" },
+          saleStatus: {
+            $cond: [{ $eq: ["$cancelled", true] }, "cancelled", "valid"],
+          },
         },
       },
       { $sort: sortStage },

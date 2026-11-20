@@ -16,8 +16,10 @@ const saleQueryRules = [
     .withMessage("status must be valid or cancelled"),
   query("sortBy")
     .optional()
-    .isIn(["date", "store", "seller", "items", "payment", "total"])
-    .withMessage("sortBy must be date, store, seller, items, payment or total"),
+    .isIn(["date", "store", "seller", "items", "payment", "total", "status"])
+    .withMessage(
+      "sortBy must be date, store, seller, items, payment, total or status",
+    ),
   query("order")
     .optional()
     .isIn(["asc", "desc"])

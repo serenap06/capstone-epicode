@@ -16,7 +16,7 @@ import SortableHeader from "../../common/sortableHeader/SortableHeader";
 
 // componente SaleTable: tabella delle vendite da 1366px.
 // props: sales, showStore e showSeller = colonne del responsabile, sort e onSort = l'ordine (lo fa il server),
-// onCancel = "Annulla vendita" (solo il dipendente)
+// onCancel = "Annulla vendita" (solo il dipendente), canCancel = true se quella vendita si può annullare
 const SaleTable = ({
   sales,
   showStore,
@@ -24,6 +24,7 @@ const SaleTable = ({
   sort,
   onSort,
   onCancel,
+  canCancel,
 }) => {
   // id della vendita con i dettagli aperti (una alla volta)
   const [openSaleId, setOpenSaleId] = useState(null);
@@ -104,7 +105,7 @@ const SaleTable = ({
                   </td>
                   {onCancel && (
                     <td className="text-end">
-                      {/* già annullata: al posto del bottone, il pulsante dei dettagli */}
+                      {/* già annullata: il pulsante dei dettagli; "Annulla vendita" solo sulle sue di oggi */}
                       {sale.cancelled ? (
                         <CancelledToggle
                           large
@@ -114,16 +115,18 @@ const SaleTable = ({
                           onToggle={() => toggleDetails(sale._id)} // apro o chiudo i dettagli
                         />
                       ) : (
-                        <Button
-                          variant="danger"
-                          aria-label={`Annulla la vendita delle ${formatSaleTime(sale.createdAt)}`}
-                          onClick={() => onCancel(sale)} // apro il modale con il motivo
-                        >
-                          <Undo2 size={16} aria-hidden="true" />
-                          <span className="app-button-label">
-                            Annulla vendita
-                          </span>
-                        </Button>
+                        canCancel(sale) && (
+                          <Button
+                            variant="danger"
+                            aria-label={`Annulla la vendita delle ${formatSaleTime(sale.createdAt)}`}
+                            onClick={() => onCancel(sale)} // apro il modale con il motivo
+                          >
+                            <Undo2 size={16} aria-hidden="true" />
+                            <span className="app-button-label">
+                              Annulla vendita
+                            </span>
+                          </Button>
+                        )
                       )}
                     </td>
                   )}

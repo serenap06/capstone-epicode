@@ -108,6 +108,22 @@ const findAll = async (
     Sale.countDocuments({ ...baseFilter, cancelled: true }),
   ]);
 
+  // incasso e IVA per aliquota delle valide, come nel Report (per i corrispettivi)
+  const vatRates = await Sale.aggregate([
+    { $match: { ...baseFilter, cancelled: { $ne: true } } },
+    { $unwind: "$items" },
+    {
+      $group: {
+        _id: "$items.vatRate",
+        revenue: {
+          $sum: { $multiply: ["$items.unitPrice", "$items.quantity"] },
+        },
+        vat: { $sum: "$items.vatAmount" },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
+
   // somma dei totali
   const sumTotal = (salesList) =>
     round(salesList.reduce((sum, sale) => sum + sale.total, 0));
@@ -124,6 +140,17 @@ const findAll = async (
       validSales.filter((sale) => sale.paymentMethod === "card"),
     ),
     cancelledCount,
+    // una riga per aliquota: incasso, netto e IVA
+    byVatRate: vatRates.map((row) => {
+      const revenue = round(row.revenue);
+      const vat = round(row.vat);
+      return {
+        vatRate: row._id,
+        revenue,
+        netRevenue: round(revenue - vat),
+        vat,
+      };
+    }),
   };
 
   return {

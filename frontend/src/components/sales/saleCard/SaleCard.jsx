@@ -14,12 +14,13 @@ import CancelledToggle from "../cancelledToggle/CancelledToggle";
 import PaymentMethod from "../paymentMethod/PaymentMethod";
 
 // componente SaleCard: card di una vendita fino a 1366px (stesse props di SaleTable).
-// props: sale, showStore, showSeller, onCancel = "Annulla vendita" (solo il dipendente)
-const SaleCard = ({ sale, showStore, showSeller, onCancel }) => {
+// props: sale, showStore, showSeller, onCancel = "Annulla vendita" (solo il dipendente),
+// canCancel = true se questa vendita si può annullare
+const SaleCard = ({ sale, showStore, showSeller, onCancel, canCancel }) => {
   // dettagli dell'annullamento aperti o chiusi
   const [showDetails, setShowDetails] = useState(false);
 
-  // "3 articoli", per il responsabile "Marta Bianchi · 3 articoli"
+  // "3 articoli", con showSeller "Marta Bianchi · 3 articoli"
   const itemCount = countSaleItems(sale);
   const itemsLabel = `${itemCount} ${itemCount === 1 ? "articolo" : "articoli"}`;
   const detail = showSeller
@@ -56,8 +57,8 @@ const SaleCard = ({ sale, showStore, showSeller, onCancel }) => {
         )}
       </div>
 
-      {/* dipendente: "Annulla vendita", oppure "Vendita annullata" */}
-      {onCancel && (
+      {/* dipendente: "Vendita annullata", oppure "Annulla vendita" sulle sue di oggi */}
+      {onCancel && (sale.cancelled || canCancel(sale)) && (
         <div className="sale-card-actions">
           {sale.cancelled ? (
             <CancelledToggle

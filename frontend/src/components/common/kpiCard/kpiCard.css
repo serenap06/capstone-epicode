@@ -36,6 +36,50 @@
   font-weight: 400;
 }
 
+/* righe al posto del numero: elenco senza pallini */
+.kpi-card-rows {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* nome a sinistra, importo a destra; se non c'è spazio l'importo va sotto */
+.kpi-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 0.75rem;
+}
+
+.kpi-card-row-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* la nota sotto il nome, più piccola e su una riga */
+.kpi-card-row-name small {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* spazio tra le righe e la riga sotto */
+.kpi-card-rows + .kpi-card-detail {
+  margin-top: 0.5rem;
+}
+
+/* l'importo non va mai a capo */
+.kpi-card-row-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 /* colori dalla prop color: magenta turni, viola task, arancio vendite, blu ore e forniture, turchese sotto scorta */
 .kpi-card-primary {
   background: var(--primary);

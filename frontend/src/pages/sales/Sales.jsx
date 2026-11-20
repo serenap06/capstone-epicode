@@ -7,6 +7,7 @@ import { useIsPhone } from "../../hooks/useIsPhone";
 import { useShowCards } from "../../hooks/useShowCards";
 import { loadData } from "../../api/loadData";
 import { formatEuro } from "../../utils/formatEuro";
+import { isSameDay } from "../../utils/dates";
 import { getNextSort } from "../../utils/getNextSort";
 import { PAGE_SIZE } from "../../utils/pageSize";
 import {
@@ -43,24 +44,14 @@ const PERIOD_OPTIONS = [
 // ordine di partenza: le più recenti
 const DEFAULT_SORT = { field: "date", direction: "desc" };
 
-// voci del menu "Ordina" delle card (adminOnly: negozio e venditore solo per il responsabile)
+// voci del menu "Ordina" delle card (adminOnly: il negozio solo per il responsabile)
 const SORT_OPTIONS = [
   { field: "date", direction: "desc", label: "Più recenti" },
   { field: "date", direction: "asc", label: "Meno recenti" },
   { field: "store", direction: "asc", label: "Negozio A→Z", adminOnly: true },
   { field: "store", direction: "desc", label: "Negozio Z→A", adminOnly: true },
-  {
-    field: "seller",
-    direction: "asc",
-    label: "Venditore A→Z",
-    adminOnly: true,
-  },
-  {
-    field: "seller",
-    direction: "desc",
-    label: "Venditore Z→A",
-    adminOnly: true,
-  },
+  { field: "seller", direction: "asc", label: "Venditore A→Z" },
+  { field: "seller", direction: "desc", label: "Venditore Z→A" },
   { field: "items", direction: "asc", label: "Meno articoli" },
   { field: "items", direction: "desc", label: "Più articoli" },
   { field: "payment", direction: "asc", label: "Prima la carta" },
@@ -70,7 +61,7 @@ const SORT_OPTIONS = [
 ];
 
 // componente Sales: le vendite per i due ruoli. Il responsabile vede tutti i negozi e sceglie
-// il periodo, il dipendente vede le sue vendite di oggi e può annullarle
+// il periodo, il dipendente vede il suo negozio giorno per giorno e annulla le sue vendite di oggi
 const Sales = () => {
   // utente collegato e ruolo
   const { user } = useAuth();
@@ -105,14 +96,14 @@ const Sales = () => {
   // un giorno del periodo mostrato (le frecce lo spostano)
   const [referenceDate, setReferenceDate] = useState(new Date());
 
-  // inizio e fine del periodo (il dipendente sempre oggi); from e to come testo per l'effetto
+  // inizio e fine del periodo (il dipendente un giorno alla volta); from e to come testo per l'effetto
   const period = isAdmin ? filters.period : "day";
-  const range = getPeriodRange(period, isAdmin ? referenceDate : new Date());
+  const range = getPeriodRange(period, referenceDate);
   const from = range.start.toISOString();
   const to = range.end.toISOString();
 
   // prendo le vendite al cambio di periodo, filtri, ordine, pagina e al refreshCount
-  // (il dipendente solo le sue di oggi)
+  // (per il dipendente il server tiene solo il suo negozio)
   useEffect(() => {
     // ignore: true se parte una richiesta più nuova (la risposta vecchia la scarto)
     let ignore = false;
@@ -120,7 +111,6 @@ const Sales = () => {
       from,
       to,
       store: filters.store,
-      soldBy: isAdmin ? "" : user._id,
       status: filters.status,
       sortBy: sort.field,
       order: sort.direction,
@@ -141,7 +131,7 @@ const Sales = () => {
     return () => {
       ignore = true;
     };
-  }, [from, to, filters, sort, page, refreshCount, isAdmin, user._id]);
+  }, [from, to, filters, sort, page, refreshCount]);
 
   // prendo i negozi una volta sola (solo il responsabile)
   useEffect(() => {
@@ -172,15 +162,16 @@ const Sales = () => {
 
   // valori calcolati
 
-  // negozio scelto, per il sottotitolo
-  const storeName = filters.store
-    ? (stores.find((store) => store._id === filters.store)?.name ?? "")
-    : "Tutti i negozi";
+  // negozio per il sottotitolo: quello scelto (responsabile) o il suo (dipendente)
+  let storeName = user.store?.name;
+  if (isAdmin) {
+    storeName = filters.store
+      ? (stores.find((store) => store._id === filters.store)?.name ?? "")
+      : "Tutti i negozi";
+  }
 
-  // sottotitolo: periodo e negozio (responsabile), le mie vendite di oggi (dipendente)
-  const subtitle = isAdmin
-    ? `${formatPeriod(period, range)} · ${storeName}`
-    : `Le tue vendite di oggi · ${user.store?.name}`;
+  // sottotitolo: periodo e negozio
+  const subtitle = `${formatPeriod(period, range)} · ${storeName}`;
 
   // frecce: sposto il periodo e torno alla pagina 1
   const moveReference = (step) => {
@@ -208,22 +199,46 @@ const Sales = () => {
     { value: "cancelled", label: `Annullate (${totals?.cancelledCount ?? 0})` },
   ];
 
-  // messaggio della lista vuota, per ruolo e stato
-  let emptyMessage = isAdmin
-    ? "Nessuna vendita in questo periodo"
-    : "Nessuna vendita oggi";
-  if (filters.status === "cancelled") {
-    emptyMessage = isAdmin
-      ? "Nessuna vendita annullata in questo periodo"
-      : "Nessuna vendita annullata oggi";
-  }
+  // messaggio della lista vuota: "oggi" o "in questo giorno" (dipendente), "in questo periodo" (responsabile)
+  let emptyWhen = "in questo periodo";
+  if (!isAdmin) emptyWhen = isCurrentPeriod ? "oggi" : "in questo giorno";
+  const emptyMessage =
+    filters.status === "cancelled"
+      ? `Nessuna vendita annullata ${emptyWhen}`
+      : `Nessuna vendita ${emptyWhen}`;
+
+  // true se la vendita è del dipendente collegato ed è di oggi (il server lo ricontrolla)
+  const canCancel = (sale) =>
+    !isAdmin &&
+    sale.soldBy?._id === user._id &&
+    isSameDay(sale.createdAt, new Date());
 
   // props uguali per tabella e card ("Annulla vendita" solo il dipendente)
   const listProps = {
     showStore: isAdmin,
-    showSeller: isAdmin,
+    showSeller: true,
     onCancel: isAdmin ? undefined : setSaleToCancel,
+    canCancel,
   };
+
+  // righe della card "Pagamenti"
+  const paymentRows = [
+    {
+      label: "Contanti",
+      note: "in cassa",
+      value: formatEuro(totals?.cashRevenue ?? 0),
+    },
+    {
+      label: "Carta",
+      note: "POS",
+      value: formatEuro(totals?.cardRevenue ?? 0),
+    },
+  ];
+  // righe della card "Venduto per aliquota": il totale IVA compresa di ogni aliquota
+  const vatRows = (totals?.byVatRate ?? []).map((row) => ({
+    label: `IVA ${row.vatRate}%`,
+    value: formatEuro(row.revenue),
+  }));
 
   // menu "Ordina", solo con le card
   const sortSelect = showCards && (
@@ -275,18 +290,16 @@ const Sales = () => {
   return (
     <Container fluid>
       <PageHeader title="Vendite" subtitle={subtitle} error={error}>
-        {/* frecce solo per il responsabile */}
-        {isAdmin && (
-          <WeekNav
-            onPrevious={() => moveReference(-1)} // periodo prima
-            onNext={() => moveReference(1)} // periodo dopo
-            onToday={goToToday} // periodo in corso
-            isCurrentWeek={isCurrentPeriod}
-            previousLabel={previousLabel}
-            nextLabel={nextLabel}
-            todayLabel={todayLabel}
-          />
-        )}
+        {/* frecce per tutti e due i ruoli (il dipendente va di un giorno) */}
+        <WeekNav
+          onPrevious={() => moveReference(-1)} // periodo prima
+          onNext={() => moveReference(1)} // periodo dopo
+          onToday={goToToday} // periodo in corso
+          isCurrentWeek={isCurrentPeriod}
+          previousLabel={previousLabel}
+          nextLabel={nextLabel}
+          todayLabel={todayLabel}
+        />
       </PageHeader>
 
       {/* periodo e stato sempre in vista; con le card negozio e "Ordina" nel bottone "Filtri" */}
@@ -304,9 +317,10 @@ const Sales = () => {
         {showCards && !isPhone && filtersMenu}
       </FilterBar>
 
-      {/* totali per tutti e due i ruoli (solo vendite valide): arancio, blu, magenta, viola */}
-      <Row xs={2} xl={4} className="g-3 mb-4">
-        <Col>
+      {/* totali per tutti e due i ruoli (solo vendite valide): arancio, blu, magenta, viola.
+          Quattro in riga da 1400px; su telefono pagamenti e aliquote prendono tutta la riga */}
+      <Row className="g-3 mb-4">
+        <Col xs={6} xxl={3}>
           <KpiCard
             color="orange"
             label="Incasso"
@@ -314,7 +328,7 @@ const Sales = () => {
             detail="IVA compresa"
           />
         </Col>
-        <Col>
+        <Col xs={6} xxl={3}>
           <KpiCard
             color="blue"
             label="Vendite"
@@ -322,21 +336,17 @@ const Sales = () => {
             detail="scontrini"
           />
         </Col>
-        {/* contanti e carta: per far tornare cassa e POS a fine giornata */}
-        <Col>
-          <KpiCard
-            color="primary"
-            label="Contanti"
-            value={formatEuro(totals?.cashRevenue ?? 0)}
-            detail="in cassa"
-          />
+        {/* contanti e carta in una card: per far tornare cassa e POS a fine giornata */}
+        <Col xs={12} sm={6} xxl={3}>
+          <KpiCard color="primary" label="Pagamenti" rows={paymentRows} />
         </Col>
-        <Col>
+        {/* venduto di ogni aliquota: per controllare i corrispettivi */}
+        <Col xs={12} sm={6} xxl={3}>
           <KpiCard
             color="secondary"
-            label="Carta"
-            value={formatEuro(totals?.cardRevenue ?? 0)}
-            detail="POS"
+            label="Venduto per aliquota"
+            rows={vatRows} // una riga per aliquota
+            detail="IVA compresa"
           />
         </Col>
       </Row>

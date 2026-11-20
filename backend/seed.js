@@ -730,8 +730,9 @@ const seed = async () => {
     // le vende chi è in turno, circa una su trenta è annullata.
     // Il Bookshop oggi non ha vendite: la cassa si apre nella demo
     const sales = [];
-    // contanti delle vendite valide per negozio e giorno, per le casse
+    // contanti e carta delle vendite valide per negozio e giorno, per le casse
     const cashByDay = new Map();
+    const cardByDay = new Map();
     stores.forEach((store) => {
       const storeProducts = getStoreProducts(store);
       eachDay(dateOf(0, 1), today).forEach((day) => {
@@ -797,9 +798,10 @@ const seed = async () => {
               : buildSale(seller, time, paymentMethod, lines);
           sales.push(sale);
 
-          if (!sale.cancelled && paymentMethod === "cash") {
+          if (!sale.cancelled) {
+            const byDay = paymentMethod === "cash" ? cashByDay : cardByDay;
             const key = `${store._id}|${dayKey(day)}`;
-            cashByDay.set(key, (cashByDay.get(key) ?? 0) + sale.total);
+            byDay.set(key, (byDay.get(key) ?? 0) + sale.total);
           }
         }
       });
@@ -820,11 +822,18 @@ const seed = async () => {
       { store: storeA, day: dateOf(9, 18), difference: -20 },
       // fondo di apertura diverso dall'ultima chiusura
       { store: storeA, day: dateOf(2, 21), openingFloat: 90 },
+      // POS diverso dalle vendite con carta
+      { store: storeB, day: dateOf(4, 12), posDifference: -15 },
+      { store: storeA, day: dateOf(10, 9), posDifference: 6.5 },
       // gli ultimi giorni: in più, fondo diverso, mancano soldi, cassa non chiusa
       { store: storeA, day: at(-1, 0), difference: 2.5 },
       { store: storeA, day: at(-2, 0), openingFloat: 80 },
       { store: storeB, day: at(-3, 0), difference: -5 },
       { store: storeB, day: at(-4, 0), notClosed: true },
+      // pagata con carta ma registrata in contanti: mancano contanti, sul POS ce n'è di più
+      { store: storeA, day: at(-5, 0), difference: -18, posDifference: 18 },
+      // un pagamento con carta non passato sul POS
+      { store: storeB, day: at(-6, 0), posDifference: -12 },
     ];
     // fondo di chiusura: 100 €, lo Shop Castello passa a 150 € dal 31 maggio (estate, più resto)
     const getStandardFloat = (store, day) =>
@@ -869,6 +878,11 @@ const seed = async () => {
         const expectedCash = round(cashSession.openingFloat + cashSales);
         const difference = event.difference ?? 0;
         const countedCash = round(expectedCash + difference);
+        // POS: lo scontrino del terminale = vendite con carta + differenza
+        const cardSales = round(
+          cardByDay.get(`${store._id}|${dayKey(day)}`) ?? 0,
+        );
+        const posDifference = event.posDifference ?? 0;
         // il fondo per domani, mai più dei contanti contati
         const closingFloat = Math.min(
           getStandardFloat(store, day),
@@ -881,6 +895,9 @@ const seed = async () => {
           cashSales,
           expectedCash,
           difference,
+          cardSales,
+          posAmount: round(cardSales + posDifference),
+          posDifference,
           closedBy: lastShift.user,
           closedAt: new Date(lastShift.endAt.getTime() - 10 * 60000),
         });

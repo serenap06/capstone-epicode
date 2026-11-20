@@ -1,7 +1,7 @@
 // import
 const mongoose = require("mongoose");
 
-// schema della cassa di un giorno: apertura con il fondo cassa, chiusura con imbustato e fondo di chiusura
+// schema della cassa di un giorno: apertura con il fondo cassa, chiusura con imbustato, fondo di chiusura e POS
 const cashSessionSchema = new mongoose.Schema(
   {
     store: {
@@ -25,6 +25,10 @@ const cashSessionSchema = new mongoose.Schema(
     cashSales: { type: Number, min: 0 },
     expectedCash: { type: Number },
     difference: { type: Number },
+    // POS: vendite con carta, totale dello scontrino di chiusura del terminale e differenza tra i due
+    cardSales: { type: Number, min: 0 },
+    posAmount: { type: Number, min: 0 },
+    posDifference: { type: Number },
     closedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     closedAt: { type: Date },
   },

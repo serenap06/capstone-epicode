@@ -50,12 +50,12 @@ const open = async (req, res, next) => {
   }
 };
 
-// PATCH /api/cash-sessions/close: chiudo la cassa di oggi con imbustato e fondo di chiusura
+// PATCH /api/cash-sessions/close: chiudo la cassa di oggi con imbustato, fondo di chiusura e totale del POS
 const close = async (req, res, next) => {
   try {
-    const { closingFloat, envelopeAmount } = req.body;
+    const { closingFloat, envelopeAmount, posAmount } = req.body;
     const cashSession = await cashSessionService.close(
-      { closingFloat, envelopeAmount },
+      { closingFloat, envelopeAmount, posAmount },
       req.user,
     );
     res.status(200).send({

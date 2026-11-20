@@ -51,16 +51,18 @@ const findToday = async (currentUser) => {
   };
 };
 
-// casse di un periodo dalla più vecchia; floatMismatch = fondo di apertura diverso dall'ultima chiusura
+// casse di un periodo dalla più vecchia, con negozio, nomi e incasso contanti e POS del giorno;
+// previousClosingFloat = ultimo fondo di chiusura, floatMismatch = true se il fondo di apertura è diverso
 const findInPeriod = async (storeId, fromDate, toDate) => {
   // in aggregate l'id lo converto io
   const storeFilter = storeId
     ? { store: new mongoose.Types.ObjectId(String(storeId)) }
     : {};
 
-  const [cashSessions, previousClosings] = await Promise.all([
+  const [cashSessions, previousClosings, salesByDay] = await Promise.all([
     CashSession.find({ ...storeFilter, day: { $gte: fromDate, $lte: toDate } })
       .populate("store", "name")
+      .populate("openedBy closedBy", "name surname")
       .sort({ day: 1 })
       .lean(),
     // per ogni negozio il fondo dell'ultima cassa chiusa prima del periodo
@@ -75,7 +77,46 @@ const findInPeriod = async (storeId, fromDate, toDate) => {
       { $sort: { day: -1 } },
       { $group: { _id: "$store", closingFloat: { $first: "$closingFloat" } } },
     ]),
+    // incasso per negozio, giorno (ora italiana) e metodo di pagamento, solo vendite valide
+    Sale.aggregate([
+      {
+        $match: {
+          ...storeFilter,
+          createdAt: { $gte: fromDate, $lte: toDate },
+          cancelled: { $ne: true },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            store: "$store",
+            day: {
+              $dateTrunc: {
+                date: "$createdAt",
+                unit: "day",
+                timezone: "Europe/Rome",
+              },
+            },
+            paymentMethod: "$paymentMethod",
+          },
+          total: { $sum: "$total" },
+        },
+      },
+    ]),
   ]);
+
+  // "negozio|giorno|metodo" → incasso
+  const salesTotals = new Map(
+    salesByDay.map((row) => [
+      `${row._id.store}|${row._id.day.getTime()}|${row._id.paymentMethod}`,
+      round(row.total),
+    ]),
+  );
+  // incasso di una cassa con un metodo (0 se non ha vendite)
+  const getSalesTotal = (cashSession, paymentMethod) =>
+    salesTotals.get(
+      `${cashSession.store._id}|${new Date(cashSession.day).getTime()}|${paymentMethod}`,
+    ) ?? 0;
 
   // negozio → ultimo fondo di chiusura, aggiornato cassa dopo cassa
   const lastClosingFloats = new Map(
@@ -84,15 +125,22 @@ const findInPeriod = async (storeId, fromDate, toDate) => {
 
   return cashSessions.map((cashSession) => {
     const storeKey = String(cashSession.store._id);
-    const lastClosingFloat = lastClosingFloats.get(storeKey);
+    const previousClosingFloat = lastClosingFloats.get(storeKey);
     const floatMismatch =
-      lastClosingFloat !== undefined &&
-      lastClosingFloat !== cashSession.openingFloat;
+      previousClosingFloat !== undefined &&
+      previousClosingFloat !== cashSession.openingFloat;
     // la sua chiusura diventa l'ultima per la cassa dopo
     if (cashSession.closedAt) {
       lastClosingFloats.set(storeKey, cashSession.closingFloat);
     }
-    return { ...cashSession, floatMismatch };
+    return {
+      ...cashSession,
+      // chiusa: contanti e carta salvati alla chiusura; aperta: quelli incassati finora
+      cashSales: cashSession.cashSales ?? getSalesTotal(cashSession, "cash"),
+      cardSales: cashSession.cardSales ?? getSalesTotal(cashSession, "card"),
+      previousClosingFloat,
+      floatMismatch,
+    };
   });
 };
 
@@ -127,8 +175,11 @@ const open = async ({ openingFloat }, currentUser) => {
   return cashSession;
 };
 
-// chiudo la cassa di oggi: salvo imbustato e fondo di chiusura, calcolo la differenza
-const close = async ({ closingFloat, envelopeAmount }, currentUser) => {
+// chiudo la cassa di oggi: salvo imbustato, fondo di chiusura e totale del POS, calcolo le due differenze
+const close = async (
+  { closingFloat, envelopeAmount, posAmount },
+  currentUser,
+) => {
   const today = getToday();
   const cashSession = await CashSession.findOne({
     store: currentUser.store,
@@ -141,8 +192,12 @@ const close = async ({ closingFloat, envelopeAmount }, currentUser) => {
     throw new HttpException("Cash register already closed", 400);
   }
 
+  // incasso di oggi in contanti e con carta
+  const [cashSales, cardSales] = await Promise.all([
+    sumSales(currentUser.store, today, "cash"),
+    sumSales(currentUser.store, today, "card"),
+  ]);
   // totale contanti = fondo di apertura + incasso contanti; contati = imbustato + fondo di chiusura
-  const cashSales = await sumSales(currentUser.store, today, "cash");
   const expectedCash = round(cashSession.openingFloat + cashSales);
   const countedCash = round(closingFloat + envelopeAmount);
 
@@ -152,6 +207,10 @@ const close = async ({ closingFloat, envelopeAmount }, currentUser) => {
   cashSession.expectedCash = expectedCash;
   // positiva = soldi in più, negativa = mancano soldi
   cashSession.difference = round(countedCash - expectedCash);
+  // POS: scontrino del terminale meno vendite con carta (negativa = mancano pagamenti sul POS)
+  cashSession.cardSales = cardSales;
+  cashSession.posAmount = round(posAmount);
+  cashSession.posDifference = round(posAmount - cardSales);
   cashSession.closedBy = currentUser._id;
   cashSession.closedAt = new Date();
   await cashSession.save();
@@ -173,11 +232,4 @@ const checkIsOpen = async (storeId) => {
   }
 };
 
-module.exports = {
-  findToday,
-  findInPeriod,
-  findAll,
-  open,
-  close,
-  checkIsOpen,
-};
+module.exports = { findToday, findAll, open, close, checkIsOpen };

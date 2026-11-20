@@ -1,0 +1,34 @@
+/* meno spazio tra le colonne: otto colonne stanno nella pagina da 1366px */
+.app-table.task-table th,
+.app-table.task-table td {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* il titolo può andare a capo ("Allestimento vetrina di Natale") */
+.app-table.task-table .task-table-title {
+  min-width: 10rem;
+  font-weight: 700;
+  white-space: normal;
+}
+
+/* "alta", "media", "bassa" con la maiuscola */
+.task-table-priority::first-letter {
+  text-transform: uppercase;
+}
+
+/* "1 su 2" con la barra sotto */
+.task-table-progress {
+  min-width: 7rem;
+}
+
+.task-table-progress .progress-track {
+  margin-top: 0.35rem;
+}
+
+/* badge delle persone, a capo se non ci stanno */
+.task-table-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}

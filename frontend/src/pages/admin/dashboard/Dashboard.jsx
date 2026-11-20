@@ -109,7 +109,7 @@ const Dashboard = () => {
           </Col>
           <Col>
             <KpiCard
-              to="/admin/tasks?due=today&status=pending" // le task di oggi ancora da fare
+              to="/admin/tasks?period=day&status=pending" // le task di oggi ancora da fare
               color="secondary"
               label="Task di oggi"
               value={
@@ -148,7 +148,7 @@ const Dashboard = () => {
             title="Task di oggi"
             className="dashboard-tasks-header"
             aside={
-              <Link to="/admin/tasks?due=today" className="section-link">
+              <Link to="/admin/tasks?period=day" className="section-link">
                 Vedi tutte
               </Link>
             }
